@@ -1,9 +1,13 @@
+import java.io.IOException;
+
+import org.antlr.runtime.ANTLRFileStream;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("File to load: " + args[0]);
 
         //To load the file use the following code
-        /*
+        
         ANTLRFileStream input = null;
 
 		try
@@ -14,7 +18,7 @@ public class Main {
         {
             e.printStackTrace();
         }
-        */
+        
 
         // If everything is OK while compiling
         System.exit(0);
