@@ -1,204 +1,249 @@
-grammar Expr;
+grammar Expr3;
 
 options {
-    language = Java;
-    output = AST;
-    
+	language = Java;
+	output = AST;
+	k = 1;
 }
 
 tokens {
-    STRUCT;
-    FUNC;
-    BLOC;
-    ARGUMENT;
-    AFFECT;
-    WHILE;
-    IF;
-    ELSE;
-    RETURN;
-    SPE_UNAIRE;
-    FUNC_ARGS;
-    VAR;
-    VEC;
-    DECL;
-    IND;
-    ASSOC;
+	STRUCT;
+	FUNC;
+	BLOC;
+	ARGUMENT;
+	AFFECT;
+	WHILE;
+	IF;
+	ELSE;
+	RETURN;
+	SPE_UNAIRE;
+	FUNC_ARGS;
+	VAR;
+	VEC;
+	PRINT;
+	DECL;
+	IND;
+	ASSOC;
+	CALL_ARGS;
 }
 
-
 fichier
-    :decl*;
-    
+	:decl*;
+
 decl    
-    :decl_func
-    |decl_struct
-    ;
+	:decl_func
+	|decl_struct
+	;
 
 decl_struct
-    :'struct' WS* IDF NEWLINE* '{' ( WS* (NEWLINE WS*)* IDF WS* ':' WS* type WS*  (',' WS* (NEWLINE WS*)* IDF WS* ':' WS* type WS* )* )? NEWLINE* '}' -> ^(STRUCT IDF ^(VAR IDF type)*)
-    ;
+	:'struct' IDF '{' (IDF ':' type (',' IDF ':' type)*)? '}' -> ^(STRUCT IDF ^(VAR IDF type)*)
+	;
 
 decl_func
-    :'fn' WS* IDF '(' args? ')' ( WS* '->' WS* type )? (NEWLINE WS*)* bloc -> ^(FUNC IDF args? (type)? bloc)
-    ;
+	:'fn' IDF '(' args? ')' ( '->' type )? bloc -> ^(FUNC IDF args? (type)? bloc)
+	;
 
 args
-    :WS* argument WS* (',' WS* argument WS* )* -> ^(FUNC_ARGS argument*)
-    ;
+	:argument(',' argument)* -> ^(FUNC_ARGS argument*)
+	;
 
 type
-    :IDF
-    |'Vec' '<' type '>' -> ^(VEC type)
-    |'&' type
-    |'i32'
-    |'bool'
-    ;
-    
+	:IDF
+	|'Vec' '<' type '>' -> ^(VEC type)
+	|'&' type
+	|'i32'
+	|'bool'
+	;
+
 argument
-    :IDF WS* ':' WS* type -> ^(ARGUMENT IDF type)
-    ;
+	:IDF ':' type -> ^(ARGUMENT IDF type)
+	;
 
 bloc
-    :'{' WS* (NEWLINE WS*)*  instruction '}' -> ^(BLOC instruction)
-    ;
+	:'{' instruction '}' -> ^(BLOC instruction)
+	;
 
 instruction
-    :';'! WS* (NEWLINE WS*)* instruction?
-    |expr instruction2
-    |let instruction2
-    |whilepro instruction?
-    |returnpro instruction2
-    |if_expr1 WS* (NEWLINE WS*)* instruction?
-    ;
+	:';'! instruction?
+	|expr instruction2
+	|let instruction2
+	|whilepro instruction?
+	|returnpro instruction2
+	|if_expr1  instruction?
+	;
 
 instruction2
-    :';'! WS* (NEWLINE WS*)* instruction?
-    | (NEWLINE WS*)*
-    ;
+	:';'! instruction?
+	| 
+	;
 
 let
-    :'let' WS* ('mut' WS* )? expr letbis? -> ^(DECL  ('mut')? expr  letbis?)
-    ;
- 
+	:'let' ('mut')? expr letbis? -> ^(DECL  ('mut')? expr  letbis?)
+	;
+
 letbis
-    :    '=' WS* expr -> ^(AFFECT expr)
-    ;
-    
+	:'='  expr -> ^(AFFECT expr)
+	;
 
 returnpro
-    :'return' WS*  (expr)? -> ^(RETURN expr?)
-    ;
-    
+	:'return' (expr)? -> ^(RETURN expr?)
+	;
+
 whilepro
-    :'while' WS* expr (NEWLINE WS*)* bloc WS* (NEWLINE WS*)* -> ^(WHILE expr bloc)
-    ;
+	:'while' exprif bloc -> ^(WHILE exprif bloc)
+	;
 
 if_expr1
-    : 'if' WS* expr  (NEWLINE WS*)* bloc ('else' WS* if_expr2)? -> ^(IF expr bloc ^(ELSE if_expr2)?)
-    ;
-    
+	:'if' exprif bloc ('else' if_expr2)? -> ^(IF exprif bloc ^(ELSE if_expr2)?)
+	;
+
 if_expr2
-    :bloc
-    |if_expr1
-    ;
+	:bloc
+	|if_expr1
+	;
+
+exprif
+	:(expr1if) ('||'^ expr1if)*
+	;
+
+expr1if
+	:(expr2if) ('&&'^ expr2if)*
+	;
+
+expr2if
+	:(expr3if) (opt^ expr3if)*
+	;
+
+expr3if
+	:(expr4if) (ops^ expr4if)*
+	;
+
+expr4if
+	:(expr5if) (opm^ expr5if)*
+	;
+
+expr5if
+	:unaire  expr6if -> ^(SPE_UNAIRE unaire expr6if)
+	|'vec' '![' (exprif(',' exprif)*)? ']' -> ^(VEC exprif*)
+	|'print' '!(' exprif ')' -> ^(PRINT exprif)
+	|expr6if
+	;
+
+expr6if
+	:expr7if expr6bisif -> ^(expr7if expr6bisif?)
+	;
+
+expr6bisif
+	:
+	|'[' exprif ']' expr6bisif -> ^(IND ^(exprif expr6bisif?))
+	|'.' expr6bisbisif -> ^(ASSOC expr6bisbisif?)
+	;
+
+expr6bisbisif
+	:IDF expr6bisif -> ^(IDF expr6bisif?)
+	|'len' '('! ')'! expr6bisif
+	;
+
+expr7if
+	:CST_ENT
+	|'true'
+	|'false'
+	|IDF expr8if -> ^(IDF expr8if?)
+	|bloc
+	|'(' exprif ')' -> exprif
+	;
+
+expr8if
+	:
+	|'(' exprif(',' exprif)* ')' -> ^(CALL_ARGS (^(ARGUMENT exprif))*)
+	;
 
 expr
-    : (expr2) ('||'^ WS* expr2)*
-    ;
-    
+	:(expr1) ('||'^ expr1)*
+	;
+
+expr1
+	:(expr2) ('&&'^ expr2)*
+	;
+
 expr2
-    : (expr3 ) ('&&'^ WS* expr3 )*
-    ;
+	:(expr3) (opt^ expr3)*
+	;
 
 expr3
-    : (expr4 ) (WS* opt^ WS* expr4 )*
-    ;
+	:(expr4) (ops^ expr4)*
+	;
 
 expr4
-    : (expr5 ) (WS* ops^ WS* expr5 )*
-    ;
+	:(expr5) (opm^ expr5)*
+	;
 
 expr5
-    : (expr6 ) (WS* opm^ WS* expr6 )*
-    ;
+	:unaire  expr6 -> ^(SPE_UNAIRE unaire expr6)
+	|'vec' '![' (expr(',' expr)*)? ']' -> ^(VEC expr*)
+	|'print' '!(' expr ')' -> ^(PRINT expr)
+	|expr6
+	;
 
 expr6
-    :unaire  expr7 -> ^(SPE_UNAIRE unaire expr7)
-    |'vec'^ '!['! (expr(','! expr)*)? ']'!
-    |'print'^ '!('! expr ')'!
-    |expr7
-    ;
+	:expr7 expr6bis -> ^(expr7 expr6bis?)
+	;
+
+expr6bis
+	:
+	|'[' expr ']' expr6bis -> ^(IND ^(expr expr6bis?))
+	|'.' expr6bisbis -> ^(ASSOC expr6bisbis?)
+	;
+
+expr6bisbis
+	:IDF expr6bis -> ^(IDF expr6bis?)
+	|'len' '('! ')'! expr6bis
+	;
 
 expr7
-    :expr8 expr7b  -> ^(expr8 expr7b?)
-    ;
-    
-expr7b
-    :
-    | '[' expr ']' expr7b -> ^(IND ^(expr expr7b?))
-    |'.' IDF  expr7b -> ^(ASSOC ^(IDF expr7b?))
-    ;
-    
+	:CST_ENT
+	|'true'
+	|'false'
+	|IDF expr8 -> ^(IDF expr8?)
+	|bloc
+	|'(' expr ')' -> expr
+	;
+
 expr8
-    :expr9 expr8b -> ^(expr9 expr8b?)
-    ;
-    
-expr8b
-    :'.'! 'len' '('! ')'! 
-    |
-    ;
-
-
-expr9
-    :CST_ENT
-    |'true'
-    |'false'
-    |IDF  expr9bis -> ^(IDF expr9bis?)
-    |bloc
-    |'(' expr ')' -> expr
-    ;
-
-
-expr9bis
-    :
-    |'('! expr9bisbis? ')'!
-    |'{' (IDF  WS* ':' expr (','  WS* IDF  WS* ':' expr)*)? '}' -> (^(ARGUMENT IDF expr))*
-    ;
-    
-expr9bisbis
-    :WS* expr (',' WS* expr)* -> ^(FUNC_ARGS (^(ARGUMENT expr))*)
-    ;
+	:
+	|'(' expr(',' expr)* ')' -> ^(CALL_ARGS (^(ARGUMENT expr))*)
+	|'{' (IDF ':' expr(',' IDF ':' expr)*)? '}' -> (^(ARGUMENT IDF expr))*
+	;
 
 ops
-    :'+'
-    |'-'
-    ;
+	:'+'
+	|'-'
+	;
 
 opm
-    :'*'
-    |'/'
-    ;
+	:'*'
+	|'/'
+	;
 
 opt    
-    :'<'
-    |'<='
-    |'>'
-    |'>='
-    |'=='
-    |'!='
-    ;
-    
+	:'<'
+	|'<='
+	|'>'
+	|'>='
+	|'=='
+	|'!='
+	;
+
 unaire
-    :'-'
-    |'!'
-    |'*'
-    |'&'
-    ;
-    
+	:'-'
+	|'!'
+	|'*'
+	|'&'
+	;
 
-CST_ENT : '0'..'9'+ ;
-IDF : ('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_' |CST_ENT)* ;
-NEWLINE: '\r'? '\n'  {$channel=HIDDEN;};
-WS : (' '|'\t') {$channel=HIDDEN;};
-
-
+CST_ENT :'0'..'9'+;
+IDF :('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | CST_ENT)*;
+NEWLINE:'\r'? '\n' {$channel=HIDDEN;};
+WS :(' ' | '\t') {$channel=HIDDEN;};
+COMMENT:'/*' .* '*/' {$channel=HIDDEN;};
+COMMENTLINE:'//' .* ('\n'|'\r') {$channel=HIDDEN;};
