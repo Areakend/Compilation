@@ -16,7 +16,7 @@ fn cotesEgaux(x:i32, y:i32, z:i32) -> i32 {
 }
 
 fn testPythagore(x:i32, y:i32, z:i32) -> bool {
-  if (x*x = y*y + z*z || y*y = x*x + z*z || z*z == x*x + y*y) {
+  if (x*x == y*y + z*z || y*y == x*x + z*z || z*z == x*x + y*y) {
     return true;
   }
   else {
