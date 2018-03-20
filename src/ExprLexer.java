@@ -1,5 +1,3 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Users\\Jerem\\OneDrive\\Bureau\\Expr.g 2018-03-20 14:22:05
-
 import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
