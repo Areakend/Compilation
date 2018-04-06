@@ -1,3 +1,4 @@
+package defaut;
 import org.antlr.runtime.tree.CommonTree;
 
 private static void analyseRec(CommonTree t,TableSymboles tds, Tables tables){
