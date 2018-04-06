@@ -13,20 +13,8 @@ public class Fonction {
 
     public Fonction(String name, String returnType, ArrayList<Argument> arguments) {
         this.setName(name);
-        this.setTypeRetour(returnType);
-        this.setArguments(arguments);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setReturnType(String returnType) {
-        this.returnType = returnType;
-    }
-
-    public void setArgs(ArrayList<Argument> args) {
-        this.args = args;
+        this.setReturnType(returnType);
+        this.setArgs(arguments);
     }
 
     public String getName() {
@@ -41,12 +29,24 @@ public class Fonction {
         return args;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setReturnType(String returnType) {
+        this.returnType = returnType;
+    }
+
+    public void setArgs(ArrayList<Argument> args) {
+        this.args = args;
+    }
+
     @Override
     public String toString() {
-        String res = this.name + " " + this.returnType;
+        String res = "Fonction " + this.name + " " + this.returnType + "\n";
 
         for(int i = 0; i < this.args.size(); i++) {
-            res += " ARG : " + this.args.get(i);
+            res += "\tArg : " + this.args.get(i) + "\n";
         }
 
         return res;

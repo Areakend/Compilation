@@ -6,11 +6,11 @@ public class Attribut extends Variable {
     }
 
     public Attribut(String id, String type, String value) {
-        super(id, type, value);
+        super(id, type, value, false);
     }
 
     @Override
     public String toString() {
-        return "Attribut " + this.getName() + " : " + this.getType() + " = " + this.getValue();
+        return "Attribut " + this.getName() + " : " + this.getType() + " = " + this.getValue() + "\n";
     }
 }
