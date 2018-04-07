@@ -1,6 +1,5 @@
 package Objets;
 
-import Exceptions.DoubleDecl;
 import Exceptions.InvalidType;
 import Exceptions.NonExistantStructureVariable;
 
@@ -8,10 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesStructures extends Table<String, Structure> {
-    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) throws DoubleDecl {
-        if(this.get(name) != null)
-            throw new DoubleDecl(name);
-
+    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
         this.put(name, new Structure(name, names, types));
     }
 
@@ -35,11 +31,11 @@ public class TableDesStructures extends Table<String, Structure> {
 
     @Override
     public String toString() {
-        StringBuilder temp = new StringBuilder();
+        StringBuilder stringStructures = new StringBuilder();
 
         for (HashMap.Entry<String, Structure> entry : table.entrySet())
-            temp.append("\t").append(entry.getValue().toString()).append("\n");
+            stringStructures.append("\t").append(entry.getValue().toString()).append("\n");
 
-        return temp.toString();
+        return stringStructures.toString();
     }
 }

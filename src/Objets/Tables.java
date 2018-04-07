@@ -13,9 +13,9 @@ public class Tables {
 		return this.tables.get(i);
 	}
 	
-	public Table getTablesById(String name) {
+	public Table getTablesById(String id) {
         for(int i = 0; i < tables.size(); i++)
-            if(((TableDesSymboles)tables.get(i)).getName().equals(name))
+            if(((TableDesSymboles)tables.get(i)).getName().equals(id))
                 return tables.get(i);
 
         return null;

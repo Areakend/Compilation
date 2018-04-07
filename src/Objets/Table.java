@@ -11,6 +11,10 @@ public class Table<K, V> {
         return table.get(key);
     }
 
+    public HashMap<K, V> getTable() {
+        return table;
+    }
+
     public void put(K key, V value) {
         this.table.put(key, value);
     }

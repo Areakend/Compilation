@@ -3,7 +3,8 @@ package Objets;
 public enum TableType {
     VAR("Variables"),
     FONC("Fonctions"),
-    STRUCT("Structures");
+    STRUCT("Structures"),
+    VEC("Vecteur");
 
     private String name;
 

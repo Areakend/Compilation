@@ -1,20 +1,20 @@
 package Objets;
 
-import Exceptions.DoubleDecl;
+import Exceptions.NonMutable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesSymboles extends Table<TableType, Table> {
-    private String name;
     private TableDesSymboles parent;
+    private String name;
 
-    public TableDesSymboles(String name, TableDesSymboles parent) {
-        this.name = name;
+    public TableDesSymboles(TableDesSymboles parent) {
         this.parent = parent;
+        this.name = this.setName();
     }
 
-    public void ajouterVariable(String name, boolean mut, String value) throws DoubleDecl {
+    public void ajouterVariable(String name, boolean mut, String value) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
@@ -23,31 +23,45 @@ public class TableDesSymboles extends Table<TableType, Table> {
             this.put(tableType, tableDesVariables);
         }
 
-        tableDesVariables.ajouterVariable(name, mut, value);
+        try {
+            tableDesVariables.ajouterVariable(this, name, mut, value);
+        } catch(NonMutable nonMutable) { }
     }
 
-    public void ajouterFonction(String id, String typeRetour, ArrayList<Argument> arguments) throws DoubleDecl {
+    public void ajouterFonction(String name, String returnType, Arguments arguments) {
         TableType tableType = TableType.FONC;
-        TableDesFonctions foncTab = (TableDesFonctions) this.get(tableType);
+        TableDesFonctions tableDesFonctions = (TableDesFonctions) this.get(tableType);
 
-        if(foncTab == null) {
-            foncTab = new TableDesFonctions();
-            this.put(tableType, foncTab);
+        if(tableDesFonctions == null) {
+            tableDesFonctions = new TableDesFonctions();
+            this.put(tableType, tableDesFonctions);
         }
 
-        foncTab.ajouterFonction(id, typeRetour, arguments);
+        tableDesFonctions.ajouterFonction(name, returnType, arguments);
     }
 
-    public void ajouterFonction(String id, ArrayList<Argument> arguments) throws DoubleDecl {
-        TableType tableType = TableType.FONC;
-        TableDesFonctions foncTab = (TableDesFonctions) this.get(tableType);
+    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
+        TableType tableType = TableType.STRUCT;
+        TableDesStructures tableDesStructures = (TableDesStructures) this.get(tableType);
 
-        if(foncTab == null) {
-            foncTab = new TableDesFonctions();
-            this.put(tableType, foncTab);
+        if(tableDesStructures == null) {
+            tableDesStructures = new TableDesStructures();
+            this.put(tableType, tableDesStructures);
         }
 
-        foncTab.ajouterFonction(id, arguments);
+        tableDesStructures.ajouterStructure(name, names, types);
+    }
+
+    public void ajouterVecteur(String name, String type, ArrayList<String> valeurs) throws NonMutable {
+        TableType tableType = TableType.VEC;
+        TableDesVecteurs tableDesVecteurs = (TableDesVecteurs) this.get(tableType);
+
+        if(tableDesVecteurs == null) {
+            tableDesVecteurs = new TableDesVecteurs();
+            this.put(tableType, tableDesVecteurs);
+        }
+
+        tableDesVecteurs.ajouterVecteur(this, name, type, valeurs);
     }
 
     public String getName() {
@@ -58,8 +72,14 @@ public class TableDesSymboles extends Table<TableType, Table> {
         return this.parent;
     }
 
-    public void setParent(TableDesSymboles parent) {
-        this.parent = parent;
+    private String setName() {
+        int maxName = 0;
+
+        for(int i = 0; i < this.parent.getTable().size(); i++)
+            if(Integer.getInteger(parent.getName()) == maxName)
+                maxName += 1;
+
+        return this.parent.getName() + String.valueOf(maxName);
     }
 
     @Override
