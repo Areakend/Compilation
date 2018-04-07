@@ -51,7 +51,7 @@ public class TreeParser {
             }
         }
 
-        if (t.getText().equals("AFFECT")) { // TO COMPLETE
+        if (t.getText().equals("AFFECT")) {
             tds.modifierValeurVariable(var,analyseExp(t,tds,tables));
         }
 
@@ -83,7 +83,7 @@ public class TreeParser {
 
 
 
-    private static String analyseExp(CommonTree t, SymbolTable tds, Tables tables) {
+    private static String analyseExp(CommonTree t, TableDesSymboles tds, Tables tables) {
         if (t.getText().equals("+") || t.getText().equals("-") || t.getText().equals("*") || t.getText().equals("/")) {
             double value = 0.0;
             if (t.getText().equals("+")) {
