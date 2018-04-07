@@ -15,20 +15,20 @@ public class Fonction {
         return name;
     }
 
-    public String getReturnType() {
-        return returnType;
-    }
-
-    public Arguments getArgs() {
-        return args;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getReturnType() {
+        return returnType;
+    }
+
     public void setReturnType(String returnType) {
         this.returnType = returnType;
+    }
+
+    public Arguments getArgs() {
+        return args;
     }
 
     public void setArgs(Arguments args) {

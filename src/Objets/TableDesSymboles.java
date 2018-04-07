@@ -1,5 +1,7 @@
 package Objets;
 
+import Exceptions.AlreadyExistantFonction;
+import Exceptions.AlreadyExistantStructure;
 import Exceptions.NonMutable;
 
 import java.util.ArrayList;
@@ -25,7 +27,8 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesVariables.ajouterVariable(this, name, mut, value);
-        } catch(NonMutable nonMutable) { }
+        } catch(NonMutable nonMutable) {
+        }
     }
 
     public void ajouterFonction(String name, String returnType, Arguments arguments) {
@@ -37,7 +40,10 @@ public class TableDesSymboles extends Table<TableType, Table> {
             this.put(tableType, tableDesFonctions);
         }
 
-        tableDesFonctions.ajouterFonction(name, returnType, arguments);
+        try {
+            tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
+        } catch(AlreadyExistantFonction alreadyExistantFonction) {
+        }
     }
 
     public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
@@ -49,10 +55,13 @@ public class TableDesSymboles extends Table<TableType, Table> {
             this.put(tableType, tableDesStructures);
         }
 
-        tableDesStructures.ajouterStructure(name, names, types);
+        try {
+            tableDesStructures.ajouterStructure(this, name, names, types);
+        } catch(AlreadyExistantStructure alreadyExistantFonction) {
+        }
     }
 
-    public void ajouterVecteur(String name, String type, ArrayList<String> valeurs) throws NonMutable {
+    public void ajouterVecteur(String name, String type, ArrayList<String> valeurs) {
         TableType tableType = TableType.VEC;
         TableDesVecteurs tableDesVecteurs = (TableDesVecteurs) this.get(tableType);
 

@@ -38,7 +38,7 @@ public class Structure {
     public String toString() {
         StringBuilder res = new StringBuilder("Structure " + this.structureName + " :\n");
 
-        for (int i = 0; i < this.names.size(); i++)
+        for(int i = 0; i < this.names.size(); i++)
             res.append("\t").append(this.names.get(i)).append(" : ").append(this.types.get(i)).append(" ").append(this.valeurs.get(i)).append("\n");
 
         return res.toString();
