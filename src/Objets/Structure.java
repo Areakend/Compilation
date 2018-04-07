@@ -3,58 +3,44 @@ package Objets;
 import java.util.ArrayList;
 
 public class Structure {
-    private String name;
+    private String structureName;
     private ArrayList<String> names;
     private ArrayList<String> types;
-	private ArrayList<String> valeurs;
+    private ArrayList<String> valeurs = null;
 
-    public Structure(String name, ArrayList<String> names, ArrayList<String> types, ArrayList<String> valeurs) {
-    	this.name = name;
-    	this.names = names;
-    	this.types = types;
-    	this.valeurs=valeurs;
+    public Structure(String structureName, ArrayList<String> names, ArrayList<String> types) {
+        this.structureName = structureName;
+        this.names = names;
+        this.types = types;
     }
 
-	public String getName() {
-		return name;
-	}
-	
-	public ArrayList<String> getNames() {
-		return names;
-	}
+    public String getStructureName() {
+        return this.structureName;
+    }
 
-	public ArrayList<String> getTypes() {
-		return types;
-	}
+    public ArrayList<String> getNames() {
+        return this.names;
+    }
 
-	public ArrayList<String> getValeurs() {
-		return valeurs;
-	}
+    public ArrayList<String> getTypes() {
+        return this.types;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setNames(ArrayList<String> names) {
-		this.names = names;
-	}
+    public ArrayList<String> getValeurs() {
+        return this.valeurs;
+    }
 
-	public void setTypes(ArrayList<String> types) {
-		this.types = types;
-	}
+    public void setValeur(int pos, String valeur) {
+        this.names.set(pos, valeur);
+    }
 
-	public void setValeurs(ArrayList<String> valeurs) {
-		this.valeurs = valeurs;
-	}
-	
     @Override
     public String toString() {
-        String res = this.name + "\n";
-        for(int i = 0; i < this.types.size(); i++) {
-            res += "	" + this.names.get(i) + " : " + this.types.get(i) + " " + this.valeurs.get(i) + "\n";
-        }
+        StringBuilder res = new StringBuilder("Structure " + this.structureName + " :\n");
 
-        return res;
-    }   
+        for (int i = 0; i < this.types.size(); i++)
+            res.append("\t").append(this.names.get(i)).append(" : ").append(this.types.get(i)).append(" ").append(this.valeurs.get(i)).append("\n");
 
+        return res.toString();
+    }
 }

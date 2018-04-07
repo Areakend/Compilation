@@ -1,4 +1,3 @@
-package defaut;
 import java.io.IOException;
 
 import org.antlr.runtime.ANTLRFileStream;
@@ -6,7 +5,7 @@ import org.antlr.runtime.ANTLRFileStream;
 public class Main {
     public static void main(String[] args) {
         System.out.println("File to load: " + args[0]);
-        ANTLRFileStream input = null;
+        ANTLRFileStream input;
 
 		try {
 		    input = new ANTLRFileStream(args[0]);

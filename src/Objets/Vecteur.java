@@ -5,42 +5,47 @@ import java.util.ArrayList;
 public class Vecteur {
     private String name;
     private String type;
-	private ArrayList<Variable> variables;
+    private ArrayList<String> valeurs;
 
-    public Vecteur(String name, String type, ArrayList<Variable> variables) {
-    	this.name = name;
-    	this.type = type;
-    	this.variables=variables;
+    public Vecteur(String name, String type) { this(name, type, null); }
+
+    public Vecteur(String name, String type, ArrayList<String> valeurs) {
+        this.name = name;
+        this.type = type;
+        this.valeurs = valeurs;
     }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public ArrayList<Variable> getVariables() {
-		return variables;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public ArrayList<String> getValeurs() {
+        return valeurs;
+    }
 
-	public void setVariables(ArrayList<Variable> variables) {
-		this.variables = variables;
-	}
-    
+    public void setValeurs(ArrayList<String> valeurs) {
+        this.valeurs = valeurs;
+    }
+
     @Override
     public String toString() {
-        return "Vecteur" + this.name + " : " + this.type + " = " + this.variables;
-    }
+        StringBuilder res = new StringBuilder("Vecteur " + this.name + " : " + this.type + " =\n");
 
-    
+        for (int i = 0; i < this.valeurs.size(); i++)
+            res.append("\t").append(this.valeurs.get(i)).append("\n");
+
+        return res.toString();
+    }
 }

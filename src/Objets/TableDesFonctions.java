@@ -1,52 +1,32 @@
 package Objets;
 
+import Exceptions.DoubleDecl;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-//import exception.DoubleDeclaration;
-import Objets.Table;
-import defaut.ExprParser;
-import Objets.Fonction;
-
-
 public class TableDesFonctions extends Table<String, Fonction> {
+    public void ajouterFonction(String name, String returnType, ArrayList<Argument> args) throws DoubleDecl {
+        if(this.get(name) != null)
+            throw new DoubleDecl(name);
 
-	public TableDesFonctions() {
-		super(new HashMap<String,Fonction>());
-	}
-	
-	public void ajouterFonction(String name, String returnType, ArrayList<Argument> args) //throws DoubleDeclaration
-	{
-		if(this.get(name) != null) 
-		{	//ajouter quand exeeption et parser faits
-			//throw new DoubleDeclaration(id);
-			//System.out.println("Erreur ligne : " + ParserSemantique.LINE + " dans \"" + ParserSemantique.EXP +  "\" : \"" + id + "\" est deja declaree\n");
+        this.put(name, new Fonction(name, returnType, args));
+    }
 
-		}
-		Fonction temp = new Fonction(name,returnType,args);
-		this.put(name,temp);
-		
-		
-	}
-	public void ajouterMethode(String name, ArrayList<Argument> args) //throws DoubleDeclaration
-	{
-		if(this.get(name) != null) 
-		{
-			//throw new DoubleDeclaration(name);
-		}
-		Fonction temp = new Fonction(name,args);
-		this.put(name,temp);
-		
-		
-	}
+    public void ajouterFonction(String name, ArrayList<Argument> args) throws DoubleDecl {
+        if(this.get(name) != null)
+            throw new DoubleDecl(name);
 
-	public String toString()
-	{
-		String temp = "";
-		for(HashMap.Entry<String, Fonction> entry : table.entrySet()) {
-			temp += entry.getValue().toString() + "\n" ;
-		}
-		return temp;
-	}
+        this.put(name, new Fonction(name, args));
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder temp = new StringBuilder();
+
+        for(HashMap.Entry<String, Fonction> entry : table.entrySet())
+            temp.append("\t").append(entry.getValue().toString()).append("\n");
+
+        return temp.toString();
+    }
 }

@@ -3,26 +3,20 @@ package Objets;
 public class Variable {
     private String name;
     private boolean mut;
-    private String type;
     private String value;
 
-    public Variable(String name, String type) {
-        this(name, type, null, false);
+    public Variable(String name) {
+        this(name, false, null);
     }
 
-    public Variable(String name, String type, String value, boolean mut) {
+    public Variable(String name, boolean mut, String value) {
         this.name = name;
-        this.type = type;
-        this.value = value;
         this.mut = mut;
+        this.value = value;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getValue() {
@@ -37,10 +31,6 @@ public class Variable {
         this.name = name;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public void setValue(String value) {
         this.value = value;
     }
@@ -51,6 +41,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        return "Variable " + this.name + " " + this.mut + " : " + this.type + " = " + this.value + "\n";
+        return "Variable " + this.name + " " + this.mut + " = " + this.value + "\n";
     }
 }
