@@ -43,7 +43,7 @@ public class TreeParser {
             if (t.getChild(nbChilds - 1).getChildCount() > 0) { //AFFECT
                 CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
                 String value = analyseExp((CommonTree) node.getChild(0), tds, tables);
-                tds.ajouterVariable(name, mut, value);
+                tds.ajouterVariable(tds, name, mut, value);
             }
         }
 
@@ -109,6 +109,10 @@ public class TreeParser {
                 }
             }
             tds.ajouterFonction(nameFunc,returnType,args);
+        }
+
+        if (t.getText().equals("print") || t.getText().equals("RETURN")) {
+            analyseExp((CommonTree) t.getChild(0),tds,tables);
         }
 
 
