@@ -1,13 +1,18 @@
-package defaut;
+package Expr;
+import Objets.Structure;
+import Objets.TableDesStructures;
+import Objets.TableDesSymboles;
+import Objets.Tables;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 import tds.SymbolTable;
 
+
 import java.util.ArrayList;
 
-public class treepars {
+public class TreeParser {
 
-    private static void analyseRec(CommonTree t, SymbolTable tds, Tables tables, String var){
+    private static void analyseRec(CommonTree t, TableDesSymboles tds, Tables tables, String var) throws Exception{
 
         if(t.isNil()){
             return;
@@ -46,8 +51,8 @@ public class treepars {
             }
         }
 
-        if (t.getText().equals("AFFECT")) { // TO COMPLETE
-            tds.modifierVariable(var,analyseExp(t,tds,tables));
+        if (t.getText().equals("AFFECT")) {
+            tds.modifierValeurVariable(var,analyseExp(t,tds,tables));
         }
 
         if (t.getText().equals("STRUCT")) {
@@ -70,14 +75,15 @@ public class treepars {
                 varNames.add(name);
                 varTypes.add(type);
             }
-            TableDesStructures tdstruct = new TableDesStructures(nameStruct,varNames,varTypes);
+            TableDesStructures tdstruct = new TableDesStructures();
+            tdstruct.ajouterStructure(nameStruct,varNames,varTypes);
         }
 
     }
 
 
 
-    private static String analyseExp(CommonTree t, SymbolTable tds, Tables tables) {
+    private static String analyseExp(CommonTree t, TableDesSymboles tds, Tables tables) {
         if (t.getText().equals("+") || t.getText().equals("-") || t.getText().equals("*") || t.getText().equals("/")) {
             double value = 0.0;
             if (t.getText().equals("+")) {
