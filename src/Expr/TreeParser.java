@@ -1,27 +1,23 @@
 package Expr;
-import Objets.Structure;
-import Objets.TableDesStructures;
-import Objets.TableDesSymboles;
-import Objets.Tables;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
-import tds.SymbolTable;
 
+import Exceptions.NonExistantVariable;
+import Objets.*;
+import org.antlr.runtime.tree.CommonTree;
 
 import java.util.ArrayList;
 
 public class TreeParser {
 
-    private static void analyseRec(CommonTree t, TableDesSymboles tds, Tables tables, String var) throws Exception{
+    private static void analyseRec(CommonTree t, TableDesSymboles tds, Tables tables) throws Exception {
 
-        if(t.isNil()){
+        if (t.isNil()) {
             return;
         }
 
         if (t.getText().equals("nil")) {
             int nbChilds = t.getChildCount();
-            for (int i=0 ; i<nbChilds; i++) {
-                analyseRec((CommonTree) t.getChild(i),tds,tables,null);
+            for (int i = 0; i < nbChilds; i++) {
+                analyseRec((CommonTree) t.getChild(i), tds, tables);
             }
         }
 
@@ -44,23 +40,19 @@ public class TreeParser {
                 name = t.getChild(1).getText();
             }
 
-            tds.ajouterVariable(name, mut, null);
-
-            if (t.getChild(nbChilds-1).getChildCount() > 0) {
-                analyseRec((CommonTree) t.getChild(nbChilds-1), tds, tables, name);
+            if (t.getChild(nbChilds - 1).getChildCount() > 0) { //AFFECT
+                CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
+                String value = analyseExp((CommonTree) node.getChild(0), tds, tables);
+                tds.ajouterVariable(name, mut, value);
             }
-        }
-
-        if (t.getText().equals("AFFECT")) {
-            tds.modifierValeurVariable(var,analyseExp(t,tds,tables));
         }
 
         if (t.getText().equals("STRUCT")) {
             String nameStruct = t.getChild(0).getText();
-            ArrayList<String> varNames = new ArrayList<String>();
-            ArrayList<String> varTypes = new ArrayList<String>();
+            ArrayList<String> varNames = new ArrayList<>();
+            ArrayList<String> varTypes = new ArrayList<>();
             int nbChilds = t.getChildCount();
-            for (int i=1 ; i<nbChilds; i++) {
+            for (int i = 1; i < nbChilds; i++) {
                 CommonTree node = (CommonTree) t.getChild(i);
                 String name = node.getChild(0).getText();
                 String temp = node.getChild(1).getText();
@@ -76,11 +68,56 @@ public class TreeParser {
                 varTypes.add(type);
             }
             TableDesStructures tdstruct = new TableDesStructures();
-            tdstruct.ajouterStructure(nameStruct,varNames,varTypes);
+            tdstruct.ajouterStructure(nameStruct, varNames, varTypes);
         }
 
-    }
+        if (t.getText().equals("BLOC")) {
+            TableDesSymboles tds2 = new TableDesSymboles(tds);
+            int nbChilds = t.getChildCount();
+            for (int i = 0; i < nbChilds; i++) {
+                analyseRec((CommonTree) t.getChild(i), tds2, tables);
+            }
+        }
 
+        if (t.getText().equals("IF")) {
+            analyseExp((CommonTree) t.getChild(0), tds, tables);
+            for (int i = 1; i < t.getChildCount(); i++) {
+                analyseRec((CommonTree) t.getChild(i), tds, tables);
+            }
+        }
+
+        if (t.getText().equals("ELSE")) {
+            analyseExp((CommonTree) t.getChild(0), tds, tables);
+        }
+
+        if (t.getText().equals("WHILE")) {
+            analyseExp((CommonTree) t.getChild(0), tds, tables);
+            analyseRec((CommonTree) t.getChild(1), tds, tables);
+        }
+
+        /*if (t.getText().equals("FUNC")) {
+            String nameFunc = t.getChild(0).getText();
+            String returnType = null;
+            ArrayList<> args = new ArrayList<>();
+            for (int i=1 ; i<t.getChildCount() ; i++) {
+                CommonTree node = (CommonTree) t.getChild(i);
+                if (node.getText().equals("FUNC_ARGS")) {
+                    for (int j=1 ; j<node.getChildCount() ; j++) {
+                        CommonTree node2 = (CommonTree) node.getChild(j);
+                    }
+                }
+                else if (node.getText().equals("BLOC")) {
+                    analyseRec(node,tds,tables);
+                }
+                else {
+                    returnType = node.getText();
+                }
+            }
+            analyseRec((CommonTree) t.getChild(1),tds,tables);
+        }*/
+
+
+    }
 
 
     private static String analyseExp(CommonTree t, TableDesSymboles tds, Tables tables) {
@@ -99,52 +136,48 @@ public class TreeParser {
         } else if (t.getText().equals("<")) {
             if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) < Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
                 return "true";
-            }
-            else {
+            } else {
                 return "false";
             }
         } else if (t.getText().equals("<=")) {
             if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) <= Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
                 return "true";
-            }
-            else {
+            } else {
                 return "false";
             }
         } else if (t.getText().equals(">")) {
             if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) > Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
                 return "true";
-            }
-            else {
+            } else {
                 return "false";
             }
         } else if (t.getText().equals(">=")) {
             if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) >= Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
                 return "true";
-            }
-            else {
+            } else {
                 return "false";
             }
         } else if (t.getText().equals("==")) {
             if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) == Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
                 return "true";
-            }
-            else {
+            } else {
                 return "false";
             }
         } else if (t.getText().equals("!=")) {
             if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) != Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
                 return "true";
-            }
-            else {
+            } else {
                 return "false";
             }
         } else {
             try {
                 Double.valueOf(t.getText());
                 return t.getText();
-            }
-            catch (NumberFormatException e) {
-                return String.valueOf(tds.getValeurVariable(tds,t.getText()));
+            } catch (NumberFormatException e) {
+                try {
+                    return String.valueOf(((TableDesVariables) (tds.get(TableType.VAR))).getValeurVariable(tds, t.getText()));
+                } catch (NonExistantVariable nonExistantVariable) {
+                }
             }
         }
     }
