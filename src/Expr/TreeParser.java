@@ -2,6 +2,8 @@ package Expr;
 
 import Exceptions.*;
 import Objets.*;
+import sun.security.action.GetBooleanAction;
+
 import org.antlr.runtime.tree.CommonTree;
 
 import java.util.ArrayList;
@@ -156,25 +158,38 @@ public class TreeParser {
 					if (t.getChild(0).getText() == "IND") {
 						String name = t.getText();
 						t = (CommonTree) t.getChild(0).getChild(0);
-						Vecteur vect = ((TableDesVecteurs) (tds.get(TableType.VAR))).getValeurVecteur(tds, name);
-						String val = vect.getValeurs().get(Integer.valueOf(analyseExp(t, tds, tables)));
-						return val;
+						try {
+							Vecteur vect = ((TableDesVecteurs) (tds.get(TableType.VEC))).getVecteur(tds, name);
+							int indice = Integer.valueOf(analyseExp(t, tds, tables));
+							try {
+								vect.validSize(vect, indice);
+							} catch (IndexOutOfBounds e3) {
+								
+							}
+							String val = vect.getValeurs().get(indice);
+							return val;
+						} catch (NonExistantVariable e4) {
+
+						}
+
 					}
 
 					if (t.getChild(0).getText() == "FUNC_ARGS") {
 						String name = t.getText();
 						try {
-							Fonction fonc = ((TableDesFonctions) (tds.get(TableType.VAR))).getFunction(tds, name);
-							t = (CommonTree) t.getChild(0);
+							Fonction fonc = ((TableDesFonctions) (tds.get(TableType.FONC))).getFunction(tds, name);
 							int nbChilds2 = t.getChildCount();
+							try {
+								fonc.validNumberArgs(fonc, nbChilds2);
+							}
+							catch (InvalidArgumentsNumber e5){
+								
+							}
+							t = (CommonTree) t.getChild(0);
 							for (int i = 0; i < nbChilds2; i++) {
 								analyseRec((CommonTree) t.getChild(i), tds, tables);
-								try {
-									fonc.getArgs().get(i).getType();
-								}
-								catch (NoException e2){
-									
-								}
+								fonc.getArgs().getTypes().get(i);
+								Integer.parseInt(t.getChild(i).getText());
 							}
 						} catch (NonExistantFunction e1) {
 

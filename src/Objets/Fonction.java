@@ -1,5 +1,8 @@
 package Objets;
 
+import Exceptions.IndexOutOfBounds;
+import Exceptions.InvalidArgumentsNumber;
+
 public class Fonction {
     private String name;
     private String returnType;
@@ -39,4 +42,9 @@ public class Fonction {
     public String toString() {
         return "Fonction " + this.name + " " + this.returnType + this.args + "\n";
     }
+
+	public void validNumberArgs(Fonction fonc, int num) throws InvalidArgumentsNumber {
+		if (fonc.getArgs().getNames().size() != num)
+			throw new InvalidArgumentsNumber(name, fonc.getArgs().getNames().size());
+	}
 }
