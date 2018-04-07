@@ -1,3 +1,4 @@
+package defaut;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 import tds.SymbolTable;

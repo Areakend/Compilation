@@ -1,5 +1,5 @@
 struct triangle {
-  cote1 : i32,
+  cote1 : Vec < Vec < i32 >>,
   cote2 : i32,
   cote3 : i32
 }
