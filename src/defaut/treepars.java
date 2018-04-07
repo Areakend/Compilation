@@ -1,42 +1,146 @@
 package defaut;
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.Tree;
+import tds.SymbolTable;
 
-private static void analyseRec(CommonTree t,TableSymboles tds, Tables tables){
- if(t.isNil()){
- return;
- }
+import java.util.ArrayList;
 
- if(t.getText().equals("STRUCT"))
- {
-   String Name =  t.getChild(0).getText() ;
-   int leafnb= t.getChildCount();
-   if (leafnb>1){
-      for (int i=1;i<leafnb;i++){
-        try {
-         tds.ajouterVariable(t.getChild(i).getChild(0).getText(),t.getChild(i).getChild(1));
+public class treepars {
+
+    private static void analyseRec(CommonTree t, SymbolTable tds, Tables tables, String var){
+
+        if(t.isNil()){
+            return;
         }
-        catch exception{
+
+        if (t.getText().equals("nil")) {
+            int nbChilds = t.getChildCount();
+            for (int i=0 ; i<nbChilds; i++) {
+                analyseRec((CommonTree) t.getChild(i),tds,tables,null);
+            }
         }
-      }
 
-   }
+        if (t.getText().equals("DECL")) {
+            boolean mut = false;
+            String name = null;
+            int nbChilds = t.getChildCount();
 
- }
+            if (nbChilds == 1) {
+                name = t.getChild(0).getText();
+            } else if (nbChilds == 2) {
+                if (t.getChild(1).getChildCount() == 0) {
+                    mut = true;
+                    name = t.getChild(1).getText();
+                } else {
+                    name = t.getChild(0).getText();
+                }
+            } else {
+                mut = true;
+                name = t.getChild(1).getText();
+            }
 
- if (t.getText().equals("FUNC")){
-   String Name =  t.getChild(0).getText();
-   String child1= t.getChild(1).getText();
-   if (child1.equals("FUNC_ARGS"){
+            tds.ajouterVariable(name, mut, null);
 
-   } else if (child1.equals("BLOC")){
+            if (t.getChild(nbChilds-1).getChildCount() > 0) {
+                analyseRec((CommonTree) t.getChild(nbChilds-1), tds, tables, name);
+            }
+        }
 
-   } else {
+        if (t.getText().equals("AFFECT")) { // TO COMPLETE
+            tds.modifierVariable(var,analyseExp(t,tds,tables));
+        }
 
-   }
+        if (t.getText().equals("STRUCT")) {
+            String nameStruct = t.getChild(0).getText();
+            ArrayList<String> varNames = new ArrayList<String>();
+            ArrayList<String> varTypes = new ArrayList<String>();
+            int nbChilds = t.getChildCount();
+            for (int i=1 ; i<nbChilds; i++) {
+                CommonTree node = (CommonTree) t.getChild(i);
+                String name = node.getChild(0).getText();
+                String temp = node.getChild(1).getText();
+                String type = temp;
+                node = (CommonTree) node.getChild(1);
+                while (temp.equals("VEC")) {
+                    node = (CommonTree) node.getChild(0);
+                    temp = node.getText();
+                    type.concat(" ");
+                    type.concat(temp);
+                }
+                varNames.add(name);
+                varTypes.add(type);
+            }
+            TableDesStructures tdstruct = new TableDesStructures(nameStruct,varNames,varTypes);
+        }
 
- }
+    }
 
 
 
+    private static String analyseExp(CommonTree t, SymbolTable tds, Tables tables) {
+        if (t.getText().equals("+") || t.getText().equals("-") || t.getText().equals("*") || t.getText().equals("/")) {
+            double value = 0.0;
+            if (t.getText().equals("+")) {
+                value = Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) + Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables));
+            } else if (t.getText().equals("-")) {
+                value = Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) - Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables));
+            } else if (t.getText().equals("*")) {
+                value = Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) * Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables));
+            } else if (t.getText().equals("/")) {
+                value = Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) / Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables));
+            }
+            return String.valueOf(value);
+        } else if (t.getText().equals("<")) {
+            if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) < Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        } else if (t.getText().equals("<=")) {
+            if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) <= Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        } else if (t.getText().equals(">")) {
+            if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) > Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        } else if (t.getText().equals(">=")) {
+            if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) >= Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        } else if (t.getText().equals("==")) {
+            if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) == Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        } else if (t.getText().equals("!=")) {
+            if (Double.valueOf(analyseExp((CommonTree) t.getChild(0), tds, tables)) != Double.valueOf(analyseExp((CommonTree) t.getChild(1), tds, tables))) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        } else {
+            try {
+                Double.valueOf(t.getText());
+                return t.getText();
+            }
+            catch (NumberFormatException e) {
+                return String.valueOf(tds.getValeurVariable(tds,t.getText()));
+            }
+        }
+    }
 
 }
