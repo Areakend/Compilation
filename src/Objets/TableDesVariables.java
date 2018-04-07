@@ -1,6 +1,7 @@
 package Objets;
 
 import Exceptions.NonExistantVariable;
+import Exceptions.NonInitialisedVariable;
 import Exceptions.NonMutable;
 
 import java.util.HashMap;
@@ -14,9 +15,12 @@ public class TableDesVariables extends Table<String, Variable> {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if(variable != null) {
-            if(variable.getValue() != null && !variable.isMut())
-                throw new NonMutable(name);
-            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value));
+            try {
+                if(variable.getValue() != null && !variable.isMut())
+                    throw new NonMutable(name);
+                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value));
+            } catch(NonInitialisedVariable nonInitialisedVariable) {
+            }
         } else if(tableSymboles.getParent() == null)
             this.put(name, new Variable(name, mut, value));
         else this.ajouterVariable(tableSymboles.getParent(), name, mut, value);
@@ -25,8 +29,12 @@ public class TableDesVariables extends Table<String, Variable> {
     public String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
         Variable variable = ((TableDesVariables) tableSymboles.getParent().get(TableType.VAR)).get(name);
 
-        if(variable != null)
-            return variable.getValue();
+        if(variable != null) {
+            try {
+                return variable.getValue();
+            } catch(NonInitialisedVariable nonInitialisedVariable) {
+            }
+        }
         else if(tableSymboles.getParent() == null)
             throw new NonExistantVariable(name);
 
