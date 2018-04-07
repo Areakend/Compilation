@@ -162,9 +162,9 @@ public class TreeParser {
 							Vecteur vect = ((TableDesVecteurs) (tds.get(TableType.VEC))).getVecteur(tds, name);
 							int indice = Integer.valueOf(analyseExp(t, tds, tables));
 							try {
-								vect.validSize(vect, indice);
+								vect.getValeur(indice);
 							} catch (IndexOutOfBounds e3) {
-								
+
 							}
 							String val = vect.getValeurs().get(indice);
 							return val;
@@ -177,19 +177,21 @@ public class TreeParser {
 					if (t.getChild(0).getText() == "FUNC_ARGS") {
 						String name = t.getText();
 						try {
-							Fonction fonc = ((TableDesFonctions) (tds.get(TableType.FONC))).getFunction(tds, name);
+							Fonction fonc = ((TableDesFonctions) (tds.get(TableType.FONC))).getFonction(tds, name);
 							int nbChilds2 = t.getChildCount();
 							try {
 								fonc.validNumberArgs(fonc, nbChilds2);
+							} catch (InvalidArgumentsNumber e5) {
+
 							}
-							catch (InvalidArgumentsNumber e5){
-								
-							}
-							t = (CommonTree) t.getChild(0);
-							for (int i = 0; i < nbChilds2; i++) {
-								analyseRec((CommonTree) t.getChild(i), tds, tables);
-								fonc.getArgs().getTypes().get(i);
-								Integer.parseInt(t.getChild(i).getText());
+							if (nbChilds2 > 0) {
+								t = (CommonTree) t.getChild(0);
+
+								for (int i = 0; i < nbChilds2; i++) {
+									analyseRec((CommonTree) t.getChild(i), tds, tables);
+									fonc.getArgs().getTypes().get(i);
+									Integer.parseInt(t.getChild(i).getText());
+								}
 							}
 						} catch (NonExistantFunction e1) {
 
