@@ -1,3 +1,4 @@
+
 package Objets;
 
 import Exceptions.InvalidVecteurVariableType;

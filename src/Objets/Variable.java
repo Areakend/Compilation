@@ -34,6 +34,7 @@ public class Variable {
             this.setStructure(structureName, structureVariables);
         } catch(NonExistantStructure nonExistantStructure) {
         }*/
+
     }
 
     public String getName() {

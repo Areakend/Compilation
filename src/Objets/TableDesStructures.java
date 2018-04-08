@@ -47,7 +47,7 @@ public class TableDesStructures extends Table<String, Structure> {
 
     @Override
     public String toString() {
-        StringBuilder stringStructures = new StringBuilder();
+        StringBuilder stringStructures = new StringBuilder("Structures : \n");
 
         for(HashMap.Entry<String, Structure> entry : table.entrySet())
             stringStructures.append("\t").append(entry.getValue().toString()).append("\n");

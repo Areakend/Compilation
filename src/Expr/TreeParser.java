@@ -92,98 +92,75 @@ public class TreeParser {
 					argNames = new ArrayList<>();
 					argTypes = new ArrayList<>();
 
-					for (int j = 1; j < node.getChildCount(); j++) {
+					for (int j = 0; j < node.getChildCount(); j++) {
 						CommonTree node2 = (CommonTree) node.getChild(j);
 						fillVarNamesTypes(node2, argNames, argTypes);
 					}
 
-					args = new Arguments(argNames, argTypes);
-				} else if (node.getText().equals("BLOC"))
+					args = new Arguments(argNames, argTypes, null);
+				} else if (node.getText().equals("BLOC")) {
+					tds.ajouterFonction(nameFunc, returnType, args);
+					System.out.println(tds);
 					TreeParser.analyseRec(node, tds);
-				else
+				} else {
 					returnType = node.getText();
+				}
 			}
-			tds.ajouterFonction(nameFunc, returnType, args);
+
 		}
 
 		if (t.getText().equals("print") || t.getText().equals("RETURN"))
 			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
 	}
 
-	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds, Tables tables) {
+	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
 		if (spe_unaire.equals("-")) {
-			return String.valueOf(-Double.valueOf(analyseExp(t, tds, tables)));
+			return "-" + analyseExp(t, tds);
 		} else if (spe_unaire.equals("!")) {
-			return String.valueOf(!Boolean.valueOf(analyseExp(t, tds, tables)));
+			return "!" + analyseExp(t, tds);
 		} else if (spe_unaire.equals("&")) {
-			return String.valueOf(Adresse(analyseExp(t, tds, tables)));
+			return "&" + analyseExp(t, tds);
 		} else if (spe_unaire.equals("*")) {
-			return String.valueOf(Pointeur(analyseExp(t, tds, tables)));
+			return "*" + analyseExp(t, tds);
+		} else {
+			return "";
 		}
 
 	}
 
 	private static String analyseExp(CommonTree t, TableDesSymboles tds) throws Exception {
-
 		String s = t.getText();
-
 		if (s.equals("SPE_UNAIRE")) {
 			return analyseExpUnaire((CommonTree) t.getChild(1), t.getChild(0).getText(), tds);
 		} else if (s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("<") || s.equals("<=")
 				|| s.equals(">") || s.equals(">=") || s.equals("==") || s.equals("!=") || s.equals("&&")
 				|| s.equals("||")) {
-
 			String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
 			String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds);
-
-			if (IsInteger(fg) && IsInteger(fd)) {
-
-				Integer fg1 = Integer.valueOf(fg);
-				Integer fd1 = Integer.valueOf(fd);
-
-				if (s.equals("+"))
-					return String.valueOf(fg1 + fd1);
-				else if (s.equals("-"))
-					return String.valueOf(fg1 - fd1);
-				else if (s.equals("*"))
-					return String.valueOf(fg1 * fd1);
-				else if (s.equals("/"))
-					return String.valueOf(fg1 / fd1);
-				else if (s.equals("<"))
-					return String.valueOf(fg1 < fd1);
-				else if (s.equals("<="))
-					return String.valueOf(fg1 <= fd1);
-				else if (s.equals(">"))
-					return String.valueOf(fg1 > fd1);
-				else if (s.equals(">="))
-					return String.valueOf(fg1 >= fd1);
-				else if (s.equals("=="))
-					return String.valueOf(fg1 == fd1);
-				else if (s.equals("!="))
-					return String.valueOf(fg1 != fd1);
-
-			} else if (isBoolean(fg) && isBoolean(fd)) {
-				Boolean fg1 = Boolean.valueOf(fg);
-				Boolean fd1 = Boolean.valueOf(fd);
-
-				if (s.equals("=="))
-					return String.valueOf(fg1 == fd1);
-				else if (s.equals("!="))
-					return String.valueOf(fg1 != fd1);
-				else if (s.equals("&&"))
-					return String.valueOf(fg1 && fd1);
-				else if (s.equals("||"))
-					return String.valueOf(fg1 || fd1);
-
-			} else {
-				try {
-					isSameTypes(fg, fd, findType(fg), findType(fd));
-				} catch (InvalidTypeArguments invalidTypeArguments) {
-					invalidTypeArguments.printStackTrace();
-				}
-				return "";
-			}
-
+			if (s.equals("+"))
+				return fg + " + " + fd;
+			else if (s.equals("-"))
+				return fg + " - " + fd;
+			else if (s.equals("*"))
+				return fg + "*" + fd;
+			else if (s.equals("/"))
+				return fg + "/" + fd;
+			else if (s.equals("<"))
+				return fg + "<" + fd;
+			else if (s.equals("<="))
+				return fg + "<=" + fd;
+			else if (s.equals(">"))
+				return fg + ">" + fd;
+			else if (s.equals(">="))
+				return fg + ">=" + fd;
+			else if (s.equals("=="))
+				return fg + "==" + fd;
+			else if (s.equals("!="))
+				return fg + "!=" + fd;
+			else if (s.equals("&&"))
+				return fg + "&&" + fd;
+			else if (s.equals("||"))
+				return fg + "||" + fd;
 		} else {
 			if (IsInteger(t.getText())) {
 				return t.getText();
@@ -193,13 +170,11 @@ public class TreeParser {
 					try {
 						return String.valueOf(
 								((TableDesVariables) (tds.get(TableType.VAR))).getValeurVariable(tds, t.getText()));
-
 					} catch (NonExistantVariable nonExistantVariable) {
 					}
 				} else if (t.getChild(0).getText() == "IND") {
 					String name = t.getText();
 					t = (CommonTree) t.getChild(0).getChild(0);
-
 					try {
 						Vecteur vect = ((TableDesVecteurs) (tds.get(TableType.VEC))).getVecteur(tds, name);
 
@@ -217,13 +192,17 @@ public class TreeParser {
 										t.getChild(0).getText());
 								isSameTypeVecteurVariable(vect.getName(), vect.getType(), fonctionFils.getName(),
 										fonctionFils.getReturnType());
-					/*		} else if (t.getChild(0).getText() == "ASSOC") {
-								Structure structureFils = ((TableDesStructures) (tds.get(TableType.STRUCT)))
-										.getStructure(tds, t.getChild(0).getText());
-								isSameTypeStructureVariable(vect.getName(), vect.getType(), structureFils.getName(),
-										structureFils.getReturnType());
-										*/
-							} 
+								/*
+								 * } else if (t.getChild(0).getText() ==
+								 * "ASSOC") { Structure structureFils =
+								 * ((TableDesStructures)
+								 * (tds.get(TableType.STRUCT)))
+								 * .getStructure(tds, t.getChild(0).getText());
+								 * isSameTypeStructureVariable(vect.getName(),
+								 * vect.getType(), structureFils.getName(),
+								 * structureFils.getReturnType());
+								 */
+							}
 						} catch (InvalidVecteurVariableType e2) {
 						}
 					} catch (NonExistantVecteur e1) {
@@ -243,28 +222,26 @@ public class TreeParser {
 								String theoricalType = fonc.getArgs().getTypes().get(i);
 								String nameVal = t.getChild(i).getText();
 								String realType = TreeParser.findType(nameVal);
+
 								try {
-
+									TreeParser.isSameType(name, theoricalType, realType);
 									try {
-										TreeParser.isSameType(name, theoricalType, realType);
-										try {
-											boolean theoricalPointerType = fonc.getArgs().getPointeurs().get(i);
-											char pointertest[];
-											nameVal.getChars(0, 0, pointertest, 0);
-											TreeParser.isSamePointerType(theoricalPointerType, pointertest[0]);
-											if (fonc.getReturnType() == null) {
-												return null;
-											}
-											// return Calcul valeur de
-											// fonction(args);
-										} catch (PointerTypeException pointeurTypeException) {
-
+										boolean theoricalPointerType = fonc.getArgs().getPointeurs().get(i);
+										char pointertest[] = null;
+										nameVal.getChars(0, 0, pointertest, 0);
+										TreeParser.isSamePointerType(theoricalPointerType, pointertest[0]);
+										if (fonc.getReturnType() == null) {
+											return null;
 										}
+										// return Calcul valeur de
+										// fonction(args);
+									} catch (PointerTypeException pointeurTypeException) {
 
-									} catch (InvalidTypeArgument invalidTypeArgument) {
 									}
-								} catch (NonExistantType nonExistantType) {
+
+								} catch (InvalidTypeArgument invalidTypeArgument) {
 								}
+
 							}
 							if (nbChilds2 == 0) {
 								if (fonc.getReturnType() == null) {
@@ -323,12 +300,6 @@ public class TreeParser {
 
 		if (!(vecteurType.equals(variableType)))
 			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName, variableType);
-	}
-
-	private static void isSameTypes(String name1, String name2, String theoricalType, String realType)
-			throws InvalidTypeArguments {
-		if (!(theoricalType.equals(realType)))
-			throw new InvalidTypeArguments(name1, name2, theoricalType, realType);
 	}
 
 	private static void isSamePointerType(Boolean VV, char test) throws PointerTypeException {
