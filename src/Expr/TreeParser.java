@@ -113,19 +113,20 @@ public class TreeParser {
             TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
     }
 
-    private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
-        if (spe_unaire.equals("-")) {
-            return String.valueOf(-Double.valueOf(analyseExp(t, tds)));
-        } else if (spe_unaire.equals("!")) {
-            return String.valueOf(!Boolean.valueOf(analyseExp(t, tds)));
-        }/* else if (spe_unaire.equals("&")) {
-            return String.valueOf(Adresse(analyseExp(t, tds)));
-        } else if (spe_unaire.equals("*")) {
-            return String.valueOf(Pointeur(analyseExp(t, tds)));
-        }*/
-        return "";
-    }
 
+    private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds, Tables tables) {
+    		   if (spe_unaire.equals("-")){
+            return String.valueOf(-Double.valueOf(analyseExp(t, tds, tables)));
+        } else if (spe_unaire.equals("!")){
+            return String.valueOf(!Boolean.valueOf(analyseExp(t, tds, tables)));
+        } else if (spe_unaire.equals("&")) {
+            return String.valueOf(Adresse(analyseExp(t, tds, tables)));
+        } else if (spe_unaire.equals("*")){
+            return String.valueOf(Pointeur(analyseExp(t, tds, tables)));
+        } 
+
+    }
+// LOL ON s'AMUSE
 
     private static String analyseExp(CommonTree t, TableDesSymboles tds) throws Exception {
 
@@ -233,10 +234,24 @@ public class TreeParser {
                                 String nameVal = t.getChild(i).getText();
                                 String realType = TreeParser.findType(nameVal);
                                 try {
-                                    TreeParser.isSameType(name, theoricalType, realType);
-                                    // return Calcul valeur de
-                                    // fonction(args);
-                                } catch (InvalidTypeArgument invalidTypeArgument) {}
+                                    
+                                    try {
+                                        TreeParser.isSameType(name, theoricalType, realType);
+                                        try {
+                                        	boolean theoricalPointerType = fonc.getArgs().getPointeurs().get(i);
+                                        	char pointertest[];
+                                        	nameVal.getChars(0, 0, pointertest, 0);
+                                        	TreeParser.isSamePointerType( theoricalPointerType,pointertest[0]);
+                                        	 // return Calcul valeur de
+                                            // fonction(args);
+                                        }catch(PointerTypeException pointeurTypeException){
+                                        	
+                                        }
+                                       
+                                    } catch (InvalidTypeArgument invalidTypeArgument) {
+                                    }
+                                } catch (NonExistantType nonExistantType) {
+                                }
                             }
                             if (nbChilds2 == 0) {
                                 // ajouter valeur fonction dans le cas 0
@@ -290,6 +305,11 @@ public class TreeParser {
     private static void isSameTypes(String name1, String name2, String theoricalType, String realType) throws InvalidTypeArguments {
         if (!(theoricalType.equals(realType)))
             throw new InvalidTypeArguments(name1, name2, theoricalType, realType);
+    }
+    
+    private static void isSamePointerType(Boolean VV, char test) throws PointerTypeException {
+        if (!((VV==true && test =='*')||(VV==false && test !='*')))
+            throw new PointerTypeException(VV,test);
     }
 
     private static boolean isBoolean(String str) {

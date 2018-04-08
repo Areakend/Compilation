@@ -12,25 +12,37 @@ public class Variable {
     private String value;
     private Structure structure;
     private ArrayList<String> structureVariables;
+    private boolean pointeur;
 
     public Variable(String name) {
-        this(name, false, null);
+        this(name, false, null, false);
     }
 
-    public Variable(String name, boolean mut, String value) {
+    public Variable(String name, boolean mut, String value,boolean pointeur) {
         this.name = name;
         this.mut = mut;
         this.value = value;
+        this.pointeur= pointeur;
     }
 
-    public Variable(String name, boolean mut, String structureName, ArrayList<String> structureVariables) {
+    public Variable(String name, boolean mut, String structureName, ArrayList<String> structureVariables,boolean pointeur) {
         this.name = name;
         this.mut = mut;
+<<<<<<< HEAD
+        this.pointeur= pointeur;
+        
+    /*    try {
+            this.setStructure(structureName, structureVariables);
+        } catch(NonExistantStructure nonExistantStructure) {
+        }
+        */
+=======
 
         /*try {
             this.setStructure(structureName, structureVariables);
         } catch(NonExistantStructure nonExistantStructure) {
         }*/
+>>>>>>> b075aa2da700ac598b7205ab1fd3de701d8278ed
     }
 
     public String getName() {
@@ -40,6 +52,7 @@ public class Variable {
     public void setName(String name) {
         this.name = name;
     }
+    
 
     public void setStructure(TableDesSymboles tableSymboles, String structureName, ArrayList<String> structureNewVariables, ArrayList<String> structureNewValeurs) throws NonExistantStructure, InvalidTypeAffectation  {
         Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
@@ -101,9 +114,17 @@ public class Variable {
     public void setMut(boolean mut) {
         this.mut = mut;
     }
+    
+    public boolean isPointeur() {
+        return mut;
+    }
+
+    public void setPointeur(boolean pointeur) {
+        this.pointeur = pointeur;
+    }
 
     @Override
     public String toString() {
-        return "Variable " + this.name + " " + this.mut + " = " + this.value + "\n";
+        return "Variable " + this.name + " " + this.mut + " = " + this.value + " " + this.pointeur +"\n";
     }
 }
