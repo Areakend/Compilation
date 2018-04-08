@@ -30,7 +30,7 @@ tokens {
 fichier
 	:decl*;
 
-decl
+decl    
 	:decl_func
 	|decl_struct
 	;
@@ -74,7 +74,7 @@ instruction
 
 instruction2
 	:';'! instruction?
-	|
+	| 
 	;
 
 let
@@ -225,7 +225,7 @@ opm
 	|'/'
 	;
 
-opt
+opt    
 	:'<'
 	|'<='
 	|'>'
