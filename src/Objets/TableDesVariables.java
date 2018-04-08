@@ -27,15 +27,14 @@ public class TableDesVariables extends Table<String, Variable> {
     }
 
     public String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
-        Variable variable = ((TableDesVariables) tableSymboles.getParent().get(TableType.VAR)).get(name);
+        Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if(variable != null) {
             try {
                 return variable.getValue();
             } catch(NonInitialisedVariable nonInitialisedVariable) {
             }
-        }
-        else if(tableSymboles.getParent() == null)
+        } else if(tableSymboles.getParent() == null)
             throw new NonExistantVariable(name);
 
         return this.getValeurVariable(tableSymboles.getParent(), name);

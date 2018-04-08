@@ -1,7 +1,7 @@
 package Objets;
 
 import Exceptions.AlreadyExistantStructure;
-import Exceptions.InvalidType;
+import Exceptions.InvalidTypeAffectation;
 import Exceptions.NonExistantStructureVariable;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class TableDesStructures extends Table<String, Structure> {
         else this.ajouterStructure(tableSymboles.getParent(), name, names, types);
     }
 
-    public void modifierValeurStructure(String name, String valeur, String type) throws NonExistantStructureVariable, InvalidType {
+    public void modifierValeurStructure(String name, String valeur, String type) throws NonExistantStructureVariable, InvalidTypeAffectation {
         Structure structure = this.get(name);
         ArrayList<String> names = structure.getNames();
         int pos;
@@ -28,7 +28,7 @@ public class TableDesStructures extends Table<String, Structure> {
                 String valeurType = structure.getTypes().get(pos);
 
                 if(valeurType.equals(type))
-                    throw new InvalidType(name, valeurType, type);
+                    throw new InvalidTypeAffectation(name, valeurType, type);
                 else this.get(name).setValeur(pos, valeur);
             }
         }
