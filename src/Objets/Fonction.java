@@ -39,7 +39,7 @@ public class Fonction {
 
     @Override
     public String toString() {
-        return "Fonction " + this.name + " " + this.returnType + this.args + "\n";
+        return "Fonction : " + this.name + " - ReturnType : " + this.returnType + " - Arguments : " + this.args + "\n";
     }
 
     public void validNumberArgs(Fonction fonc, int num) throws InvalidArgumentsNumber {
