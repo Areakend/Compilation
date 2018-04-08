@@ -1,5 +1,9 @@
-package Expr;
+package Expr;// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Users\\Jerem\\OneDrive\\Bureau\\Expr.g 2018-04-08 17:50:50
+
 import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
 
 public class ExprLexer extends Lexer {
     public static final int PRINT=17;
