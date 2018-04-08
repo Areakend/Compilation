@@ -111,19 +111,20 @@ public class TreeParser {
     }
 
 
-    private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds, Tables tables) {
+    private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
     		   if (spe_unaire.equals("-")){
-            return String.valueOf(-Double.valueOf(analyseExp(t, tds, tables)));
+            return "-" + analyseExp(t,tds);
         } else if (spe_unaire.equals("!")){
-            return String.valueOf(!Boolean.valueOf(analyseExp(t, tds, tables)));
+            return "!" + analyseExp(t,tds);
         } else if (spe_unaire.equals("&")) {
-            return String.valueOf(Adresse(analyseExp(t, tds, tables)));
+            return "&" + analyseExp(t,tds);
         } else if (spe_unaire.equals("*")){
-            return String.valueOf(Pointeur(analyseExp(t, tds, tables)));
-        } 
+            return "*" + analyseExp(t,tds);
+        } else {
+        	return "";
+        }
 
     }
-// LOL ON s'AMUSE
 
     private static String analyseExp(CommonTree t, TableDesSymboles tds) throws Exception {
 
@@ -131,62 +132,35 @@ public class TreeParser {
 
         if (s.equals("SPE_UNAIRE")) {
             return analyseExpUnaire((CommonTree) t.getChild(1), t.getChild(0).getText(), tds);
-        } else if (s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("<") || s.equals("<=") || s.equals(">") || s.equals(">=") || s.equals("==") || s.equals("!=") || s.equals("&&") || s.equals("||")) {
-
-
-            String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+        } else if (s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("<") || s.equals("<=") ||
+        		s.equals(">") || s.equals(">=") || s.equals("==") || s.equals("!=") || s.equals("&&") || s.equals("||")) {
+        	String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
             String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds);
-
-
-            if (IsInteger(fg) && IsInteger(fd)) {
-
-                Integer fg1 = Integer.valueOf(fg);
-                Integer fd1 = Integer.valueOf(fd);
-
-                if (s.equals("+"))
-                    return String.valueOf(fg1 + fd1);
-                else if (s.equals("-"))
-                    return String.valueOf(fg1 - fd1);
-                else if (s.equals("*"))
-                    return String.valueOf(fg1 * fd1);
-                else if (s.equals("/"))
-                    return String.valueOf(fg1 / fd1);
-                else if (s.equals("<"))
-                    return String.valueOf(fg1 < fd1);
-                else if (s.equals("<="))
-                    return String.valueOf(fg1 <= fd1);
-                else if (s.equals(">"))
-                    return String.valueOf(fg1 > fd1);
-                else if (s.equals(">="))
-                    return String.valueOf(fg1 >= fd1);
-                else if (s.equals("=="))
-                    return String.valueOf(fg1 == fd1);
-                else if (s.equals("!="))
-                    return String.valueOf(fg1 != fd1);
-
-            } else if (isBoolean(fg) && isBoolean(fd)) {
-                Boolean fg1 = Boolean.valueOf(fg);
-                Boolean fd1 = Boolean.valueOf(fd);
-
-                if (s.equals("=="))
-                    return String.valueOf(fg1 == fd1);
-                else if (s.equals("!="))
-                    return String.valueOf(fg1 != fd1);
-                else if (s.equals("&&"))
-                    return String.valueOf(fg1 && fd1);
-                else if (s.equals("||"))
-                    return String.valueOf(fg1 || fd1);
-
-            } else {
-                try {
-                    isSameTypes(fg, fd, findType(fg), findType(fd));
-                } catch (InvalidTypeArguments invalidTypeArguments) {
-                    invalidTypeArguments.printStackTrace();
-                }
-                return "";
-            }
-
-        } else {
+            if (s.equals("+"))
+            	return fg + " + "+ fd;
+            else if (s.equals("-"))
+                return fg +" - "+  fd;
+            else if (s.equals("*"))
+                return fg + "*" +  fd;
+            else if (s.equals("/"))
+                return fg + "/" +  fd;
+            else if (s.equals("<"))
+                return fg + "<" +  fd;
+            else if (s.equals("<="))
+                return fg + "<=" + fd;
+            else if (s.equals(">"))
+                return fg + ">" +  fd;
+            else if (s.equals(">="))
+                return fg + ">=" + fd;
+            else if (s.equals("=="))
+                return fg + "==" + fd;
+            else if (s.equals("!="))
+                return fg + "!=" + fd;
+            else if (s.equals("&&"))
+                return fg + "&&" + fd;
+            else if (s.equals("||"))
+                return fg + "||" + fd;
+    } else {
             if (IsInteger(t.getText())) {
                 return t.getText();
             } else {
