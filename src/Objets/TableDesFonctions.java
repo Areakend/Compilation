@@ -1,15 +1,16 @@
 package Objets;
 
-import Exceptions.AlreadyExistantFonction;
-import Exceptions.NonExistantFunction;
+import Exceptions.*;
 
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
-    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction {
+    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws NoReturn, AlreadyExistantFonction {
         Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
-
-        if(fonction != null && fonction.getArgs().equals(args) && fonction.getReturnType().equals(returnType))
+        if (fonction.getReturnType().equals(null)) {
+        	throw new NoReturn(name);
+        }
+        else if(fonction != null && fonction.getArgs().equals(args) && fonction.getReturnType().equals(returnType))
             throw new AlreadyExistantFonction(name);
         else if(tableSymboles.getParent() == null)
             this.put(name, new Fonction(name, returnType, args));

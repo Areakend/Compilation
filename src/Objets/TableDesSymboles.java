@@ -1,9 +1,6 @@
 package Objets;
 
 import Exceptions.*;
-import Exceptions.AlreadyExistantFonction;
-import Exceptions.AlreadyExistantStructure;
-import Exceptions.NonMutable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +46,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         try {
             tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
         } catch(AlreadyExistantFonction alreadyExistantFonction) {
+        } catch (NoReturn noReturn) {
         }
     }
 
@@ -62,12 +60,9 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            try {
-                tableDesStructures.ajouterStructure(this, name, names, types);
-            } catch (NonSameNumberNamesTypes nonSameNumberNamesTypes) {
-            } catch (NonExistantType nonExistantType) {
-            }
             tableDesStructures.ajouterStructure(this, name, names, types);
+        } catch (NonSameNumberNamesTypes nonSameNumberNamesTypes) {
+        } catch (NonExistantType nonExistantType) {
         } catch(AlreadyExistantStructure alreadyExistantFonction) {
         }
     }
