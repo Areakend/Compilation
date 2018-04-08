@@ -1,7 +1,7 @@
 package Exceptions;
 
 public class NonExistantStructureVariable extends Exception {
-    public NonExistantStructureVariable(String structureName, String variableName) {
-        System.out.println("Erreur ligne : \"" + variableName + "\" n'existe pas dans la structure " + structureName + "\n");
+    public NonExistantStructureVariable(String structureName) {
+        System.out.println("Erreur ligne : \"" + structureName + "\" n'a pas le meme nombre de variables que de types\n");
     }
 }

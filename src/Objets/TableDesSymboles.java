@@ -1,106 +1,112 @@
 package Objets;
 
-import Exceptions.AlreadyExistantFonction;
-import Exceptions.AlreadyExistantStructure;
-import Exceptions.NoReturn;
-import Exceptions.NonMutable;
+import Exceptions.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesSymboles extends Table<TableType, Table> {
-	private TableDesSymboles parent;
-	private String name;
+    private TableDesSymboles parent;
+    private String name;
 
-	public TableDesSymboles(TableDesSymboles parent) {
-		this.parent = parent;
-		this.name = this.setName();
-	}
+    public TableDesSymboles() {
+        this.parent = null;
+        this.name = "1";
+    }
 
-	public void ajouterVariable(String name, boolean mut, String value) {
-		TableType tableType = TableType.VAR;
-		TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
+    public TableDesSymboles(TableDesSymboles parent) {
+        this.parent = parent;
+        this.name = this.setName();
+    }
 
-		if (tableDesVariables == null) {
-			tableDesVariables = new TableDesVariables();
-			this.put(tableType, tableDesVariables);
-		}
+    public void ajouterVariable(String name, boolean mut, String value) {
+        TableType tableType = TableType.VAR;
+        TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
-		try {
-			tableDesVariables.ajouterVariable(this, name, mut, value);
-		} catch (NonMutable nonMutable) {
-		}
-	}
+        if(tableDesVariables == null) {
+            tableDesVariables = new TableDesVariables();
+            this.put(tableType, tableDesVariables);
+        }
 
-	public void ajouterFonction(String name, String returnType, Arguments arguments) {
-		TableType tableType = TableType.FONC;
-		TableDesFonctions tableDesFonctions = (TableDesFonctions) this.get(tableType);
+        try {
+            tableDesVariables.ajouterVariable(this, name, mut, value);
+        } catch(NonMutable nonMutable) {
+        }
+    }
 
-		if (tableDesFonctions == null) {
-			tableDesFonctions = new TableDesFonctions();
-			this.put(tableType, tableDesFonctions);
-		}
+    public void ajouterFonction(String name, String returnType, Arguments arguments) {
+        TableType tableType = TableType.FONC;
+        TableDesFonctions tableDesFonctions = (TableDesFonctions) this.get(tableType);
 
-		try {
-			tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
-		} catch (AlreadyExistantFonction alreadyExistantFonction) {
-		} catch (NoReturn noReturn) {
-		}
-	}
+        if(tableDesFonctions == null) {
+            tableDesFonctions = new TableDesFonctions();
+            this.put(tableType, tableDesFonctions);
+        }
 
-	public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
-		TableType tableType = TableType.STRUCT;
-		TableDesStructures tableDesStructures = (TableDesStructures) this.get(tableType);
+        try {
+            tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
+        } catch(AlreadyExistantFonction alreadyExistantFonction) {
+        } catch (NoReturn noReturn) {
+        }
+    }
 
-		if (tableDesStructures == null) {
-			tableDesStructures = new TableDesStructures();
-			this.put(tableType, tableDesStructures);
-		}
+    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
+        TableType tableType = TableType.STRUCT;
+        TableDesStructures tableDesStructures = (TableDesStructures) this.get(tableType);
 
-		try {
-			tableDesStructures.ajouterStructure(this, name, names, types);
-		} catch (AlreadyExistantStructure alreadyExistantFonction) {
-		}
-	}
+        if(tableDesStructures == null) {
+            tableDesStructures = new TableDesStructures();
+            this.put(tableType, tableDesStructures);
+        }
 
-	public void ajouterVecteur(String name, String type, ArrayList<String> valeurs) {
-		TableType tableType = TableType.VEC;
-		TableDesVecteurs tableDesVecteurs = (TableDesVecteurs) this.get(tableType);
+        try {
+            tableDesStructures.ajouterStructure(this, name, names, types);
+        } catch (NonSameNumberNamesTypes nonSameNumberNamesTypes) {
+        } catch (NonExistantType nonExistantType) {
+        } catch(AlreadyExistantStructure alreadyExistantFonction) {
+        }
+    }
 
-		if (tableDesVecteurs == null) {
-			tableDesVecteurs = new TableDesVecteurs();
-			this.put(tableType, tableDesVecteurs);
-		}
+    public void ajouterVecteur(String name, String type, ArrayList<String> valeurs) {
+        TableType tableType = TableType.VEC;
+        TableDesVecteurs tableDesVecteurs = (TableDesVecteurs) this.get(tableType);
 
-		tableDesVecteurs.ajouterVecteur(this, name, type, valeurs);
-	}
+        if(tableDesVecteurs == null) {
+            tableDesVecteurs = new TableDesVecteurs();
+            this.put(tableType, tableDesVecteurs);
+        }
 
-	public String getName() {
-		return this.name;
-	}
+        try {
+            tableDesVecteurs.ajouterVecteur(this, name, type, valeurs);
+        } catch(InvalidVecteurVariableType invalidVecteurVariableType) {
+        }
+    }
 
-	public TableDesSymboles getParent() {
-		return this.parent;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	private String setName() {
-		int maxName = 0;
+    public TableDesSymboles getParent() {
+        return this.parent;
+    }
 
-		for (int i = 0; i < this.parent.getTable().size(); i++)
-			if (Integer.getInteger(parent.getName()) == maxName)
-				maxName += 1;
+    private String setName() {
+        int maxName = 0;
 
-		return this.parent.getName() + String.valueOf(maxName);
-	}
+        for(int i = 0; i < this.parent.getTable().size(); i++)
+            if(Integer.getInteger(parent.getName()) == maxName)
+                maxName += 1;
 
-	@Override
-	public String toString() {
-		StringBuilder temp = new StringBuilder(
-				"TDS : " + this.name + " : PARENT : " + this.parent != null ? this.parent.getName() : null + "\n");
+        return this.parent.getName() + String.valueOf(maxName);
+    }
 
-		for (HashMap.Entry<TableType, Table> entry : table.entrySet())
-			temp.append("\t").append(entry.getValue().toString()).append("\n");
+    @Override
+    public String toString() {
+        StringBuilder temp = new StringBuilder("TDS : " + this.name + " : PARENT : " + this.parent != null ? this.parent.getName() : null + "\n");
 
-		return temp.toString();
-	}
+        for(HashMap.Entry<TableType, Table> entry : table.entrySet())
+            temp.append("\t").append(entry.getValue().toString()).append("\n");
+
+        return temp.toString();
+    }
 }

@@ -1,23 +1,31 @@
 package Objets;
 
+import Exceptions.InvalidVecteurVariableType;
 import Exceptions.NonExistantVecteur;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static Expr.TreeParser.findType;
+
 public class TableDesVecteurs extends Table<String, Vecteur> {
-    public void ajouterVecteur(TableDesSymboles tableSymboles, String name, String type, ArrayList<String> valeurs) {
+    public void ajouterVecteur(TableDesSymboles tableSymboles, String name, String type, ArrayList<String> valeurs) throws InvalidVecteurVariableType {
         Vecteur vecteur = ((TableDesVecteurs) tableSymboles.get(TableType.VEC)).get(name);
 
         if(vecteur != null)
             tableSymboles.get(TableType.VEC).put(name, new Vecteur(name, type, valeurs));
-        else if(tableSymboles.getParent() == null)
+        else if(tableSymboles.getParent() == null) {
+            for (int i = 0; i<valeurs.size(); i++) {
+                if (!findType(valeurs.get(i)).equals(type))
+        		    throw new InvalidVecteurVariableType(name, type, valeurs.get(i), findType(valeurs.get(i)));
+            }
+
             this.put(name, new Vecteur(name, type, valeurs));
-        else this.ajouterVecteur(tableSymboles.getParent(), name, type, valeurs);
+        } else this.ajouterVecteur(tableSymboles.getParent(), name, type, valeurs);
     }
 
     public Vecteur getVecteur(TableDesSymboles tableSymboles, String name) throws NonExistantVecteur {
-        Vecteur vecteur = ((TableDesVecteurs) tableSymboles.getParent().get(TableType.VEC)).get(name);
+        Vecteur vecteur = ((TableDesVecteurs) tableSymboles.get(TableType.VEC)).get(name);
 
         if(vecteur != null)
             return vecteur;
