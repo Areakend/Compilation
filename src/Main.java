@@ -31,9 +31,6 @@ public class Main {
             CommonTree t = (CommonTree)result.getTree();
 
             Tables tables = new Tables();
-            TableDesSymboles tds = new TDS("Global TDS");
-            tables.add(globalTable);
-            ast.parcoursProf(tables, globalTable, 1);
 
 
 		} catch (FileNotFoundException e) {
