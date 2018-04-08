@@ -66,13 +66,13 @@ public class TreeParser {
 
 		if (t.getText().equals("IF")) {
 			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
-
 			for (int i = 1; i < t.getChildCount(); i++)
 				TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
 		}
 
-		if (t.getText().equals("ELSE"))
-			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+		if (t.getText().equals("ELSE")) {
+            TreeParser.analyseRec((CommonTree) t.getChild(0), tds);
+        }
 
 		if (t.getText().equals("WHILE")) {
 			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
@@ -162,14 +162,20 @@ public class TreeParser {
 			else if (s.equals("||"))
 				return fg + "||" + fd;
 		} else {
-			if (IsInteger(t.getText())) {
+			if (isInteger(t.getText())) {
 				return t.getText();
 			} else {
 				int nbChilds = t.getChildCount();
 				if (nbChilds == 0) {
 					try {
-						return String.valueOf(
-								((TableDesVariables) (tds.get(TableType.VAR))).getValeurVariable(tds, t.getText()));
+					    TableDesVariables tdv = ((TableDesVariables) (tds.get(TableType.VAR)));
+                        System.out.println("deghzjfgkrhj");
+                        System.out.println("s");
+                        System.out.println(s);
+                        System.out.println("tdv");
+                        System.out.println(tdv);
+						Variable variable = tdv.getVariable(tds, s);
+                        return variable.getName();
 					} catch (NonExistantVariable nonExistantVariable) {
 					}
 				} else if (t.getChild(0).getText() == "IND") {
@@ -311,7 +317,7 @@ public class TreeParser {
 		return (str.equals("true") || str.equals("false"));
 	}
 
-	private static Boolean IsInteger(String str) {
+	private static Boolean isInteger(String str) {
 		int length = str.length(), c = 0;
 		if (length == 0)
 			return false;

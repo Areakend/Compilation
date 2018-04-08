@@ -16,11 +16,11 @@ public class TableDesVariables extends Table<String, Variable> {
             try {
                 if(variable.getValue() != null && !variable.isMut())
                     throw new NonMutable(name);
-                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value));
+                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value, false));
             } catch(NonInitialisedVariable nonInitialisedVariable) {
             }
         } else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
-            this.put(name, new Variable(name, mut, value));
+            this.put(name, new Variable(name, mut, value,false));
         else {
             this.ajouterVariable(tableSymboles.getParent(), name, mut, value);
         }
@@ -38,6 +38,17 @@ public class TableDesVariables extends Table<String, Variable> {
             throw new NonExistantVariable(name);
 
         return this.getValeurVariable(tableSymboles.getParent(), name);
+    }
+
+    public Variable getVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
+        Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
+
+        if(variable != null)
+            return variable;
+        else if(tableSymboles.getParent() == null)
+            throw new NonExistantVariable(name);
+
+        return this.getVariable(tableSymboles.getParent(), name);
     }
 
     @Override
