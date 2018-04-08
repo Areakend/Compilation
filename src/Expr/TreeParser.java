@@ -113,40 +113,65 @@ public class TreeParser {
 			TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
 	}
 
-	private static String analyseExp(CommonTree t, TableDesSymboles tds, Tables tables) throws Exception {
-		Integer fg = Integer.valueOf(TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables));
-		Integer fd = Integer.valueOf(TreeParser.analyseExp((CommonTree) t.getChild(1), tds, tables));
 
-		if (t.getText().equals("+") || t.getText().equals("-") || t.getText().equals("*") || t.getText().equals("/")) {
-			int value = 0;
+    private static String analyseExp(CommonTree t, TableDesSymboles tds, Tables tables) throws Exception {
 
-			if (t.getText().equals("+"))
-				value = fg + fd;
-			else if (t.getText().equals("-"))
-				value = fg - fd;
-			else if (t.getText().equals("*"))
-				value = fg * fd;
-			else if (t.getText().equals("/"))
-				value = fg / fd;
+        String s = t.getText();
 
-			return String.valueOf(value);
-		} else if (t.getText().equals("<"))
-			return String.valueOf(fg < fd);
-		else if (t.getText().equals("<="))
-			return String.valueOf(fg <= fd);
-		else if (t.getText().equals(">"))
-			return String.valueOf(fg > fd);
-		else if (t.getText().equals(">="))
-			return String.valueOf(fg >= fd);
-		else if (t.getText().equals("=="))
-			return String.valueOf(fg == fd);
-		else if (t.getText().equals("!="))
-			return String.valueOf(fg != fd);
-		else {
-			try {
-				Integer.valueOf(t.getText());
-				return t.getText();
-			} catch (NumberFormatException e) {
+        if (s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("<") || s.equals("<=") || s.equals(">") || s.equals(">=") || s.equals("==") || s.equals("!=") || s.equals("&&") || s.equals("||")) {
+
+
+            String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
+            String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds, tables);
+
+            if (IsInteger(fg) && IsInteger(fd)) {
+
+                Integer fg1 = Integer.valueOf(fg);
+                Integer fd1 = Integer.valueOf(fd);
+
+                if (s.equals("+"))
+                    return String.valueOf(fg1 + fd1);
+                else if (s.equals("-"))
+                    return String.valueOf(fg1 - fd1);
+                else if (s.equals("*"))
+                    return String.valueOf(fg1 * fd1);
+                else if (s.equals("/"))
+                    return String.valueOf(fg1 / fd1);
+                else if (s.equals("<"))
+                    return String.valueOf(fg1 < fd1);
+                else if (s.equals("<="))
+                    return String.valueOf(fg1 <= fd1);
+                else if (s.equals(">"))
+                    return String.valueOf(fg1 > fd1);
+                else if (s.equals(">="))
+                    return String.valueOf(fg1 >= fd1);
+                else if (s.equals("=="))
+                    return String.valueOf(fg1 == fd1);
+                else if (s.equals("!="))
+                    return String.valueOf(fg1 != fd1);
+
+            } else if (isBoolean(fg) && isBoolean(fd)) {
+                Boolean fg1 = Boolean.valueOf(fg);
+                Boolean fd1 = Boolean.valueOf(fd);
+
+                if (s.equals("=="))
+                    return String.valueOf(fg1 == fd1);
+                else if (s.equals("!="))
+                    return String.valueOf(fg1 != fd1);
+                else if (s.equals("&&"))
+                    return String.valueOf(fg1 && fd1);
+                else if (s.equals("||"))
+                    return String.valueOf(fg1 || fd1);
+
+            } else {
+                isSameTypes(fg,fd,findType(fg),findType(fd));
+                return "";
+            }
+
+        } else {
+            if (IsInteger(t.getText())) {
+                return t.getText();
+            } else {
 				int nbChilds = t.getChildCount();
 				if (nbChilds == 0) {
 					try {
@@ -232,22 +257,42 @@ public class TreeParser {
 		varTypes.add(type);
 	}
 
-	private static String findType(String value) {
-		try {
-			Integer.parseInt(value);
-			return "i32";
-		} catch (NoException e) {
-			try {
-				Boolean.parseBoolean(value);
-				return "bool";
-			} catch (NonExistantType e2) {
-			}
-		}
-		return "";
-	}
 
-	private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
-		if (!(theoricalType.equals(realType)))
-			throw new InvalidTypeArgument(name, theoricalType, realType);
-	}
+    private static String findType(String value) {
+        try {
+            Integer.parseInt(value);
+            return "i32";
+        } catch (NumberFormatException e) {
+            return isBoolean(value) ? "bool" : "";
+        }
+    }
+
+
+    private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
+        if (!(theoricalType.equals(realType)))
+            throw new InvalidTypeArgument(name, theoricalType, realType);
+    }
+
+    private static void isSameTypes(String name1, String name2, String theoricalType, String realType) throws InvalidTypeArguments {
+        if (!(theoricalType.equals(realType)))
+            throw new InvalidTypeArguments(name1, name2, theoricalType, realType);
+    }
+
+    private static boolean isBoolean(String str) {
+        return (str.equals("true") || str.equals("false"));
+    }
+    
+    private static Boolean IsInteger(String str)
+    {
+       int length = str.length(),c=0;
+       if(length==0)
+          return false;
+       for(int i=0;i<length; i++)
+       {
+          c = (int)str.charAt(i)-48;
+          if(!(c>=0 && c<10))
+             return false;
+       }
+      return true;
+    }
 }
