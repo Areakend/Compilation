@@ -1,5 +1,7 @@
 import Expr.ExprLexer;
 import Expr.ExprParser;
+import Expr.TreeParser;
+import Objets.TableDesSymboles;
 import Objets.Tables;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -8,6 +10,8 @@ import org.antlr.runtime.tree.CommonTree;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import static Expr.TreeParser.analyseRec;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -27,6 +31,14 @@ public class Main {
             CommonTree t = (CommonTree) result.getTree();
 
             Tables tables = new Tables();
+            TableDesSymboles tds = new TableDesSymboles();
+            tables.add(tds);
+
+            analyseRec(t,tds);
+
+
+
+
 
 
         } catch (FileNotFoundException e) {

@@ -7,7 +7,7 @@ import org.antlr.runtime.tree.CommonTree;
 import java.util.ArrayList;
 
 public class TreeParser {
-    private static void analyseRec(CommonTree t, TableDesSymboles tds, Tables tables) throws Exception {
+    public static void analyseRec(CommonTree t, TableDesSymboles tds) throws Exception {
 
         if (t.isNil())
             return;
@@ -16,7 +16,7 @@ public class TreeParser {
             int nbChilds = t.getChildCount();
 
             for (int i = 0; i < nbChilds; i++)
-                TreeParser.analyseRec((CommonTree) t.getChild(i), tds, tables);
+                TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
         }
 
         if (t.getText().equals("DECL")) {
@@ -39,7 +39,7 @@ public class TreeParser {
 
             if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
                 CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
-                String value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds, tables);
+                String value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
                 tds.ajouterVariable(name, mut, value);
             }
         }
@@ -64,22 +64,22 @@ public class TreeParser {
             int nbChilds = t.getChildCount();
 
             for (int i = 0; i < nbChilds; i++)
-                TreeParser.analyseRec((CommonTree) t.getChild(i), tds2, tables);
+                TreeParser.analyseRec((CommonTree) t.getChild(i), tds2);
         }
 
         if (t.getText().equals("IF")) {
-            TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
+            TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
 
             for (int i = 1; i < t.getChildCount(); i++)
-                TreeParser.analyseRec((CommonTree) t.getChild(i), tds, tables);
+                TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
         }
 
         if (t.getText().equals("ELSE"))
-            TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
+            TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
 
         if (t.getText().equals("WHILE")) {
-            TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
-            TreeParser.analyseRec((CommonTree) t.getChild(1), tds, tables);
+            TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+            TreeParser.analyseRec((CommonTree) t.getChild(1), tds);
         }
 
         if (t.getText().equals("FUNC")) {
@@ -102,7 +102,7 @@ public class TreeParser {
 
                     args = new Arguments(argNames, argTypes);
                 } else if (node.getText().equals("BLOC"))
-                    TreeParser.analyseRec(node, tds, tables);
+                    TreeParser.analyseRec(node, tds);
                 else
                     returnType = node.getText();
             }
@@ -110,33 +110,34 @@ public class TreeParser {
         }
 
         if (t.getText().equals("print") || t.getText().equals("RETURN"))
-            TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
+            TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
     }
 
-    private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds, Tables tables) {
-        if (spe_unaire.equals("-") {
-            return String.valueOf(-Double.valueOf(analyseExp(t, tds, tables)));
-        } else if (spe_unaire.equals("!") {
-            return String.valueOf(!Boolean.valueOf(analyseExp(t, tds, tables)));
-        } else if (spe_unaire.equals("&") {
-            return String.valueOf(Adresse(analyseExp(t, tds, tables)));
-        } else if (spe_unaire.equals("*") {
-            return String.valueOf(Pointeur(analyseExp(t, tds, tables)));
+    private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
+        if (spe_unaire.equals("-")) {
+            return String.valueOf(-Double.valueOf(analyseExp(t, tds)));
+        } else if (spe_unaire.equals("!")) {
+            return String.valueOf(!Boolean.valueOf(analyseExp(t, tds)));
+        } else if (spe_unaire.equals("&")) {
+            return String.valueOf(Adresse(analyseExp(t, tds)));
+        } else if (spe_unaire.equals("*")) {
+            return String.valueOf(Pointeur(analyseExp(t, tds)));
         }
+        return "";
     }
 
 
-    private static String analyseExp(CommonTree t, TableDesSymboles tds, Tables tables) throws Exception {
+    private static String analyseExp(CommonTree t, TableDesSymboles tds) throws Exception {
 
         String s = t.getText();
 
         if (s.equals("SPE_UNAIRE")) {
-            return analyseExpUnaire((CommonTree) t.getChild(1), t.getChild(0).getText(), tds, tables);
+            return analyseExpUnaire((CommonTree) t.getChild(1), t.getChild(0).getText(), tds);
         } else if (s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("<") || s.equals("<=") || s.equals(">") || s.equals(">=") || s.equals("==") || s.equals("!=") || s.equals("&&") || s.equals("||")) {
 
 
-            String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds, tables);
-            String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds, tables);
+            String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+            String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds);
 
 
             if (IsInteger(fg) && IsInteger(fd)) {
@@ -179,7 +180,11 @@ public class TreeParser {
                     return String.valueOf(fg1 || fd1);
 
             } else {
-                isSameTypes(fg, fd, findType(fg), findType(fd));
+                try {
+                    isSameTypes(fg, fd, findType(fg), findType(fd));
+                } catch (InvalidTypeArguments invalidTypeArguments) {
+                    invalidTypeArguments.printStackTrace();
+                }
                 return "";
             }
 
@@ -203,7 +208,7 @@ public class TreeParser {
                         Vecteur vect = ((TableDesVecteurs) (tds.get(TableType.VEC))).getVecteur(tds, name);
 
                         try {
-                            int indice = Integer.valueOf(analyseExp(t, tds, tables));
+                            int indice = Integer.valueOf(analyseExp(t, tds));
                             vect.getValeur(indice);
                             String val = vect.getValeurs().get(indice);
 
@@ -212,7 +217,7 @@ public class TreeParser {
                         }
                     } catch (NonExistantVecteur e1) {
                     }
-                } else if (t.getChild(0).getText() == "FUNC_ARGS") {
+                } else if (t.getChild(0).getText() == "CALL_ARGS") {
                     String name = t.getText();
                     try {
                         Fonction fonc = ((TableDesFonctions) (tds.get(TableType.FONC))).getFonction(tds, name);
@@ -223,19 +228,15 @@ public class TreeParser {
                             ArrayList<String> args = new ArrayList<>();
 
                             for (int i = 0; i < nbChilds2; i++) {
-                                args.add(TreeParser.analyseExp((CommonTree) t.getChild(i), tds, tables));
+                                args.add(TreeParser.analyseExp((CommonTree) t.getChild(i), tds));
                                 String theoricalType = fonc.getArgs().getTypes().get(i);
                                 String nameVal = t.getChild(i).getText();
+                                String realType = TreeParser.findType(nameVal);
                                 try {
-                                    String realType = TreeParser.findType(nameVal);
-                                    try {
-                                        TreeParser.isSameType(name, theoricalType, realType);
-                                        // return Calcul valeur de
-                                        // fonction(args);
-                                    } catch (InvalidTypeArgument invalidTypeArgument) {
-                                    }
-                                } catch (NonExistantType nonExistantType) {
-                                }
+                                    TreeParser.isSameType(name, theoricalType, realType);
+                                    // return Calcul valeur de
+                                    // fonction(args);
+                                } catch (InvalidTypeArgument invalidTypeArgument) {}
                             }
                             if (nbChilds2 == 0) {
                                 // ajouter valeur fonction dans le cas 0
