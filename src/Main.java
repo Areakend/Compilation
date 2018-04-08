@@ -1,17 +1,13 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
 import Expr.ExprLexer;
 import Expr.ExprParser;
-import Expr.TreeParser;
-import Objets.TableDesSymboles;
 import Objets.Tables;
-import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -19,7 +15,7 @@ public class Main {
         String file = args[0];
         System.out.println("File to load: " + file);
 
-		try {
+        try {
             InputStream stream = new FileInputStream(file);
             ANTLRInputStream input = new ANTLRInputStream(stream);
 
@@ -28,15 +24,15 @@ public class Main {
             ExprParser parser = new ExprParser(tokens);
 
             ExprParser.fichier_return result = parser.fichier();
-            CommonTree t = (CommonTree)result.getTree();
+            CommonTree t = (CommonTree) result.getTree();
 
             Tables tables = new Tables();
 
 
-		} catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        
+
         System.exit(0);
     }
 }
