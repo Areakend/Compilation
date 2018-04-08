@@ -1,39 +1,37 @@
 package Objets;
 
-import Exceptions.AlreadyExistantStructure;
-import Exceptions.InvalidTypeAffectation;
-import Exceptions.NonExistantStructureVariable;
+import Exceptions.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesStructures extends Table<String, Structure> {
-    public void ajouterStructure(TableDesSymboles tableSymboles, String name, ArrayList<String> names, ArrayList<String> types) throws AlreadyExistantStructure {
-        Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
+    public void ajouterStructure(TableDesSymboles tableSymboles, String name, ArrayList<String> names, ArrayList<String> types) throws AlreadyExistantStructure, NonSameNumberNamesTypes, NonExistantType {
+        this.ajouterStructure(tableSymboles, name, names, types, new ArrayList<>());
+    }
+
+    public void ajouterStructure(TableDesSymboles tableSymboles, String name, ArrayList<String> names, ArrayList<String> types, ArrayList<String> structuresNames) throws AlreadyExistantStructure, NonSameNumberNamesTypes, NonExistantType {
+        ArrayList<String> newStructureNames = structuresNames;
+        TableDesStructures structuresTable = ((TableDesStructures) tableSymboles.get(TableType.STRUCT));
+        Structure structure = structuresTable.get(name);
+
+        newStructureNames.addAll(structuresTable.getTable().keySet());
 
         if(structure != null)
             throw new AlreadyExistantStructure(name);
-        else if(tableSymboles.getParent() == null)
-            this.put(name, new Structure(name, names, types));
-        else this.ajouterStructure(tableSymboles.getParent(), name, names, types);
-    }
+        else if(tableSymboles.getParent() == null) {
+            if(names.size() != types.size())
+                throw new NonSameNumberNamesTypes(name);
 
-    public void modifierValeurStructure(String name, String valeur, String type) throws NonExistantStructureVariable, InvalidTypeAffectation {
-        Structure structure = this.get(name);
-        ArrayList<String> names = structure.getNames();
-        int pos;
+            for(int i = 0; i < names.size(); i++) {
+                String type = types.get(i);
 
-        for(pos = 0; pos < names.size(); pos++) {
-            if(names.get(pos).equals(name)) {
-                String valeurType = structure.getTypes().get(pos);
-
-                if(valeurType.equals(type))
-                    throw new InvalidTypeAffectation(name, valeurType, type);
-                else this.get(name).setValeur(pos, valeur);
+                if(type.equals("bool") || type.equals("i32") || newStructureNames.contains(type))
+                    this.put(name, new Structure(name, names, types));
+                else throw new NonExistantType(type);
             }
-        }
 
-        throw new NonExistantStructureVariable(structure.getStructureName(), names.get(pos));
+        } else this.ajouterStructure(tableSymboles.getParent(), name, names, types, newStructureNames);
     }
 
     @Override

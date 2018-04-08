@@ -1,9 +1,10 @@
 package Objets;
 
-import Exceptions.NonExistantStructure;
-import Exceptions.NonInitialisedVariable;
+import Exceptions.*;
 
 import java.util.ArrayList;
+
+import static Expr.TreeParser.findType;
 
 public class Variable {
     private String name;
@@ -40,12 +41,51 @@ public class Variable {
         this.name = name;
     }
 
-    public void setStructure(String structureName, ArrayList<String> structureVariables) throws NonExistantStructure {
-        //parcours de l'ensemble des structures
-        throw new NonExistantStructure(structureName);
-        //parcours des types d'entrées par rapport à ceux de la struct + affectation
-        //throw new InvalidType(name);
+    public void setStructure(TableDesSymboles tableSymboles, String structureName, ArrayList<String> structureNewVariables, ArrayList<String> structureNewValeurs) throws NonExistantStructure, InvalidTypeAffectation  {
+        Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
+
+        if(structure != null) {
+            this.structure = structure;
+            this.structureVariables = structure.getValeurs();
+
+            for(int i = 0; i < structureVariables.size(); i++) {
+                String var = structureVariables.get(i);
+
+                for(int j = 0; j < structureNewVariables.size(); i++) {
+                    String newVar = structureNewVariables.get(j);
+
+                    if() {
+                        String typeVariable = findType(var);
+                        String typeAffect = findType(newVar);
+
+                        if(typeVariable.equals(typeAffect))
+                            this.structureVariables.add(structureNewVariables.get(i));
+                        else throw new InvalidTypeAffectation(name, typeVariable, typeAffect);
+                    }
+                }
+            }
+        } else if(tableSymboles.getParent() == null)
+            throw new NonExistantStructure(structureName);
+        else this.setStructure(tableSymboles.getParent(), structureName, structureNewVariables, structureNewVariables);
     }
+
+    /*public void modifierValeurStructure(String name, String valeur, String type) throws NonExistantStructureVariable, InvalidTypeAffectation {
+        Structure structure = this.get(name);
+        ArrayList<String> names = structure.getNames();
+        int pos;
+
+        for(pos = 0; pos < names.size(); pos++) {
+            if(names.get(pos).equals(name)) {
+                String valeurType = structure.getTypes().get(pos);
+
+                if(valeurType.equals(type))
+                    throw new InvalidTypeAffectation(name, valeurType, type);
+                else this.get(name).setValeur(pos, valeur);
+            }
+        }
+
+        throw new NonExistantStructureVariable(structure.getStructureName(), names.get(pos));
+    }*/
 
     public String getValue() throws NonInitialisedVariable {
         if(value == null)

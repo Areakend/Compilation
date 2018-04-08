@@ -1,5 +1,6 @@
 package Objets;
 
+import Exceptions.*;
 import Exceptions.AlreadyExistantFonction;
 import Exceptions.AlreadyExistantStructure;
 import Exceptions.NonMutable;
@@ -10,6 +11,11 @@ import java.util.HashMap;
 public class TableDesSymboles extends Table<TableType, Table> {
     private TableDesSymboles parent;
     private String name;
+
+    public TableDesSymboles() {
+        this.parent = null;
+        this.name = "1";
+    }
 
     public TableDesSymboles(TableDesSymboles parent) {
         this.parent = parent;
@@ -56,6 +62,11 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
+            try {
+                tableDesStructures.ajouterStructure(this, name, names, types);
+            } catch (NonSameNumberNamesTypes nonSameNumberNamesTypes) {
+            } catch (NonExistantType nonExistantType) {
+            }
             tableDesStructures.ajouterStructure(this, name, names, types);
         } catch(AlreadyExistantStructure alreadyExistantFonction) {
         }
@@ -70,7 +81,10 @@ public class TableDesSymboles extends Table<TableType, Table> {
             this.put(tableType, tableDesVecteurs);
         }
 
-        tableDesVecteurs.ajouterVecteur(this, name, type, valeurs);
+        try {
+            tableDesVecteurs.ajouterVecteur(this, name, type, valeurs);
+        } catch(InvalidVecteurVariableType invalidVecteurVariableType) {
+        }
     }
 
     public String getName() {
