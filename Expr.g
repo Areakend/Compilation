@@ -1,4 +1,4 @@
-grammar Expr3;
+grammar Expr;
 
 options {
 	language = Java;
@@ -30,7 +30,7 @@ tokens {
 fichier
 	:decl*;
 
-decl    
+decl
 	:decl_func
 	|decl_struct
 	;
@@ -74,7 +74,7 @@ instruction
 
 instruction2
 	:';'! instruction?
-	| 
+	|
 	;
 
 let
@@ -155,7 +155,7 @@ expr7if
 
 expr8if
 	:
-	|'(' exprif(',' exprif)* ')' -> ^(CALL_ARGS (^(ARGUMENT exprif))*)
+	|'(' exprif?(',' exprif)* ')' -> ^(CALL_ARGS (^(ARGUMENT exprif))*)
 	;
 
 expr
@@ -211,7 +211,7 @@ expr7
 
 expr8
 	:
-	|'(' expr(',' expr)* ')' -> ^(CALL_ARGS (^(ARGUMENT expr))*)
+	|'(' expr?(',' expr)* ')' -> ^(CALL_ARGS (^(ARGUMENT expr))*)
 	|'{' (IDF ':' expr(',' IDF ':' expr)*)? '}' -> (^(ARGUMENT IDF expr))*
 	;
 
@@ -225,7 +225,7 @@ opm
 	|'/'
 	;
 
-opt    
+opt
 	:'<'
 	|'<='
 	|'>'
