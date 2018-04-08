@@ -1,6 +1,6 @@
+
 import Expr.ExprLexer;
 import Expr.ExprParser;
-import Expr.TreeParser;
 import Objets.TableDesSymboles;
 import Objets.Tables;
 import org.antlr.runtime.ANTLRInputStream;
@@ -16,7 +16,7 @@ import static Expr.TreeParser.analyseRec;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String file = args[0];
+        String file = "ExemplesRust/testsSimples.rs";
         System.out.println("File to load: " + file);
 
         try {
@@ -27,8 +27,42 @@ public class Main {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             ExprParser parser = new ExprParser(tokens);
 
+
+
             ExprParser.fichier_return result = parser.fichier();
             CommonTree t = (CommonTree) result.getTree();
+
+            if (file==null) {
+                System.out.println("file");
+            }
+
+            if (stream==null) {
+                System.out.println("stream");
+            }
+
+            if (input==null) {
+                System.out.println("input");
+            }
+
+            if (lexer==null) {
+                System.out.println("lexer");
+            }
+
+            if (tokens==null) {
+                System.out.println("tokens");
+            }
+
+            if (parser==null) {
+                System.out.println("parser");
+            }
+
+            if (result==null) {
+                System.out.println("result");
+            }
+
+            if (t==null) {
+                System.out.println("t");
+            }
 
             Tables tables = new Tables();
             TableDesSymboles tds = new TableDesSymboles();
@@ -36,10 +70,7 @@ public class Main {
 
             analyseRec(t,tds);
 
-
-
-
-
+            System.out.println(tables.toString());
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

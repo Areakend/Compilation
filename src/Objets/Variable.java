@@ -27,10 +27,10 @@ public class Variable {
         this.name = name;
         this.mut = mut;
 
-        try {
+        /*try {
             this.setStructure(structureName, structureVariables);
         } catch(NonExistantStructure nonExistantStructure) {
-        }
+        }*/
     }
 
     public String getName() {
@@ -54,14 +54,14 @@ public class Variable {
                 for(int j = 0; j < structureNewVariables.size(); i++) {
                     String newVar = structureNewVariables.get(j);
 
-                    if() {
+                    /*if() {
                         String typeVariable = findType(var);
                         String typeAffect = findType(newVar);
 
                         if(typeVariable.equals(typeAffect))
                             this.structureVariables.add(structureNewVariables.get(i));
                         else throw new InvalidTypeAffectation(name, typeVariable, typeAffect);
-                    }
+                    }*/
                 }
             }
         } else if(tableSymboles.getParent() == null)

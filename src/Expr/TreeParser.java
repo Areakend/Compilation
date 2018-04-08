@@ -9,9 +9,6 @@ import java.util.ArrayList;
 public class TreeParser {
     public static void analyseRec(CommonTree t, TableDesSymboles tds) throws Exception {
 
-        if (t.isNil())
-            return;
-
         if (t.getText().equals("nil")) {
             int nbChilds = t.getChildCount();
 
@@ -118,11 +115,11 @@ public class TreeParser {
             return String.valueOf(-Double.valueOf(analyseExp(t, tds)));
         } else if (spe_unaire.equals("!")) {
             return String.valueOf(!Boolean.valueOf(analyseExp(t, tds)));
-        } else if (spe_unaire.equals("&")) {
+        }/* else if (spe_unaire.equals("&")) {
             return String.valueOf(Adresse(analyseExp(t, tds)));
         } else if (spe_unaire.equals("*")) {
             return String.valueOf(Pointeur(analyseExp(t, tds)));
-        }
+        }*/
         return "";
     }
 
