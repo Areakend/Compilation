@@ -28,21 +28,12 @@ public class Variable {
     public Variable(String name, boolean mut, String structureName, ArrayList<String> structureVariables,boolean pointeur) {
         this.name = name;
         this.mut = mut;
-<<<<<<< HEAD
         this.pointeur= pointeur;
-        
-    /*    try {
-            this.setStructure(structureName, structureVariables);
-        } catch(NonExistantStructure nonExistantStructure) {
-        }
-        */
-=======
 
         /*try {
             this.setStructure(structureName, structureVariables);
         } catch(NonExistantStructure nonExistantStructure) {
         }*/
->>>>>>> b075aa2da700ac598b7205ab1fd3de701d8278ed
     }
 
     public String getName() {

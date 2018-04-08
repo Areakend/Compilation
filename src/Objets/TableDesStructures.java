@@ -33,6 +33,17 @@ public class TableDesStructures extends Table<String, Structure> {
 
         } else this.ajouterStructure(tableSymboles.getParent(), name, names, types, newStructureNames);
     }
+    
+    public Structure getStructure(TableDesSymboles tableSymboles, String name) throws NonExistantStructure {
+        Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
+
+        if(structure != null)
+            return structure;
+        else if(tableSymboles.getParent() == null)
+            throw new NonExistantStructure(name);
+
+        return this.getStructure(tableSymboles.getParent(), name);
+    }
 
     @Override
     public String toString() {
