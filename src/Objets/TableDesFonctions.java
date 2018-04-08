@@ -1,12 +1,33 @@
 package Objets;
 
+import Exceptions.AlreadyExistantFonction;
+import Exceptions.NonExistantFunction;
+import Exceptions.NonExistantVecteur;
+
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
-    public void ajouterFonction(String name, String returnType, Arguments args) {
-        this.put(name, new Fonction(name, returnType, args));
+    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction {
+        Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
+
+        if(fonction != null && fonction.getArgs().equals(args) && fonction.getReturnType().equals(returnType))
+            throw new AlreadyExistantFonction(name);
+        else if(tableSymboles.getParent() == null)
+            this.put(name, new Fonction(name, returnType, args));
+        else this.ajouterFonction(tableSymboles.getParent(), name, returnType, args);
     }
 
+    public Fonction getFonction(TableDesSymboles tableSymboles, String name) throws NonExistantFunction {
+        Fonction fonction = ((TableDesFonctions) tableSymboles.getParent().get(TableType.FONC)).get(name);
+
+        if(fonction != null)
+            return fonction;
+        else if(tableSymboles.getParent() == null)
+            throw new NonExistantFunction(name);
+
+        return this.getFonction(tableSymboles.getParent(), name);
+    }
+    
     @Override
     public String toString() {
         StringBuilder stringFonctions = new StringBuilder();

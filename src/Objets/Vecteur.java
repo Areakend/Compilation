@@ -1,5 +1,7 @@
 package Objets;
 
+import Exceptions.IndexOutOfBounds;
+
 import java.util.ArrayList;
 
 import Exceptions.IndexOutOfBounds;
@@ -13,6 +15,7 @@ public class Vecteur {
 	public Vecteur(String name, String type) {
 		this(name, type, null);
 	}
+
 
 	public Vecteur(String name, String type, ArrayList<String> valeurs) {
 		this.name = name;
@@ -43,18 +46,19 @@ public class Vecteur {
 	public void setValeurs(ArrayList<String> valeurs) {
 		this.valeurs = valeurs;
 	}
+    public String getValeur(int i) throws IndexOutOfBounds {
+        if(i > this.valeurs.size())
+            throw new IndexOutOfBounds(name);
 
-	public void validSize(Vecteur vect, int size) throws IndexOutOfBounds {
-		if (vect.getValeurs().size() <= size)
-			throw new IndexOutOfBounds(name);
-	}
+        return valeurs.get(i);
+    }
 
 	@Override
 	public String toString() {
 		StringBuilder res = new StringBuilder("Vecteur " + this.name + " : " + this.type + " =\n");
+        for(int i = 0; i < this.valeurs.size(); i++)
+            res.append("\t").append(this.valeurs.get(i)).append("\n");
 
-		for (int i = 0; i < this.valeurs.size(); i++)
-			res.append("\t").append(this.valeurs.get(i)).append("\n");
 
 		return res.toString();
 	}

@@ -1,5 +1,6 @@
 package Objets;
 
+import Exceptions.AlreadyExistantStructure;
 import Exceptions.InvalidType;
 import Exceptions.NonExistantStructureVariable;
 
@@ -7,8 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesStructures extends Table<String, Structure> {
-    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
-        this.put(name, new Structure(name, names, types));
+    public void ajouterStructure(TableDesSymboles tableSymboles, String name, ArrayList<String> names, ArrayList<String> types) throws AlreadyExistantStructure {
+        Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
+
+        if(structure != null)
+            throw new AlreadyExistantStructure(name);
+        else if(tableSymboles.getParent() == null)
+            this.put(name, new Structure(name, names, types));
+        else this.ajouterStructure(tableSymboles.getParent(), name, names, types);
     }
 
     public void modifierValeurStructure(String name, String valeur, String type) throws NonExistantStructureVariable, InvalidType {
@@ -33,7 +40,7 @@ public class TableDesStructures extends Table<String, Structure> {
     public String toString() {
         StringBuilder stringStructures = new StringBuilder();
 
-        for (HashMap.Entry<String, Structure> entry : table.entrySet())
+        for(HashMap.Entry<String, Structure> entry : table.entrySet())
             stringStructures.append("\t").append(entry.getValue().toString()).append("\n");
 
         return stringStructures.toString();

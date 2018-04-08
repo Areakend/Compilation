@@ -1,6 +1,7 @@
 package Objets;
 
 import Exceptions.NonExistantVariable;
+import Exceptions.NonInitialisedVariable;
 import Exceptions.NonMutable;
 
 import java.util.HashMap;
@@ -11,22 +12,29 @@ public class TableDesVariables extends Table<String, Variable> {
     }
 
     public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value) throws NonMutable {
-        Variable variable = this.get(name);
+        Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if(variable != null) {
-            if(variable.getValue() != null && !variable.isMut())
-                throw new NonMutable(name);
-            else this.get(name).setValue(value);
+            try {
+                if(variable.getValue() != null && !variable.isMut())
+                    throw new NonMutable(name);
+                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value));
+            } catch(NonInitialisedVariable nonInitialisedVariable) {
+            }
         } else if(tableSymboles.getParent() == null)
             this.put(name, new Variable(name, mut, value));
         else this.ajouterVariable(tableSymboles.getParent(), name, mut, value);
     }
 
     public String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
-        Variable variable = ((TableDesVariables)tableSymboles.getParent().get(TableType.VAR)).get(name);
+        Variable variable = ((TableDesVariables) tableSymboles.getParent().get(TableType.VAR)).get(name);
 
-        if(variable != null)
-            return variable.getValue();
+        if(variable != null) {
+            try {
+                return variable.getValue();
+            } catch(NonInitialisedVariable nonInitialisedVariable) {
+            }
+        }
         else if(tableSymboles.getParent() == null)
             throw new NonExistantVariable(name);
 
@@ -37,7 +45,7 @@ public class TableDesVariables extends Table<String, Variable> {
     public String toString() {
         StringBuilder stringVariables = new StringBuilder();
 
-        for (HashMap.Entry<String, Variable> entry : table.entrySet())
+        for(HashMap.Entry<String, Variable> entry : table.entrySet())
             stringVariables.append("\t").append(entry.getValue().toString()).append("\n");
 
         return stringVariables.toString();

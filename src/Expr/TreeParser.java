@@ -4,7 +4,11 @@ import Exceptions.*;
 import Objets.*;
 import sun.security.action.GetBooleanAction;
 
+import org.antlr.grammar.v3.ANTLRv3Parser.throwsSpec_return;
 import org.antlr.runtime.tree.CommonTree;
+
+import com.sun.org.apache.regexp.internal.recompile;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.RealType;
 
 import java.util.ArrayList;
 
@@ -45,7 +49,7 @@ public class TreeParser {
 			if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
 				CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
 				String value = analyseExp((CommonTree) node.getChild(0), tds, tables);
-				tds.ajouterVariable(tds, name, mut, value);
+				tds.ajouterVariable(name, mut, value);
 			}
 		}
 
@@ -59,7 +63,7 @@ public class TreeParser {
 				fillVarNamesTypes(node, varNames, varTypes);
 			}
 			TableDesStructures tdstruct = new TableDesStructures();
-			tdstruct.ajouterStructure(nameStruct, varNames, varTypes);
+			tdstruct.ajouterStructure(tds, nameStruct, varNames, varTypes);
 		}
 
 		if (t.getText().equals("BLOC")) {
@@ -89,7 +93,7 @@ public class TreeParser {
 		if (t.getText().equals("FUNC")) {
 			String nameFunc = t.getChild(0).getText();
 			String returnType = null;
-			Arguments args;
+			Arguments args = null;
 			ArrayList<String> argNames;
 			ArrayList<String> argTypes;
 			for (int i = 1; i < t.getChildCount(); i++) {
@@ -163,13 +167,13 @@ public class TreeParser {
 							int indice = Integer.valueOf(analyseExp(t, tds, tables));
 							try {
 								vect.getValeur(indice);
+								String val = vect.getValeurs().get(indice);
+								return val;
 							} catch (IndexOutOfBounds e3) {
-
+								throw new IndexOutOfBounds(vect.getName());
 							}
-							String val = vect.getValeurs().get(indice);
-							return val;
 						} catch (NonExistantVariable e4) {
-
+							throw new NonExistantVariable(name);
 						}
 
 					}
@@ -178,22 +182,36 @@ public class TreeParser {
 						String name = t.getText();
 						try {
 							Fonction fonc = ((TableDesFonctions) (tds.get(TableType.FONC))).getFonction(tds, name);
+							t = (CommonTree) t.getChild(0);
 							int nbChilds2 = t.getChildCount();
 							try {
 								fonc.validNumberArgs(fonc, nbChilds2);
-							} catch (InvalidArgumentsNumber e5) {
-
-							}
-							if (nbChilds2 > 0) {
-								t = (CommonTree) t.getChild(0);
-
+								ArrayList<String> args = new ArrayList<String>();
 								for (int i = 0; i < nbChilds2; i++) {
-									analyseRec((CommonTree) t.getChild(i), tds, tables);
-									fonc.getArgs().getTypes().get(i);
-									Integer.parseInt(t.getChild(i).getText());
+									args.add(analyseExp((CommonTree) t.getChild(i), tds, tables));
+									String theoricalType = fonc.getArgs().getTypes().get(i);
+									String nameVal = t.getChild(i).getText();
+									try {
+										String realType = findType(nameVal);
+										try {
+											isSameType(name, theoricalType, realType);
+									//		return Calcul valeure de fonction(args);
+										}
+										catch (InvalidTypeArgument e7){
+											throw new InvalidTypeArgument(name, theoricalType, realType);									
+										}
+									} catch (NonExistantType e6) {
+										throw new NonExistantType(nameVal);
+									}
+
 								}
+							} catch (InvalidArgumentsNumber e5) {
+								throw new InvalidArgumentsNumber(name, nbChilds2);
+
 							}
+
 						} catch (NonExistantFunction e1) {
+							throw new NonExistantFunction(name);
 
 						}
 
@@ -203,6 +221,7 @@ public class TreeParser {
 				}
 			}
 		}
+		return null;
 	}
 
 	private static void fillVarNamesTypes(CommonTree node, ArrayList<String> varNames, ArrayList<String> varTypes) {
@@ -218,6 +237,31 @@ public class TreeParser {
 		}
 		varNames.add(name);
 		varTypes.add(type);
+	}
+
+	private static String findType(String value) throws NonExistantType {
+		try {
+			try {
+
+				Integer.parseInt(value);
+				return "i32";
+			} catch (Exception e) {
+				try {
+					Boolean.parseBoolean(value);
+					return "bool";
+				} catch (Exception e2) {
+
+				}
+			}
+		} catch (Exception e3) {
+			throw new NonExistantType(value);
+		}
+		return value;
+	}
+
+	private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
+		if (!(theoricalType.equals(realType)))
+			throw new InvalidTypeArgument(name, theoricalType, realType);
 	}
 
 }

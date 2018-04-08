@@ -8,12 +8,12 @@ public enum TableType {
 
     private String name;
 
-    TableType(String name){
+    TableType(String name) {
         this.name = name;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return name;
     }
 }
