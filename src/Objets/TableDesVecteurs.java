@@ -37,7 +37,7 @@ public class TableDesVecteurs extends Table<String, Vecteur> {
 
     @Override
     public String toString() {
-        StringBuilder stringVecteurs = new StringBuilder();
+        StringBuilder stringVecteurs = new StringBuilder("Vecteurs : \n");
 
         for(HashMap.Entry<String, Vecteur> entry : table.entrySet())
             stringVecteurs.append("\t").append(entry.getValue().toString()).append("\n");

@@ -7,11 +7,9 @@ import Exceptions.NonMutable;
 import java.util.HashMap;
 
 public class TableDesVariables extends Table<String, Variable> {
-    public void ajouterVariable(TableDesSymboles tableSymboles, String name) throws NonMutable {
-        this.ajouterVariable(tableSymboles, name, false, null);
-    }
 
     public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value) throws NonMutable {
+        //System.out.println(tableSymboles.getParent());
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if(variable != null) {
@@ -21,9 +19,11 @@ public class TableDesVariables extends Table<String, Variable> {
                 else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value));
             } catch(NonInitialisedVariable nonInitialisedVariable) {
             }
-        } else if(tableSymboles.getParent() == null)
+        } else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
             this.put(name, new Variable(name, mut, value));
-        else this.ajouterVariable(tableSymboles.getParent(), name, mut, value);
+        else {
+            this.ajouterVariable(tableSymboles.getParent(), name, mut, value);
+        }
     }
 
     public String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
@@ -42,7 +42,7 @@ public class TableDesVariables extends Table<String, Variable> {
 
     @Override
     public String toString() {
-        StringBuilder stringVariables = new StringBuilder();
+        StringBuilder stringVariables = new StringBuilder("Variables : \n");
 
         for(HashMap.Entry<String, Variable> entry : table.entrySet())
             stringVariables.append("\t").append(entry.getValue().toString()).append("\n");

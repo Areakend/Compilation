@@ -92,18 +92,21 @@ public class TreeParser {
                     argNames = new ArrayList<>();
                     argTypes = new ArrayList<>();
 
-                    for (int j = 1; j < node.getChildCount(); j++) {
+                    for (int j = 0; j < node.getChildCount(); j++) {
                         CommonTree node2 = (CommonTree) node.getChild(j);
                         fillVarNamesTypes(node2, argNames, argTypes);
                     }
 
                     args = new Arguments(argNames, argTypes);
-                } else if (node.getText().equals("BLOC"))
+                } else if (node.getText().equals("BLOC")) {
+                    tds.ajouterFonction(nameFunc, returnType, args);
+                    System.out.println(tds);
                     TreeParser.analyseRec(node, tds);
-                else
+                } else {
                     returnType = node.getText();
+                }
             }
-            tds.ajouterFonction(nameFunc, returnType, args);
+
         }
 
         if (t.getText().equals("print") || t.getText().equals("RETURN"))

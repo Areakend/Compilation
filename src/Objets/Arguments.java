@@ -21,7 +21,7 @@ public class Arguments {
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("Arguments = " + this.names.get(0) + " : " + this.types.get(0));
+        StringBuilder res = new StringBuilder(this.names.get(0) + " : " + this.types.get(0));
 
         for(int i = 1; i < this.names.size(); i++)
             res.append(", ").append(this.names.get(i)).append(" : ").append(this.types.get(i));

@@ -94,15 +94,15 @@ public class TableDesSymboles extends Table<TableType, Table> {
         int maxName = 0;
 
         for(int i = 0; i < this.parent.getTable().size(); i++)
-            if(Integer.getInteger(parent.getName()) == maxName)
+            if(Integer.valueOf(parent.getName()) == maxName)
                 maxName += 1;
 
-        return this.parent.getName() + String.valueOf(maxName);
+        return this.parent.getName().concat(String.valueOf(maxName));
     }
 
     @Override
     public String toString() {
-        StringBuilder temp = new StringBuilder("TDS : " + this.name + " : PARENT : " + this.parent != null ? this.parent.getName() : null + "\n");
+        StringBuilder temp = new StringBuilder("TDS : " + this.name + " - PARENT : " + (this.parent != null ? this.parent.getName() : null) + "\n");
 
         for(HashMap.Entry<TableType, Table> entry : table.entrySet())
             temp.append("\t").append(entry.getValue().toString()).append("\n");
