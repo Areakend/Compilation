@@ -2,6 +2,7 @@ package Objets;
 
 import Exceptions.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {

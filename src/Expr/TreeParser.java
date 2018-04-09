@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public class TreeParser {
     public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
+
+		System.out.println(t.getText());
+
         if(t.isNil()) {
             int nbChilds = t.getChildCount();
 
@@ -56,11 +59,18 @@ public class TreeParser {
                     break;
                 }
                 case "BLOC": {
-                    TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
-                    int nbChilds = t.getChildCount();
+					int nbChilds = t.getChildCount();
 
-                    for (int i = 0; i < nbChilds; i++)
-                        TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds2);
+					if (!t.getParent().getText().equals("FUNC")) {
+						TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
+
+						for (int i = 0; i < nbChilds; i++)
+							TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds2);
+					}
+					else {
+						for (int i = 0; i < nbChilds; i++)
+							TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+					}
                     break;
                 }
                 case "IF":
@@ -98,7 +108,14 @@ public class TreeParser {
                                 break;
                             case "BLOC":
                                 tds.ajouterFonction(nameFunc, returnType, args);
-                                TreeParser.analyseRec(tables, node, tds);
+								TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
+								if (args!=null) {
+									ArrayList<String> names = args.getNames();
+									for (int k = 0; k < names.size(); k++) {
+										tds2.ajouterVariable(names.get(k), true, null);
+									}
+								}
+                                TreeParser.analyseRec(tables, node, tds2);
                                 break;
                             default:
                                 returnType = node.getText();
