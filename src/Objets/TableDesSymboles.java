@@ -23,7 +23,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         this.name = this.setName();
     }
 
-    public void ajouterFils() {
+    private void ajouterFils() {
         this.filsNbr++;
     }
     
@@ -103,13 +103,10 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
             if (variable != null)
                 return variable;
-            else if (this.getParent() == null)
-                throw new NonExistantVariable(name);
-        }
+        } else if(tableDesSymboles.getParent().getName().equals("1"))
+            throw new NonExistantVariable(name);
 
-        if(this.getParent() != null)
-            return this.getVariable(tableDesSymboles.getParent(), name);
-        else throw new NonExistantVariable(name);
+        return this.getVariable(tableDesSymboles.getParent(), name);
     }
 
     private String setName() {
@@ -126,7 +123,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         return temp.toString();
     }
 
-    public int getFilsNbr() {
+    private int getFilsNbr() {
         return filsNbr;
     }
 }
