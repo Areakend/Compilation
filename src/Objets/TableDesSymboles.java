@@ -45,8 +45,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
-        } catch(AlreadyExistantFonction alreadyExistantFonction) {
-        } catch (NoReturn noReturn) {
+        } catch(AlreadyExistantFonction | WrongRegionDeclaration | NonExistantType | NonExistantStructure e) {
         }
     }
 
@@ -61,9 +60,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesStructures.ajouterStructure(this, name, names, types);
-        } catch (NonExistantType nonExistantType) {
-        } catch(AlreadyExistantStructure alreadyExistantFonction) {
-        } catch (WrongRegionDeclaration wrongRegionDeclaration) {
+        } catch (NonExistantType | AlreadyExistantStructure | WrongRegionDeclaration e) {
         }
     }
 

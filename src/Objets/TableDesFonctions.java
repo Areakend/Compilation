@@ -5,7 +5,7 @@ import Exceptions.*;
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
-    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration {
+    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration, NonExistantType, NonExistantStructure {
         Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
 
         if(!tableSymboles.getName().equals("1"))
@@ -13,15 +13,14 @@ public class TableDesFonctions extends Table<String, Fonction> {
         else if(fonction != null && fonction.getArgs().getTypes().equals(args.getTypes()) && fonction.getReturnType().equals(returnType))
             throw new AlreadyExistantFonction(name);
         else {
-            /*
-            for(int i = 0; i < names.size(); i++) {
-                String type = types.get(i);
+            for(String type : args.getTypes())
+                if (!type.equals("bool") && !type.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, type) != null)
+                    throw new NonExistantType(type);
 
-                if(type.equals("bool") || type.equals("i32") || fonctionsTable.get(name) != null)
-                    this.put(name, new Fonction(name, returnType, args));
-                else throw new NonExistantType(type);
-            }
-            */
+            if(returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, returnType) != null)
+                throw new NonExistantType(returnType);
+
+            this.put(name, new Fonction(name, returnType, args));
         }
     }
 
