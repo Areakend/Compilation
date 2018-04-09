@@ -46,8 +46,7 @@ public class TreeParser {
 				String value =null;
 				if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
 					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
-					value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
-					
+					value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);	
 				}
 				tds.ajouterVariable(name, mut, value);
 				break;
