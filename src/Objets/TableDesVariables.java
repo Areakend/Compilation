@@ -10,12 +10,9 @@ public class TableDesVariables extends Table<String, Variable> {
     public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value, boolean pointeur) throws NonMutable {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
         if(variable != null) {
-            try {
-                if(variable.getValue() != null && !variable.isMut())
-                    throw new NonMutable(name);
-                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), value, pointeur));
-            } catch(NonInitialisedVariable nonInitialisedVariable) {
-            }
+            if(variable.getValue() != null && !variable.isMut())
+                throw new NonMutable(name);
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), value, pointeur));
         } else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
             this.put(name, new Variable(name, mut, value,false));
         else this.ajouterVariable(tableSymboles.getParent(), name, mut, value, pointeur);
@@ -25,10 +22,7 @@ public class TableDesVariables extends Table<String, Variable> {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if(variable != null) {
-            try {
-                return variable.getValue();
-            } catch(NonInitialisedVariable nonInitialisedVariable) {
-            }
+            return variable.getValue();
         } else if(tableSymboles.getParent() == null)
             throw new NonExistantVariable(name);
 
