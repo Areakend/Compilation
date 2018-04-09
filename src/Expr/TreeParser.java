@@ -11,10 +11,9 @@ public class TreeParser {
         if(t.isNil()) {
             int nbChilds = t.getChildCount();
 
-            for (int i = 0; i < nbChilds; i++)
-                TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+                for (int i = 0; i < nbChilds; i++)
+                    TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
         } else {
-
             switch (t.getText()) {
                 case "DECL": {
                     String name;
@@ -56,7 +55,7 @@ public class TreeParser {
                     break;
                 }
                 case "BLOC": {
-                    TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
+                    TableDesSymboles tds2 = new TableDesSymboles(tds);
                     int nbChilds = t.getChildCount();
 
                     for (int i = 0; i < nbChilds; i++)
@@ -218,17 +217,9 @@ public class TreeParser {
 										fonctionFils.getReturnType());
 							} catch (InvalidVecteurVariableType | NonExistantFunction e) {
 							}
-                            /*
-								 * } else if (t.getChild(0).getText() ==
-								 * "ASSOC") { Structure structureFils =
-								 * ((TableDesStructures)
-								 * (tds.get(TableType.STRUCT)))
-								 * .getStructure(tds, t.getChild(0).getText());
-								 * isSameTypeStructureVariable(vect.getName(),
-								 * vect.getType(), structureFils.getName(),
-								 * structureFils.getReturnType());
-								 */
-
+						}
+					} catch (NonExistantVariable e) {
+						}
 						} else if (t.getChild(0).getText().equals("CALL_ARGS")) {
 							String name1 = t.getText();
 							try {
@@ -240,49 +231,71 @@ public class TreeParser {
 
 									for (int i = 0; i < nbChilds2; i++) {
 										String theoricalType = fonc.getArgs().getTypes().get(i);
-										String nameVal = t.getChild(i).getText();
-										String realType = TreeParser.findType(nameVal);
-
-										try {
-											TreeParser.isSameType(name1, theoricalType, realType);
+										CommonTree Child = (CommonTree) t.getChild(i);
+										String nameVal = Child.getText();
+										if (Child.getChildCount() == 0) {
 											try {
-												boolean theoricalPointerType = fonc.getArgs().getPointeurs().get(i);
-												char pointertest[] = null;
+												String variable = TreeParser.analyseExp(Child, tds);
+												String realType = TreeParser.findType(variable);
+												try {
+													TreeParser.isSameType(name1, theoricalType, realType);
+													try {
+														boolean theoricalPointerType = fonc.getArgs().getPointeurs()
+																.get(i);
+														char pointertest[] = null;
 
-												nameVal.getChars(0, 0, pointertest, 0);
-												TreeParser.isSamePointerType(theoricalPointerType, pointertest[0]);
+														nameVal.getChars(0, 0, pointertest, 0);
+														TreeParser.isSamePointerType(theoricalPointerType,
+																pointertest[0]);
 
-												if (fonc.getReturnType() == null) {
-													return null;
+														if (fonc.getReturnType() == null) {
+															return null;
+														}
+													} catch (PointerTypeException pointeurTypeException) {
+
+													}
+
+												} catch (InvalidTypeArgument invalidTypeArgument) {
 												}
-												// return Calcul valeur de
-												// fonction(args);
-											} catch (PointerTypeException pointeurTypeException) {
+											} catch (InvalidTypeArgument e) {
 											}
-										} catch (InvalidTypeArgument invalidTypeArgument) {
 										}
-									}
-									if (nbChilds2 == 0) {
-										if (fonc.getReturnType() == null) {
-											return null;
+										else if (Child.getChild(0).getText().equals("IND")) {
+											try {
+												TreeParser.analyseExp(Child, tds);
+												Vecteur vectFils = ((TableDesVecteurs) (tds.get(TableType.VEC))).getVecteur(tds,
+														t.getChild(0).getText());
+												isSameType(fonc.getName(), theoricalType, vectFils.getType());
+											} catch (NonExistantVecteur | InvalidTypeArgument e) {
+										    }
 										}
-										// ajouter valeur fonction dans le cas 0
-										// args
+										else if (Child.getChild(0).getText().equals("CALL_ARGS")) {
+											try {
+												TreeParser.analyseExp(Child, tds);
+												Fonction foncFils = ((TableDesFonctions) (tds.get(TableType.FONC))).getFonction(tds,
+														t.getChild(0).getText());
+												isSameType(fonc.getName(), theoricalType, foncFils.getReturnType());
+											} catch (NonExistantFunction | InvalidTypeArgument e) {
+										    }
+										}
 									}
 								} catch (InvalidArgumentsNumber invalidArgumentsNumber) {
 								}
 							} catch (NonExistantFunction nonExistantFunction) {
 							}
 						}
-					} catch (NonExistantVariable e) {
+						/*
+						 * } else if (t.getChild(0).getText() == "ASSOC") {
+						 * Structure structureFils = ((TableDesStructures)
+						 * (tds.get(TableType.STRUCT))) .getStructure(tds,
+						 * t.getChild(0).getText());
+						 * isSameTypeStructureVariable(vect.getName(),
+						 * vect.getType(), structureFils.getName(),
+						 * structureFils.getReturnType());
+						 */
 					}
-					break;
 				}
-
-			}
-		}
 		return null;
-
 	}
 
 	private static void fillVarNamesTypes(CommonTree node, ArrayList<String> varNames, ArrayList<String> varTypes) {
