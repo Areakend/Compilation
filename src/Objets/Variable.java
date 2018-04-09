@@ -14,27 +14,22 @@ public class Variable {
 	private ArrayList<String> structureVariables;
     private boolean pointeur;
 
-    public Variable(String name) {
-        this(name, false, null, false);
-    }
-
-    public Variable(String name, boolean mut, String value,boolean pointeur) {
+    public Variable(String name, boolean mut, String value, boolean pointeur) {
         this.name = name;
         this.mut = mut;
         this.value = value;
         this.pointeur= pointeur;
     }
 
-    public Variable(String name, boolean mut, String structureName, ArrayList<String> structureVariables,boolean pointeur) {
+    public Variable(String name, boolean mut, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, boolean pointeur) {
         this.name = name;
         this.mut = mut;
         this.pointeur= pointeur;
 
-        /*try {
-            this.setStructure(structureName, structureVariables);
-        } catch(NonExistantStructure nonExistantStructure) {
-        }*/
-
+        try {
+            this.setStructure(tableDesSymboles, structureName, structureVariables);
+        } catch(NonExistantStructure | InvalidTypeAffectation e) {
+        }
     }
     
     public Structure getStructure() throws NonExistantStructure {
@@ -50,10 +45,9 @@ public class Variable {
     public void setName(String name) {
         this.name = name;
     }
-    
 
-    public void setStructure(TableDesSymboles tableSymboles, String structureName, ArrayList<String> structureNewVariables, ArrayList<String> structureNewValeurs) throws NonExistantStructure, InvalidTypeAffectation  {
-        Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
+    private void setStructure(TableDesSymboles tableSymboles, String structureName, ArrayList<String> structureNewValeurs) throws NonExistantStructure, InvalidTypeAffectation  {
+        Structure structure = tableSymboles.getStructure(tableSymboles, structureName);
 
         if(structure != null) {
             this.structure = structure;
@@ -62,22 +56,22 @@ public class Variable {
             for(int i = 0; i < structureVariables.size(); i++) {
                 String var = structureVariables.get(i);
 
-                for(int j = 0; j < structureNewVariables.size(); i++) {
-                    String newVar = structureNewVariables.get(j);
+                for(int j = 0; j < structureNewValeurs.size(); i++) {
+                    String newVar = structureNewValeurs.get(j);
 
-                    /*if() {
+
                         String typeVariable = findType(var);
                         String typeAffect = findType(newVar);
 
                         if(typeVariable.equals(typeAffect))
-                            this.structureVariables.add(structureNewVariables.get(i));
+                            this.structureVariables.add(structureNewValeurs.get(i));
                         else throw new InvalidTypeAffectation(name, typeVariable, typeAffect);
-                    }*/
+
                 }
             }
-        } else if(tableSymboles.getParent() == null)
+        } else if(!tableSymboles.getParent().getName().equals("1"))
             throw new NonExistantStructure(structureName);
-        else this.setStructure(tableSymboles.getParent(), structureName, structureNewVariables, structureNewVariables);
+        else this.setStructure(tableSymboles.getParent(), structureName, structureNewValeurs);
     }
 
     /*public void modifierValeurStructure(String name, String valeur, String type) throws NonExistantStructureVariable, InvalidTypeAffectation {
@@ -98,9 +92,9 @@ public class Variable {
         throw new NonExistantStructureVariable(structure.getStructureName(), names.get(pos));
     }*/
 
-    public String getValue() throws NonInitialisedVariable {
+    public String getValue() /*throws NonInitialisedVariable*/ {
         /*if(value == null)
-            //throw new NonInitialisedVariable(this.name);
+            throw new NonInitialisedVariable(this.name);
         */
         return value;
     }
@@ -108,17 +102,13 @@ public class Variable {
     public boolean isMut() {
         return mut;
     }
+    
+    public boolean isPointeur() {
+        return this.pointeur;
+    }
 
     public void setMut(boolean mut) {
         this.mut = mut;
-    }
-    
-    public boolean isPointeur() {
-        return mut;
-    }
-
-    public void setPointeur(boolean pointeur) {
-        this.pointeur = pointeur;
     }
 
     @Override

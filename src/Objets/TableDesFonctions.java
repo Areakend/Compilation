@@ -15,14 +15,13 @@ public class TableDesFonctions extends Table<String, Fonction> {
             throw new AlreadyExistantFonction(name);
         else {
             if(args != null)
-                for(String type : args.getTypes())
-            
-                    if (!type.equals("bool") && !type.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, type) == null) {
+                for (String type : args.getTypes())
+                    if (!type.equals("bool") && !type.equals("i32") && (tableSymboles.getStructure(tableSymboles, type) == null))
                         throw new NonExistantType(type);
-                    }
-            if(returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, returnType) == null) {
+
+            if(returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && (tableSymboles.getStructure(tableSymboles, returnType) == null))
                 throw new NonExistantType(returnType);
-            }
+
             this.put(name, new Fonction(name, returnType, args));
         }
     }
