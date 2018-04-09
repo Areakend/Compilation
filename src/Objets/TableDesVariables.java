@@ -9,7 +9,6 @@ import java.util.HashMap;
 public class TableDesVariables extends Table<String, Variable> {
 
     public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value) throws NonMutable {
-        //System.out.println(tableSymboles.getParent());
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if(variable != null) {
@@ -56,7 +55,7 @@ public class TableDesVariables extends Table<String, Variable> {
         StringBuilder stringVariables = new StringBuilder("Variables : \n");
 
         for(HashMap.Entry<String, Variable> entry : table.entrySet())
-            stringVariables.append("\t").append(entry.getValue().toString()).append("\n");
+            stringVariables.append("\t").append(entry.getValue().toString());
 
         return stringVariables.toString();
     }

@@ -61,9 +61,9 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesStructures.ajouterStructure(this, name, names, types);
-        } catch (NonSameNumberNamesTypes nonSameNumberNamesTypes) {
         } catch (NonExistantType nonExistantType) {
         } catch(AlreadyExistantStructure alreadyExistantFonction) {
+        } catch (WrongRegionDeclaration wrongRegionDeclaration) {
         }
     }
 

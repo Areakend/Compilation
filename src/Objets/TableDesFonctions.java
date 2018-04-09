@@ -5,24 +5,35 @@ import Exceptions.*;
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
-    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws NoReturn, AlreadyExistantFonction {
+    public void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration {
         Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
-        if(fonction != null && fonction.getArgs().equals(args) && fonction.getReturnType().equals(returnType))
+
+        if(!tableSymboles.getName().equals("1"))
+            throw new WrongRegionDeclaration(name);
+        else if(fonction != null && fonction.getArgs().getTypes().equals(args.getTypes()) && fonction.getReturnType().equals(returnType))
             throw new AlreadyExistantFonction(name);
-        else if(tableSymboles.getParent() == null)
-            this.put(name, new Fonction(name, returnType, args));
-        else this.ajouterFonction(tableSymboles.getParent(), name, returnType, args);
+        else {
+            /*
+            for(int i = 0; i < names.size(); i++) {
+                String type = types.get(i);
+
+                if(type.equals("bool") || type.equals("i32") || fonctionsTable.get(name) != null)
+                    this.put(name, new Fonction(name, returnType, args));
+                else throw new NonExistantType(type);
+            }
+            */
+        }
     }
 
     public Fonction getFonction(TableDesSymboles tableSymboles, String name) throws NonExistantFunction {
         Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
 
-        if(fonction != null)
+        if(!tableSymboles.getName().equals("1"))
+            return this.getFonction(tableSymboles.getParent(), name);
+        else if(fonction != null)
             return fonction;
-        else if(tableSymboles.getParent() == null)
-            throw new NonExistantFunction(name);
 
-        return this.getFonction(tableSymboles.getParent(), name);
+        throw new NonExistantFunction(name);
     }
 
     @Override
