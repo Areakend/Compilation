@@ -42,7 +42,7 @@ public class TableDesStructures extends Table<String, Structure> {
         StringBuilder stringStructures = new StringBuilder("Structures : \n");
 
         for(HashMap.Entry<String, Structure> entry : table.entrySet())
-            stringStructures.append("\t").append(entry.getValue().toString()).append("\n");
+            stringStructures.append("\t").append(entry.getValue().toString());
 
         return stringStructures.toString();
     }

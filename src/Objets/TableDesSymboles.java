@@ -9,12 +9,14 @@ public class TableDesSymboles extends Table<TableType, Table> {
     private TableDesSymboles parent;
     private String name;
 
-    public TableDesSymboles() {
+    public TableDesSymboles(Tables tables) {
+        tables.add(this);
         this.parent = null;
         this.name = "1";
     }
 
-    public TableDesSymboles(TableDesSymboles parent) {
+    public TableDesSymboles(Tables tables, TableDesSymboles parent) {
+        tables.add(this);
         this.parent = parent;
         this.name = this.setName();
     }
@@ -87,6 +89,21 @@ public class TableDesSymboles extends Table<TableType, Table> {
         return this.parent;
     }
 
+    public Variable getVariable(TableDesSymboles tableDesSymboles, String name) throws NonExistantVariable {
+        TableDesVariables tableDesVariables = ((TableDesVariables) tableDesSymboles.get(TableType.VAR));
+
+        if(tableDesVariables != null) {
+            Variable variable = tableDesVariables.get(name);
+
+            if (variable != null)
+                return variable;
+            else if (this.getParent() == null)
+                throw new NonExistantVariable(name);
+        }
+
+        return this.getVariable(tableDesSymboles.getParent(), name);
+    }
+
     private String setName() {
         int maxName = 0;
 
@@ -99,7 +116,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
     @Override
     public String toString() {
-        StringBuilder temp = new StringBuilder("TDS : " + this.name + " - PARENT : " + (this.parent != null ? this.parent.getName() : null) + "\n");
+        StringBuilder temp = new StringBuilder("TDS : " + this.name + " | PARENT : " + (this.parent != null ? this.parent.getName() : null) + "\n");
 
         for(HashMap.Entry<TableType, Table> entry : table.entrySet())
             temp.append("\t").append(entry.getValue().toString()).append("\n");

@@ -117,6 +117,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        return "Variable " + this.name + " " + this.mut + " = " + this.value + " " + this.pointeur +"\n";
+        return "\tVariable : " + this.name + " | mut : " + this.mut + " | val : " + this.value + "\n";
     }
 }
