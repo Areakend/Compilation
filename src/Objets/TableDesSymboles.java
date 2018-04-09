@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class TableDesSymboles extends Table<TableType, Table> {
     private TableDesSymboles parent;
     private String name;
+    private int filsNbr = 0;
 
     public TableDesSymboles(Tables tables) {
         tables.add(this);
@@ -18,9 +19,14 @@ public class TableDesSymboles extends Table<TableType, Table> {
     public TableDesSymboles(Tables tables, TableDesSymboles parent) {
         tables.add(this);
         this.parent = parent;
+        this.parent.ajouterFils();
         this.name = this.setName();
     }
 
+    public void ajouterFils() {
+        this.filsNbr++;
+    }
+    
     public void ajouterVariable(String name, boolean mut, String value) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
@@ -107,13 +113,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
     }
 
     private String setName() {
-        int maxName = 0;
-
-        for(int i = 0; i < this.parent.getTable().size(); i++)
-            if(Integer.valueOf(parent.getName()) == maxName)
-                maxName += 1;
-
-        return this.parent.getName().concat(String.valueOf(maxName));
+        return this.parent.getName().concat(Integer.toString(this.parent.getFilsNbr()));
     }
 
     @Override
@@ -124,5 +124,9 @@ public class TableDesSymboles extends Table<TableType, Table> {
             temp.append("\t").append(entry.getValue().toString()).append("\n");
 
         return temp.toString();
+    }
+
+    public int getFilsNbr() {
+        return filsNbr;
     }
 }

@@ -254,7 +254,7 @@ public class TreeParser {
 
 								for (int i = 0; i < nbChilds2; i++) {
 									String theoricalType = fonc.getArgs().getTypes().get(i);
-									CommonTree Child = (CommonTree) t.getChild(i);
+									CommonTree Child = (CommonTree) t.getChild(i).getChild(0);
 									String nameVal = Child.getText();
 									if (Child.getChildCount() == 0) {
 										try {
