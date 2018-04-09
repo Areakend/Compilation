@@ -55,7 +55,7 @@ public class TreeParser {
                     break;
                 }
                 case "BLOC": {
-                    TableDesSymboles tds2 = new TableDesSymboles(tds);
+                    TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
                     int nbChilds = t.getChildCount();
 
                     for (int i = 0; i < nbChilds; i++)
