@@ -16,7 +16,7 @@ import static Expr.TreeParser.analyseRec;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String file = "ExemplesRust/testsSimples.rs";
+        String file = "ExemplesRust/ex3.rs";
         System.out.println("File to load: " + file);
 
         try {
@@ -29,7 +29,7 @@ public class Main {
 
             ExprParser.fichier_return result = parser.fichier();
             CommonTree t = (CommonTree) result.getTree();
-            
+
             Tables tables = new Tables();
             TableDesSymboles tds = new TableDesSymboles(tables);
 

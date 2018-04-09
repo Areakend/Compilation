@@ -232,8 +232,7 @@ public class TreeParser {
 								}
 							} else if (t.getChild(0).getText().equals("CALL_ARGS")) {
 								try {
-									Fonction fonctionFils = ((TableDesFonctions) (tds.get(TableType.FONC))).getFonction(tds,
-											t.getText());
+									Fonction fonctionFils = tds.getFonction(tds, t.getText());
 									isSameTypeVecteurVariable(vect.getName(), "i32", fonctionFils.getName(),
 											fonctionFils.getReturnType());
 								} catch (InvalidVecteurVariableType e) {
@@ -246,7 +245,7 @@ public class TreeParser {
 					} else if (t.getChild(0).getText().equals("CALL_ARGS")) {
 						String name1 = t.getText();
 						try {
-							Fonction fonc = ((TableDesFonctions) (tds.get(TableType.FONC))).getFonction(tds, name1);
+							Fonction fonc = tds.getFonction(tds, name1);
 							t = (CommonTree) t.getChild(0);
 							int nbChilds2 = t.getChildCount();
 							try {
@@ -262,7 +261,7 @@ public class TreeParser {
 											String realType = TreeParser.findType(variable);
 											try {
 												TreeParser.isSameType(name1, theoricalType, realType);
-												try {
+												/*try {
 													boolean theoricalPointerType = fonc.getArgs().getPointeurs().get(i);
 													char pointertest[] = null;
 
@@ -274,7 +273,7 @@ public class TreeParser {
 													}
 												} catch (PointerTypeException pointeurTypeException) {
 
-												}
+												}*/
 
 											} catch (InvalidTypeArgument invalidTypeArgument) {
 											}
@@ -292,8 +291,7 @@ public class TreeParser {
 									} else if (Child.getChild(0).getText().equals("CALL_ARGS")) {
 										try {
 											TreeParser.analyseExp(Child, tds);
-											Fonction foncFils = ((TableDesFonctions) (tds.get(TableType.FONC)))
-													.getFonction(tds, t.getText());
+											Fonction foncFils = tds.getFonction(tds, t.getText());
 											isSameType(fonc.getName(), theoricalType, foncFils.getReturnType());
 										} catch (NonExistantFunction e) {
 										} catch (InvalidTypeArgument e2) {
@@ -401,7 +399,10 @@ public class TreeParser {
 	}
 
 	private static boolean isBoolean(String str) {
-		return (str.equals("true") || str.equals("false"));
+		if (str!=null) {
+			return (str.equals("true") || str.equals("false"));
+		}
+		return false;
 	}
 
 	private static boolean isSameName(String str1, String str2, String name, int parcours)
