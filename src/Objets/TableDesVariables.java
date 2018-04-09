@@ -10,7 +10,6 @@ public class TableDesVariables extends Table<String, Variable> {
 
     public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value) throws NonMutable {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
-
         if(variable != null) {
             try {
                 if(variable.getValue() != null && !variable.isMut())
