@@ -103,7 +103,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
             if (variable != null)
                 return variable;
-        } else if(tableDesSymboles.getParent().getName().equals("1"))
+        } else if(tableDesSymboles.getName().equals("1"))
             throw new NonExistantVariable(name);
 
         return this.getVariable(tableDesSymboles.getParent(), name);
