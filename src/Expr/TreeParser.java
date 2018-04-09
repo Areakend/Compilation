@@ -7,13 +7,14 @@ import org.antlr.runtime.tree.CommonTree;
 import java.util.ArrayList;
 
 public class TreeParser {
-	public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
+    public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
         if(t.isNil()) {
             int nbChilds = t.getChildCount();
 
-                for (int i = 0; i < nbChilds; i++)
-                    TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+            for (int i = 0; i < nbChilds; i++)
+                TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
         } else {
+
             switch (t.getText()) {
                 case "DECL": {
                     String name;
