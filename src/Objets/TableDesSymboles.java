@@ -45,9 +45,9 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
-        } catch(AlreadyExistantFonction alreadyExistantFonction) {
-        } catch (WrongRegionDeclaration e) {
-		}
+
+        } catch(AlreadyExistantFonction | WrongRegionDeclaration | NonExistantType | NonExistantStructure e) {
+        }
     }
 
     public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
@@ -61,9 +61,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesStructures.ajouterStructure(this, name, names, types);
-        } catch (NonExistantType nonExistantType) {
-        } catch(AlreadyExistantStructure alreadyExistantFonction) {
-        } catch (WrongRegionDeclaration wrongRegionDeclaration) {
+        } catch (NonExistantType | AlreadyExistantStructure | WrongRegionDeclaration e) {
         }
     }
 

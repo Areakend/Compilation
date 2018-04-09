@@ -18,10 +18,11 @@ public class TableDesStructures extends Table<String, Structure> {
             for(int i = 0; i < names.size(); i++) {
                 String type = types.get(i);
 
-                if(type.equals("bool") || type.equals("i32") || structuresTable.get(name) != null)
-                    this.put(name, new Structure(name, names, types));
-                else throw new NonExistantType(type);
+                if(!type.equals("bool") && !type.equals("i32") && structuresTable.get(name) != null)
+                    throw new NonExistantType(type);
             }
+
+            this.put(name, new Structure(name, names, types));
         }
     }
     
