@@ -396,7 +396,7 @@ public class TreeParser {
 	private static void isSameTypeVecteurVariable(String vecteurName, String vecteurType, String variableName,
 			String variableType) throws InvalidVecteurVariableType {
 		if (variableType == null)
-			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName, null);
+			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName,"null");
 		else if (!(vecteurType.equals(variableType)))
 			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName, variableType);
 	}
