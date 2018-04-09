@@ -45,7 +45,6 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
-
         } catch(AlreadyExistantFonction | WrongRegionDeclaration | NonExistantType | NonExistantStructure e) {
         }
     }

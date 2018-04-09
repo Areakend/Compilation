@@ -13,9 +13,10 @@ public class TableDesFonctions extends Table<String, Fonction> {
         else if(fonction != null && fonction.getArgs().getTypes().equals(args.getTypes()) && fonction.getReturnType().equals(returnType))
             throw new AlreadyExistantFonction(name);
         else {
-            for(String type : args.getTypes())
-                if (!type.equals("bool") && !type.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, type) != null)
-                    throw new NonExistantType(type);
+            if(args != null)
+                for(String type : args.getTypes())
+                    if (!type.equals("bool") && !type.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, type) != null)
+                        throw new NonExistantType(type);
 
             if(returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, returnType) != null)
                 throw new NonExistantType(returnType);

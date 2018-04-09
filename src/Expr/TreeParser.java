@@ -8,110 +8,109 @@ import java.util.ArrayList;
 
 public class TreeParser {
 	public static void analyseRec(CommonTree t, TableDesSymboles tds) throws Exception {
+        switch (t.getText()) {
+            case "nil": {
+                int nbChilds = t.getChildCount();
 
-		if (t.getText().equals("nil")) {
-			int nbChilds = t.getChildCount();
+                for (int i = 0; i < nbChilds; i++)
+                    TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
+                break;
+            }
+            case "DECL": {
+                String name;
+                boolean mut = false;
+                int nbChilds = t.getChildCount();
 
-			for (int i = 0; i < nbChilds; i++)
-				TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
-		}
+                if (nbChilds == 1)
+                    name = t.getChild(0).getText();
+                else if (nbChilds == 2) {
+                    if (t.getChild(1).getChildCount() == 0) {
+                        mut = true;
+                        name = t.getChild(1).getText();
+                    } else
+                        name = t.getChild(0).getText();
+                } else {
+                    mut = true;
+                    name = t.getChild(1).getText();
+                }
 
-		if (t.getText().equals("DECL")) {
-			String name;
-			boolean mut = false;
-			int nbChilds = t.getChildCount();
+                if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
+                    CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
+                    String value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
+                    tds.ajouterVariable(name, mut, value);
+                }
+                break;
+            }
+            case "STRUCT": {
+                String nameStruct = t.getChild(0).getText();
+                ArrayList<String> varNames = new ArrayList<>();
+                ArrayList<String> varTypes = new ArrayList<>();
+                int nbChilds = t.getChildCount();
 
-			if (nbChilds == 1)
-				name = t.getChild(0).getText();
-			else if (nbChilds == 2) {
-				if (t.getChild(1).getChildCount() == 0) {
-					mut = true;
-					name = t.getChild(1).getText();
-				} else
-					name = t.getChild(0).getText();
-			} else {
-				mut = true;
-				name = t.getChild(1).getText();
-			}
+                for (int i = 1; i < nbChilds; i++) {
+                    CommonTree node = (CommonTree) t.getChild(i);
+                    fillVarNamesTypes(node, varNames, varTypes);
+                }
 
-			if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
-				CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
-				String value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
-				tds.ajouterVariable(name, mut, value);
-			}
-		}
+                tds.ajouterStructure(nameStruct, varNames, varTypes);
+                break;
+            }
+            case "BLOC": {
+                TableDesSymboles tds2 = new TableDesSymboles(tds);
+                int nbChilds = t.getChildCount();
 
-		if (t.getText().equals("STRUCT")) {
-			String nameStruct = t.getChild(0).getText();
-			ArrayList<String> varNames = new ArrayList<>();
-			ArrayList<String> varTypes = new ArrayList<>();
-			int nbChilds = t.getChildCount();
+                for (int i = 0; i < nbChilds; i++)
+                    TreeParser.analyseRec((CommonTree) t.getChild(i), tds2);
+                break;
+            }
+            case "IF":
+                TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+                for (int i = 1; i < t.getChildCount(); i++)
+                    TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
+                break;
+            case "ELSE":
+                TreeParser.analyseRec((CommonTree) t.getChild(0), tds);
+                break;
+            case "WHILE":
+                TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+                TreeParser.analyseRec((CommonTree) t.getChild(1), tds);
+                break;
+            case "FUNC":
+                String nameFunc = t.getChild(0).getText();
+                String returnType = null;
+                Arguments args = null;
+                ArrayList<String> argNames;
+                ArrayList<String> argTypes;
 
-			for (int i = 1; i < nbChilds; i++) {
-				CommonTree node = (CommonTree) t.getChild(i);
-				fillVarNamesTypes(node, varNames, varTypes);
-			}
+                for (int i = 1; i < t.getChildCount(); i++) {
+                    CommonTree node = (CommonTree) t.getChild(i);
+                    switch (node.getText()) {
+                        case "FUNC_ARGS":
+                            argNames = new ArrayList<>();
+                            argTypes = new ArrayList<>();
 
-			tds.ajouterStructure(nameStruct, varNames, varTypes);
-		}
+                            for (int j = 0; j < node.getChildCount(); j++) {
+                                CommonTree node2 = (CommonTree) node.getChild(j);
+                                fillVarNamesTypes(node2, argNames, argTypes);
+                            }
 
-		if (t.getText().equals("BLOC")) {
-			TableDesSymboles tds2 = new TableDesSymboles(tds);
-			int nbChilds = t.getChildCount();
-
-			for (int i = 0; i < nbChilds; i++)
-				TreeParser.analyseRec((CommonTree) t.getChild(i), tds2);
-		}
-
-		if (t.getText().equals("IF")) {
-			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
-			for (int i = 1; i < t.getChildCount(); i++)
-				TreeParser.analyseRec((CommonTree) t.getChild(i), tds);
-		}
-
-		if (t.getText().equals("ELSE")) {
-			TreeParser.analyseRec((CommonTree) t.getChild(0), tds);
-		}
-
-		if (t.getText().equals("WHILE")) {
-			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
-			TreeParser.analyseRec((CommonTree) t.getChild(1), tds);
-		}
-
-		if (t.getText().equals("FUNC")) {
-			String nameFunc = t.getChild(0).getText();
-			String returnType = null;
-			Arguments args = null;
-			ArrayList<String> argNames;
-			ArrayList<String> argTypes;
-
-			for (int i = 1; i < t.getChildCount(); i++) {
-				CommonTree node = (CommonTree) t.getChild(i);
-				switch (node.getText()) {
-				case "FUNC_ARGS":
-					argNames = new ArrayList<>();
-					argTypes = new ArrayList<>();
-
-					for (int j = 0; j < node.getChildCount(); j++) {
-						CommonTree node2 = (CommonTree) node.getChild(j);
-						fillVarNamesTypes(node2, argNames, argTypes);
-					}
-
-					args = new Arguments(argNames, argTypes, null);
-					break;
-				case "BLOC":
-					tds.ajouterFonction(nameFunc, returnType, args);
-					TreeParser.analyseRec(node, tds);
-					break;
-				default:
-					returnType = node.getText();
-					break;
-				}
-			}
-		}
-
-		if (t.getText().equals("print") || t.getText().equals("RETURN"))
-			TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+                            args = new Arguments(argNames, argTypes, null);
+                            break;
+                        case "BLOC":
+                            tds.ajouterFonction(nameFunc, returnType, args);
+                            TreeParser.analyseRec(node, tds);
+                            break;
+                        default:
+                            returnType = node.getText();
+                            break;
+                    }
+                }
+                break;
+            case "print":
+            case "RETURN":
+                TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+                break;
+        }
 	}
 
 	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
