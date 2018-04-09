@@ -3,5 +3,5 @@ fn test(a : i32) {
 }
 
 fn main() {
-    return test(4);
+    return(test(4));
 }
