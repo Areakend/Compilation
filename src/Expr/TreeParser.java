@@ -153,29 +153,29 @@ public class TreeParser {
 
 			switch (s) {
 			case "+":
-				return fg + " + " + fd;
+				return "(" + fg + " + " + fd + ")";
 			case "-":
-				return fg + " - " + fd;
+				return "(" + fg + " - " + fd + ")";
 			case "*":
-				return fg + " * " + fd;
+				return "(" + fg + " * " + fd + ")";
 			case "/":
-				return fg + " / " + fd;
+				return "(" + fg + " / " + fd + ")";
 			case "<":
-				return fg + " < " + fd;
+				return "(" + fg + " < " + fd + ")";
 			case "<=":
-				return fg + " <= " + fd;
+				return "(" + fg + " <= " + fd + ")";
 			case ">":
-				return fg + " > " + fd;
+				return "(" + fg + " > " + fd + ")";
 			case ">=":
-				return fg + " >= " + fd;
+				return "(" + fg + " >= " + fd + ")";
 			case "==":
-				return fg + " == " + fd;
+				return "(" + fg + " == " + fd + ")";
 			case "!=":
-				return fg + " != " + fd;
+				return "(" + fg + " != " + fd + ")";
 			case "&&":
-				return fg + " && " + fd;
+				return "(" + fg + " && " + fd + ")";
 			case "||":
-				return fg + " || " + fd;
+				return "(" + fg + " || " + fd + ")";
 			}
 			break;
 		default:
@@ -185,7 +185,9 @@ public class TreeParser {
 				int nbChilds = t.getChildCount();
 				if (nbChilds == 0) {
 					try {
-						return tds.getVariable(tds, s).getName();
+						
+						return tds.getVariable(tds, s).getValue();
+						
 					} catch (NonExistantVariable nonExistantVariable) {
 					}
 				} else if (t.getChild(0).getText().equals("IND")) {
