@@ -29,6 +29,7 @@ public class TreeParser {
 			case "DECL": {
 				String name;
 				boolean mut = false;
+				boolean pointeur = false;
 				int nbChilds = t.getChildCount();
 				int posName=0;
 
