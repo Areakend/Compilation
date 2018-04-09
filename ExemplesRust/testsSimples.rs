@@ -1,9 +1,7 @@
-let mut a = 3 * 2 + 4;
-let b = 1;
-let mut c;
-let d;
+fn test(a : i32) {
+    return a+1;
+}
 
-struct tab {
-    taille : i32,
-    tableau : Vec<i32>
+fn main() {
+    return test(4);
 }

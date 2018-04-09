@@ -99,9 +99,9 @@ public class Variable {
     }*/
 
     public String getValue() throws NonInitialisedVariable {
-        if(value == null)
-            throw new NonInitialisedVariable(this.name);
-
+        /*if(value == null)
+            //throw new NonInitialisedVariable(this.name);
+        */
         return value;
     }
 

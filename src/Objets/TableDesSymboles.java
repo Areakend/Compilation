@@ -101,7 +101,9 @@ public class TableDesSymboles extends Table<TableType, Table> {
                 throw new NonExistantVariable(name);
         }
 
-        return this.getVariable(tableDesSymboles.getParent(), name);
+        if(this.getParent() != null)
+            return this.getVariable(tableDesSymboles.getParent(), name);
+        else throw new NonExistantVariable(name);
     }
 
     private String setName() {
