@@ -2,7 +2,6 @@ package Objets;
 
 import Exceptions.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
@@ -18,6 +17,7 @@ public class TableDesFonctions extends Table<String, Fonction> {
                 for(String type : args.getTypes())
             
                     if (!type.equals("bool") && !type.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, type) == null) {
+   
                         throw new NonExistantType(type);
                     }
             if(returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).getStructure(tableSymboles, returnType) == null) {

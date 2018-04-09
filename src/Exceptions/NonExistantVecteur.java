@@ -1,7 +1,9 @@
 package Exceptions;
 
+import Expr.TreeParser;
+
 public class NonExistantVecteur extends Exception {
     public NonExistantVecteur(String name) {
-        System.out.println("Erreur ligne : \"" + "Le vecteur " + name + "\" n'existe pas\n");
+        System.out.println("Erreur ligne : \"" + TreeParser.LIGNE + "Le vecteur " + name + "\" n'existe pas\n");
     }
 }
