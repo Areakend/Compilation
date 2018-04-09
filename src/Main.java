@@ -29,11 +29,7 @@ public class Main {
 
             ExprParser.fichier_return result = parser.fichier();
             CommonTree t = (CommonTree) result.getTree();
-
-            System.out.println("COUCOU");
-            System.out.println(t.getChild(1).getChild(1).getChild(0).getChild(0).getText());
-            System.out.println(t.getChild(1).getChild(1).getChild(0).getChild(0).getChildCount());
-
+            
             Tables tables = new Tables();
             TableDesSymboles tds = new TableDesSymboles(tables);
 
