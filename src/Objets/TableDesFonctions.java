@@ -41,7 +41,7 @@ public class TableDesFonctions extends Table<String, Fonction> {
         StringBuilder stringFonctions = new StringBuilder("Fonctions : \n");
 
         for(HashMap.Entry<String, Fonction> entry : table.entrySet())
-            stringFonctions.append("\t").append(entry.getValue().toString()).append("\n");
+            stringFonctions.append("\t").append(entry.getValue().toString());
 
         return stringFonctions.toString();
     }

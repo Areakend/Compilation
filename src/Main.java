@@ -31,13 +31,11 @@ public class Main {
             CommonTree t = (CommonTree) result.getTree();
 
             Tables tables = new Tables();
-            TableDesSymboles tds = new TableDesSymboles();
-            tables.add(tds);
+            TableDesSymboles tds = new TableDesSymboles(tables);
 
-            analyseRec(t,tds);
+            analyseRec(tables, t, tds);
 
             System.out.println(tables.toString());
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

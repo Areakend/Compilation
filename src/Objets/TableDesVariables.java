@@ -39,17 +39,6 @@ public class TableDesVariables extends Table<String, Variable> {
         return this.getValeurVariable(tableSymboles.getParent(), name);
     }
 
-    public Variable getVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
-        Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
-
-        if(variable != null)
-            return variable;
-        else if(tableSymboles.getParent() == null)
-            throw new NonExistantVariable(name);
-
-        return this.getVariable(tableSymboles.getParent(), name);
-    }
-
     @Override
     public String toString() {
         StringBuilder stringVariables = new StringBuilder("Variables : \n");

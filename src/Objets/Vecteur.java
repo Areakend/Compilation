@@ -52,7 +52,8 @@ public class Vecteur {
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("Vecteur " + this.name + " : " + this.type + " =\n");
+        StringBuilder res = new StringBuilder("Vecteur " + this.name + " | type : " + this.type + "\n");
+
         for(int i = 0; i < this.valeurs.size(); i++)
             res.append("\t").append(this.valeurs.get(i)).append("\n");
 
