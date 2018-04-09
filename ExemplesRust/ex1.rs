@@ -1,44 +1,20 @@
-
-fn ntm() {
-    let mut total = 0;
-    let mut i = 0;
-    let n = 10;
-    let mut test = i <= n;
-    while test
-    {
-        let total = total + i * i;
-        let i = i + 1;
-        let zeubi = 0;
-
-        if i == 5
-        {
-            print!(5)
-        }
-
-        let test = i <= n;
-    }
-
-    print!(total);
-}
-
 fn main() {
     let mut total = 0;
     let mut i = 0;
     let n = 10;
     let mut test = i <= n;
     while test
-    {
-        let total = total + i * i;
-        let i = i + 1;
-        let zeubi = 0;
-
-        if i == 5
         {
-            print!(5)
-        }
+            let total = total + i * i;
+            let i = i + 1;
 
-        let test = i <= n;
-    }
+            if i == 5
+                {
+                    print!(5)
+                }
+
+            let test = i <= n;
+        }
 
     print!(total);
 }
