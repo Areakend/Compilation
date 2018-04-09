@@ -27,17 +27,6 @@ public class TableDesFonctions extends Table<String, Fonction> {
         }
     }
 
-    public Fonction getFonction(TableDesSymboles tableSymboles, String name) throws NonExistantFunction {
-        Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
-
-        if(!tableSymboles.getName().equals("1"))
-            return this.getFonction(tableSymboles.getParent(), name);
-        else if(fonction != null)
-            return fonction;
-
-        throw new NonExistantFunction(name);
-    }
-
     @Override
     public String toString() {
         StringBuilder stringFonctions = new StringBuilder("Fonctions : \n");

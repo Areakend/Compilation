@@ -109,6 +109,20 @@ public class TableDesSymboles extends Table<TableType, Table> {
         return this.getVariable(tableDesSymboles.getParent(), name);
     }
 
+    public Fonction getFonction(TableDesSymboles tableDesSymboles, String name) throws NonExistantFunction {
+        TableDesFonctions tableDesFonctions = ((TableDesFonctions) tableDesSymboles.get(TableType.FONC));
+
+        if(tableDesFonctions != null) {
+            Fonction fonction = tableDesFonctions.get(name);
+
+            if (fonction != null)
+                return fonction;
+        } else if(tableDesSymboles.getName().equals("1"))
+            throw new NonExistantFunction(name);
+
+        return this.getFonction(tableDesSymboles.getParent(), name);
+    }
+
     private String setName() {
         return this.parent.getName().concat(Integer.toString(this.parent.getFilsNbr()));
     }
