@@ -387,6 +387,8 @@ public class TreeParser {
 	}
 
 	private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
+		if (realType == null)
+			throw new InvalidTypeArgument(name, theoricalType, "null");
 		if (!(theoricalType.equals(realType)))
 			throw new InvalidTypeArgument(name, theoricalType, realType);
 	}
