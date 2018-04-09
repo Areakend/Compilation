@@ -2,15 +2,21 @@ package Expr;
 
 import Exceptions.*;
 import Objets.*;
+
+
 import org.antlr.runtime.tree.CommonTree;
 
 import java.util.ArrayList;
 
 public class TreeParser {
+	
+	public static int LIGNE = 0;
 
 	public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
 
 		System.out.println(t.getText());
+	
+		TreeParser.LIGNE = t.getLine();
 
 		if (t.isNil()) {
 			int nbChilds = t.getChildCount();
