@@ -405,6 +405,8 @@ public class TreeParser {
 	}
 
 	private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
+		if (realType == null)
+			throw new InvalidTypeArgument(name, theoricalType, "null");
 		if (!(theoricalType.equals(realType)))
 			throw new InvalidTypeArgument(name, theoricalType, realType);
 	}
@@ -412,7 +414,7 @@ public class TreeParser {
 	private static void isSameTypeVecteurVariable(String vecteurName, String vecteurType, String variableName,
 			String variableType) throws InvalidVecteurVariableType {
 		if (variableType == null)
-			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName, null);
+			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName,"null");
 		else if (!(vecteurType.equals(variableType)))
 			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName, variableType);
 	}

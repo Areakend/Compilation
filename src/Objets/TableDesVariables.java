@@ -7,21 +7,18 @@ import Exceptions.NonMutable;
 import java.util.HashMap;
 
 public class TableDesVariables extends Table<String, Variable> {
-
-    public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value) throws NonMutable {
+    public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value, boolean pointeur) throws NonMutable {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
         if(variable != null) {
             try {
                 if(variable.getValue() != null && !variable.isMut())
                     throw new NonMutable(name);
-                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), value, false));
+                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), value, pointeur));
             } catch(NonInitialisedVariable nonInitialisedVariable) {
             }
         } else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
             this.put(name, new Variable(name, mut, value,false));
-        else {
-            this.ajouterVariable(tableSymboles.getParent(), name, mut, value);
-        }
+        else this.ajouterVariable(tableSymboles.getParent(), name, mut, value, pointeur);
     }
 
     public String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {

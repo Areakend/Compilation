@@ -123,6 +123,20 @@ public class TableDesSymboles extends Table<TableType, Table> {
         return this.getFonction(tableDesSymboles.getParent(), name);
     }
 
+    public Structure getStructure(TableDesSymboles tableDesSymboles, String name) throws NonExistantStructure {
+        TableDesStructures tableDesStructures = ((TableDesStructures) tableDesSymboles.get(TableType.STRUCT));
+
+        if(tableDesStructures != null) {
+            Structure structure = tableDesStructures.get(name);
+
+            if (structure != null)
+                return structure;
+        } else if(tableDesSymboles.getName().equals("1"))
+            throw new NonExistantStructure(name);
+
+        return this.getStructure(tableDesSymboles.getParent(), name);
+    }
+
     private String setName() {
         return this.parent.getName().concat(Integer.toString(this.parent.getFilsNbr()));
     }
