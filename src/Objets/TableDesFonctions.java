@@ -15,7 +15,7 @@ public class TableDesFonctions extends Table<String, Fonction> {
         else {
             if(args != null)
                 for (String type : args.getTypes())
-                    if (!type.equals("bool") && !type.equals("i32") && (tableSymboles.getStructure(tableSymboles, type) == null))
+                    if (!type.equals("bool") && !type.equals("i32") && !type.equals("& bool") && !type.equals("& i32") && (tableSymboles.getStructure(tableSymboles, type) == null))
                         throw new NonExistantType(type);
 
             if(returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && (tableSymboles.getStructure(tableSymboles, returnType) == null))
