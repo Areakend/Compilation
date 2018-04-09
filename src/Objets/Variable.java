@@ -11,7 +11,7 @@ public class Variable {
     private boolean mut;
     private String value;
     private Structure structure;
-    private ArrayList<String> structureVariables;
+	private ArrayList<String> structureVariables;
     private boolean pointeur;
 
     public Variable(String name) {
@@ -36,7 +36,13 @@ public class Variable {
         }*/
 
     }
-
+    
+    public Structure getStructure() throws NonExistantStructure {
+    	if (structure == null)
+    		throw new NonExistantStructure(" null ");
+		return structure;
+	}
+    
     public String getName() {
         return name;
     }

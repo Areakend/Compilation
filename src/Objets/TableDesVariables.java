@@ -14,7 +14,7 @@ public class TableDesVariables extends Table<String, Variable> {
             try {
                 if(variable.getValue() != null && !variable.isMut())
                     throw new NonMutable(name);
-                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, mut, value, false));
+                else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), value, false));
             } catch(NonInitialisedVariable nonInitialisedVariable) {
             }
         } else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
