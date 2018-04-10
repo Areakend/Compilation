@@ -21,7 +21,7 @@ public class Variable {
         this.pointeur = pointeur;
     }
 
-    public Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
+    Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
         this.name = name;
 
         try {

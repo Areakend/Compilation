@@ -42,6 +42,18 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
     }
 
+    public void ajouterStructureVariable(String name, String structureName, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
+        TableType tableType = TableType.VAR;
+        TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
+
+        if(tableDesVariables == null) {
+            tableDesVariables = new TableDesVariables();
+            this.put(tableType, tableDesVariables);
+        }
+
+        tableDesVariables.ajouterStructureVariable(this, name, structureName, structureVariables, structureValeurs, pointeur);
+    }
+
     public void ajouterFonction(String name, String returnType, Arguments arguments) {
         TableType tableType = TableType.FONC;
         TableDesFonctions tableDesFonctions = (TableDesFonctions) this.get(tableType);
