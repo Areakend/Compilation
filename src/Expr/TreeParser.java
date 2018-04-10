@@ -40,7 +40,7 @@ public class TreeParser {
 					}
 				} else {
 					mut = true;
-					posName=0;
+					posName=1;
 				}
 
 				if (t.getChild(posName).getText().equals("SPE_UNAIRE")) {
