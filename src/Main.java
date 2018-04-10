@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
 
-        String file = "ExemplesRust/testsBasiques.rs";
+        String file = "ExemplesRust/ex3.rs";
 
         System.out.println("File to load: " + file);
 

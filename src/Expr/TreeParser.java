@@ -305,7 +305,6 @@ public class TreeParser {
 
 										// if (name1!="CALL_ARGS") {
 										Fonction fonction = tds.getFonction(tds, name1);
-										System.out.println(fonction.getName());
 
 										// Variable variable =
 										// tds.getVariable(tds, name1);
@@ -318,7 +317,6 @@ public class TreeParser {
 
 										// String realType =
 										// TreeParser.findType(variable.getValue());
-										System.out.println(realType);
 										try {
 
 											TreeParser.isSameType(name1, theoricalType, realType);
@@ -362,8 +360,7 @@ public class TreeParser {
 									try {
 										TreeParser.analyseExp(Child, tds);
 										Fonction foncFils = tds.getFonction(tds, t.getText());
-										System.out.println(foncFils.getName());
-										System.out.println(foncFils.getReturnType());
+
 										isSameType(fonc.getName(), theoricalType, foncFils.getReturnType());
 									} catch (NonExistantFunction e) {
 									} catch (InvalidTypeArgument e2) {
