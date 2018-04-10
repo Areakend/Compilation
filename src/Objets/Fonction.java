@@ -7,7 +7,7 @@ public class Fonction {
     private String returnType;
     private Arguments args;
 
-    public Fonction(String name, String returnType, Arguments args) {
+    Fonction(String name, String returnType, Arguments args) {
         this.name = name;
         this.returnType = returnType;
         this.args = args;
