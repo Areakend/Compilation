@@ -15,8 +15,6 @@ public class TreeParser {
 
 	public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
 
-		System.out.println(t.getText());
-
 		TreeParser.LIGNE = t.getLine();
 
 		if (t.isNil()) {
@@ -239,8 +237,19 @@ public class TreeParser {
 				int nbChilds = t.getChildCount();
 				if (nbChilds == 0) {
 					try {
-						Variable variable = tds.getVariable(tds, t.getText());
-						return variable.getValue();
+						if (t.getText().equals("true")){
+							return "true";
+						}
+						else if (t.getText().equals("false")){
+							return "false";
+						}
+						else {Variable variable = tds.getVariable(tds, t.getText());
+						if (variable.getValue()==null ||  isInteger(variable.getValue())) {
+							return variable.getName();
+							} else {
+								return variable.getValue();
+							}
+						}
 					} catch (NonExistantVariable nonExistantVariable) {
 					}
 				} else if (t.getChild(0).getText().equals("IND")) {

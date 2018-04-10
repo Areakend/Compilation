@@ -1,8 +1,8 @@
-fn verifierPriorite(a:i32,b:i32,c:i32,d:i32) -> bool {
+fn verifierPriorite(a:i32,b:i32,c:i32,d:i32,e:i32) -> bool {
   let res1 = a+b*c/d-2*d;
   let res2 = (a+((b*c)/d))-(2*d);
 
-  let res3 = a+b*c/d-2*d-4||h;
+  let res3 = a+b*c/d-2*d-4||e;
 
   return (res1==res2);
 }
