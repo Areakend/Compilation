@@ -25,17 +25,6 @@ public class TableDesStructures extends Table<String, Structure> {
             this.put(name, new Structure(name, names, types));
         }
     }
-    
-    public Structure getStructure(TableDesSymboles tableSymboles, String name) throws NonExistantStructure {
-        Structure structure = ((TableDesStructures) tableSymboles.get(TableType.STRUCT)).get(name);
-
-        if(!tableSymboles.getName().equals("1"))
-            return this.getStructure(tableSymboles.getParent(), name);
-        else if(structure != null)
-            return structure;
-
-        throw new NonExistantStructure(name);
-    }
 
     @Override
     public String toString() {

@@ -29,26 +29,32 @@ public class TreeParser {
 			case "DECL": {
 				String name;
 				boolean mut = false;
+				boolean pointeur = false;
 				int nbChilds = t.getChildCount();
+				int posName=0;
 
-				if (nbChilds == 1)
-					name = t.getChild(0).getText();
-				else if (nbChilds == 2) {
+				if (nbChilds == 2) {
 					if (t.getChild(1).getChildCount() == 0) {
 						mut = true;
-						name = t.getChild(1).getText();
-					} else
-						name = t.getChild(0).getText();
+						posName=1;
+					}
 				} else {
 					mut = true;
-					name = t.getChild(1).getText();
+					posName=1;
+				}
+
+				if (t.getChild(posName).getText().equals("SPE_UNAIRE")) {
+					name = t.getChild(posName).getChild(1).getText();
+					pointeur = true;
+				} else {
+					name = t.getChild(posName).getText();
 				}
 				String value =null;
 				if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
 					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
 					value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);	
 				}
-				tds.ajouterVariable(name, mut, value);
+				tds.ajouterVariable(name, mut, value,pointeur);
 				break;
 			}
 			case "STRUCT": {
@@ -118,8 +124,13 @@ public class TreeParser {
 						TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
 						if (args!=null) {
 							ArrayList<String> names = args.getNames();
+							ArrayList<String> types = args.getTypes();
 							for (int k = 0; k < names.size(); k++) {
-								tds2.ajouterVariable(names.get(k), true, null);
+								boolean pointeur = false;
+								if (types.get(k).equals("& i32") || types.get(k).equals("& bool")) {
+									pointeur = true;
+								}
+								tds2.ajouterVariable(names.get(k), true, null, pointeur);
 							}
 						}
 						TreeParser.analyseRec(tables, node, tds2);
@@ -364,7 +375,15 @@ public class TreeParser {
 		String name = node.getChild(0).getText();
 		String temp = node.getChild(1).getText();
 		String type = temp;
-		node = (CommonTree) node.getChild(1);
+
+		if (temp.equals("&")) {
+			type = type.concat(" ");
+			type = type.concat(node.getChild(2).getText());
+			node = (CommonTree) node.getChild(2);
+		}
+		else {
+			node = (CommonTree) node.getChild(1);
+		}
 
 		while (temp.equals("VEC")) {
 			node = (CommonTree) node.getChild(0);
