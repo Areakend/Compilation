@@ -79,14 +79,15 @@ public class TreeParser {
 				String nameStruct = t.getChild(0).getText();
 				ArrayList<String> varNames = new ArrayList<>();
 				ArrayList<String> varTypes = new ArrayList<>();
-				int nbChilds = t.getChildCount();
+                ArrayList<Boolean> varPointeurs = new ArrayList<>();
+                int nbChilds = t.getChildCount();
 
 				for (int i = 1; i < nbChilds; i++) {
 					CommonTree node = (CommonTree) t.getChild(i);
-					fillVarNamesTypes(node, varNames, varTypes);
+					fillVarNamesTypes(node, varNames, varTypes, varPointeurs);
 				}
 
-				tds.ajouterStructure(nameStruct, varNames, varTypes);
+				tds.ajouterStructure(nameStruct, varNames, varTypes, varPointeurs);
 				break;
 			}
 			case "BLOC": {
@@ -121,6 +122,7 @@ public class TreeParser {
 				Arguments args = null;
 				ArrayList<String> argNames;
 				ArrayList<String> argTypes;
+				ArrayList<Boolean> argPointeurs;
 
 				for (int i = 1; i < t.getChildCount(); i++) {
 					CommonTree node = (CommonTree) t.getChild(i);
@@ -128,13 +130,14 @@ public class TreeParser {
 					case "FUNC_ARGS":
 						argNames = new ArrayList<>();
 						argTypes = new ArrayList<>();
+						argPointeurs = new ArrayList<>();
 
 						for (int j = 0; j < node.getChildCount(); j++) {
 							CommonTree node2 = (CommonTree) node.getChild(j);
-							fillVarNamesTypes(node2, argNames, argTypes);
+							fillVarNamesTypes(node2, argNames, argTypes, argPointeurs);
 						}
 
-						args = new Arguments(argNames, argTypes, null);
+						args = new Arguments(argNames, argTypes, argPointeurs);
 						break;
 					case "BLOC":
 						tds.ajouterFonction(nameFunc, returnType, args);
@@ -423,16 +426,18 @@ public class TreeParser {
 		return null;
 	}
 
-	private static void fillVarNamesTypes(CommonTree node, ArrayList<String> varNames, ArrayList<String> varTypes) {
+	private static void fillVarNamesTypes(CommonTree node, ArrayList<String> varNames, ArrayList<String> varTypes, ArrayList<Boolean> varPointeur) {
 		String name = node.getChild(0).getText();
 		String temp = node.getChild(1).getText();
 		String type = temp;
 
 		if (temp.equals("&")) {
+            varPointeur.add(true);
 			type = type.concat(" ");
 			type = type.concat(node.getChild(2).getText());
 			node = (CommonTree) node.getChild(2);
 		} else {
+		    varPointeur.add(false);
 			node = (CommonTree) node.getChild(1);
 		}
 

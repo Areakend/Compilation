@@ -57,7 +57,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
     }
 
-    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types) {
+    public void ajouterStructure(String name, ArrayList<String> names, ArrayList<String> types, ArrayList<Boolean> pointeurs) {
         TableType tableType = TableType.STRUCT;
         TableDesStructures tableDesStructures = (TableDesStructures) this.get(tableType);
 
@@ -67,7 +67,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            tableDesStructures.ajouterStructure(this, name, names, types);
+            tableDesStructures.ajouterStructure(this, name, names, types, pointeurs);
         } catch (NonExistantType | AlreadyExistantStructure | WrongRegionDeclaration e) {
         }
     }
