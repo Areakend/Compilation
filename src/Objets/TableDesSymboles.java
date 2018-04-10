@@ -27,7 +27,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         this.filsNbr++;
     }
     
-    public void ajouterVariable(String name, boolean mut, String value) {
+    public void ajouterVariable(String name, boolean mut, String value, boolean pointeur) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
@@ -37,7 +37,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            tableDesVariables.ajouterVariable(this, name, mut, value);
+            tableDesVariables.ajouterVariable(this, name, mut, value, pointeur);
         } catch(NonMutable nonMutable) {
         }
     }
@@ -121,6 +121,20 @@ public class TableDesSymboles extends Table<TableType, Table> {
             throw new NonExistantFunction(name);
 
         return this.getFonction(tableDesSymboles.getParent(), name);
+    }
+
+    public Structure getStructure(TableDesSymboles tableDesSymboles, String name) throws NonExistantStructure {
+        TableDesStructures tableDesStructures = ((TableDesStructures) tableDesSymboles.get(TableType.STRUCT));
+
+        if(tableDesStructures != null) {
+            Structure structure = tableDesStructures.get(name);
+
+            if (structure != null)
+                return structure;
+        } else if(tableDesSymboles.getName().equals("1"))
+            throw new NonExistantStructure(name);
+
+        return this.getStructure(tableDesSymboles.getParent(), name);
     }
 
     private String setName() {

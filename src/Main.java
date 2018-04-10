@@ -16,7 +16,9 @@ import static Expr.TreeParser.analyseRec;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String file = "ExemplesRust/ex3.rs";
+
+        String file = "ExemplesRust/ex4.rs";
+
         System.out.println("File to load: " + file);
 
         try {
