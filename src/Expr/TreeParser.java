@@ -254,19 +254,33 @@ public class TreeParser {
 							Fonction fonc = tds.getFonction(tds, name1);
 							t = (CommonTree) t.getChild(0);
 							int nbChilds2 = t.getChildCount();
+
 							try {
 								fonc.validNumberArgs(fonc, nbChilds2);
-
 								for (int i = 0; i < nbChilds2; i++) {
 									String theoricalType = fonc.getArgs().getTypes().get(i);
 									CommonTree Child = (CommonTree) t.getChild(i).getChild(0);
 									String nameVal = Child.getText();
-									if (Child.getChildCount() == 0) {
+									if (Child.getChildCount() == 0 && name1!="CALL_ARGS") {
 										try {
-											String variable = TreeParser.analyseExp(Child, tds);
-											String realType = TreeParser.findType(variable);
+											
+										//	if (name1!="CALL_ARGS") {
+											Fonction fonction = tds.getFonction(tds, name1);
+											System.out.println(fonction.getName());
+
+										//	Variable variable = tds.getVariable(tds, name1);
+											
+										//	System.out.println(variable.getName());
+										//	String realType = TreeParser.findType(fonction.getReturnType());
+											String realType = fonction.getReturnType();
+										//	System.out.println(fonction.getReturnType());
+
+										//	String realType = TreeParser.findType(variable.getValue());
+											System.out.println(realType);
 											try {
+												
 												TreeParser.isSameType(name1, theoricalType, realType);
+
 												/*try {
 													boolean theoricalPointerType = fonc.getArgs().getPointeurs().get(i);
 													char pointertest[] = null;
@@ -283,7 +297,8 @@ public class TreeParser {
 
 											} catch (InvalidTypeArgument invalidTypeArgument) {
 											}
-										} catch (InvalidTypeArgument e) {
+									//	} catch (NonExistantVariable e) {
+										}catch (NonExistantFunction e2){
 										}
 									} else if (Child.getChild(0).getText().equals("IND")) {
 										try {
@@ -295,9 +310,12 @@ public class TreeParser {
 										} catch (InvalidTypeArgument e2) {
 										}
 									} else if (Child.getChild(0).getText().equals("CALL_ARGS")) {
+
 										try {
 											TreeParser.analyseExp(Child, tds);
 											Fonction foncFils = tds.getFonction(tds, t.getText());
+											System.out.println(foncFils.getName());
+											System.out.println(foncFils.getReturnType());
 											isSameType(fonc.getName(), theoricalType, foncFils.getReturnType());
 										} catch (NonExistantFunction e) {
 										} catch (InvalidTypeArgument e2) {
