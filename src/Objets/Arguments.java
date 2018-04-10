@@ -6,7 +6,8 @@ public class Arguments {
     private ArrayList<String> names;
     private ArrayList<String> types;
     private ArrayList<Boolean> pointeurs;
-    public Arguments(ArrayList<String> names, ArrayList<String> types,ArrayList<Boolean> pointeurs) {
+
+    public Arguments(ArrayList<String> names, ArrayList<String> types, ArrayList<Boolean> pointeurs) {
         this.names = names;
         this.types = types;
         this.pointeurs = pointeurs;

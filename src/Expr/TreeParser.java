@@ -240,13 +240,16 @@ public class TreeParser {
 				if (nbChilds == 0) {
 					try {
 						Variable variable = tds.getVariable(tds, t.getText());
-						return variable.getValue();
+						if (variable.getValue()==null ||  isInteger(variable.getValue())) {
+						return variable.getName();
+						} else {
+							return variable.getValue();
+						}
 					} catch (NonExistantVariable nonExistantVariable) {
 					}
 				} else if (t.getChild(0).getText().equals("IND")) {
 					String name = t.getText();
 					t = (CommonTree) t.getChild(0).getChild(0);
-
 					try {
 						Vecteur vect = ((TableDesVecteurs) (tds.get(TableType.VEC))).getVecteur(tds, name);
 
