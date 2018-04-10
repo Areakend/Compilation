@@ -161,9 +161,9 @@ public class TreeParser {
 					}
 				}
 				break;
-			case "print":
+			case "PRINT":
 			case "RETURN":
-				TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+                TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
 				break;
 			}
 		}
@@ -203,8 +203,15 @@ public class TreeParser {
 		case "!=":
 		case "&&":
 		case "||":
-			String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
-			String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds);
+            String fg = TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+            String fd = TreeParser.analyseExp((CommonTree) t.getChild(1), tds);
+
+            try {
+                isSameTypeCalcul(fg, findType(fg), fd, findType(fd));
+            } catch (InvalidTypeCalcul e) {
+
+            }
+            ;
 
 			switch (s) {
 			case "+":
@@ -303,52 +310,35 @@ public class TreeParser {
 								String theoricalType = fonc.getArgs().getTypes().get(i);
 								CommonTree Child = (CommonTree) t.getChild(i).getChild(0);
 								String nameVal = Child.getText();
-								if (Child.getChildCount() == 0 && name1 != "CALL_ARGS") {
-									try {
 
-										// if (name1!="CALL_ARGS") {
-										Fonction fonction = tds.getFonction(tds, name1);
+								if (Child.getChildCount() == 0 && !name1.equals("CALL_ARGS")) {
+                                    try {
 
-										// Variable variable =
-										// tds.getVariable(tds, name1);
+                                        TreeParser.isSameType(name1, theoricalType, nameVal);
 
-										// System.out.println(variable.getName());
-										// String realType =
-										// TreeParser.findType(fonction.getReturnType());
-										String realType = fonction.getReturnType();
-										// System.out.println(fonction.getReturnType());
+                                        /*
+                                         * try { boolean
+                                         * theoricalPointerType =
+                                         * fonc.getArgs().getPointeurs().get
+                                         * (i); char pointertest[] = null;
+                                         *
+                                         * nameVal.getChars(0, 0,
+                                         * pointertest, 0);
+                                         * TreeParser.isSamePointerType(
+                                         * theoricalPointerType,
+                                         * pointertest[0]);
+                                         *
+                                         * if (fonc.getReturnType() == null)
+                                         * { return null; } } catch
+                                         * (PointerTypeException
+                                         * pointeurTypeException) {
+                                         *
+                                         * }
+                                         */
 
-										// String realType =
-										// TreeParser.findType(variable.getValue());
-										try {
-
-											TreeParser.isSameType(name1, theoricalType, realType);
-
-											/*
-											 * try { boolean
-											 * theoricalPointerType =
-											 * fonc.getArgs().getPointeurs().get
-											 * (i); char pointertest[] = null;
-											 * 
-											 * nameVal.getChars(0, 0,
-											 * pointertest, 0);
-											 * TreeParser.isSamePointerType(
-											 * theoricalPointerType,
-											 * pointertest[0]);
-											 * 
-											 * if (fonc.getReturnType() == null)
-											 * { return null; } } catch
-											 * (PointerTypeException
-											 * pointeurTypeException) {
-											 * 
-											 * }
-											 */
-
-										} catch (InvalidTypeArgument invalidTypeArgument) {
-										}
-										// } catch (NonExistantVariable e) {
-									} catch (NonExistantFunction e2) {
-									}
+                                    } catch (InvalidTypeArgument invalidTypeArgument) {
+                                    }
+                                    // } catch (NonExistantVariable e) {
 								} else if (Child.getChild(0).getText().equals("IND")) {
 									try {
 										TreeParser.analyseExp(Child, tds);
@@ -464,8 +454,8 @@ public class TreeParser {
 	private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
 		if (realType == null)
 			throw new InvalidTypeArgument(name, theoricalType, "null");
-		if (!(theoricalType.equals(realType)))
-			throw new InvalidTypeArgument(name, theoricalType, realType);
+		if (!(theoricalType.equals(findType(realType))))
+			throw new InvalidTypeArgument(name, theoricalType, findType(realType));
 	}
 
 	private static void isSameTypeVecteurVariable(String vecteurName, String vecteurType, String variableName,
@@ -475,6 +465,14 @@ public class TreeParser {
 		else if (!(vecteurType.equals(variableType)))
 			throw new InvalidVecteurVariableType(vecteurName, vecteurType, variableName, variableType);
 	}
+
+    private static void isSameTypeCalcul(String name, String theoricalType, String name2, String realType)
+            throws InvalidTypeCalcul {
+        if (realType == null)
+            throw new InvalidTypeCalcul(name, theoricalType, name2, "null");
+        if (!(theoricalType.equals(findType(realType))))
+            throw new InvalidTypeCalcul(name, theoricalType, name2, findType(realType));
+    }
 
 	private static void isSamePointerType(Boolean VV, char test) throws PointerTypeException {
 		if (!((VV && test == '*') || (!VV && test != '*')))

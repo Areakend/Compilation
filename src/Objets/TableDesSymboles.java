@@ -110,21 +110,28 @@ public class TableDesSymboles extends Table<TableType, Table> {
     }
 
     public Fonction getFonction(TableDesSymboles tableDesSymboles, String name) throws NonExistantFunction {
-        TableDesFonctions tableDesFonctions = ((TableDesFonctions) tableDesSymboles.get(TableType.FONC));
+        TableDesFonctions tableDesFonctions;
+
+        if(tableDesSymboles != null)
+            tableDesFonctions = ((TableDesFonctions) tableDesSymboles.get(TableType.FONC));
+        else throw new NonExistantFunction(name);
 
         if(tableDesFonctions != null) {
             Fonction fonction = tableDesFonctions.get(name);
 
             if (fonction != null)
                 return fonction;
-        } else if(tableDesSymboles.getName().equals("1"))
-            throw new NonExistantFunction(name);
+        }
 
         return this.getFonction(tableDesSymboles.getParent(), name);
     }
 
     public Structure getStructure(TableDesSymboles tableDesSymboles, String name) throws NonExistantStructure {
-        TableDesStructures tableDesStructures = ((TableDesStructures) tableDesSymboles.get(TableType.STRUCT));
+        TableDesStructures tableDesStructures;
+
+        if(tableDesSymboles != null)
+            tableDesStructures = ((TableDesStructures) tableDesSymboles.get(TableType.STRUCT));
+        else throw new NonExistantStructure(name);
 
         if(tableDesStructures != null) {
             Structure structure = tableDesStructures.get(name);
