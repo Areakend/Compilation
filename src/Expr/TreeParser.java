@@ -34,15 +34,16 @@ public class TreeParser {
 				int nbChilds = t.getChildCount();
 				int posName = 0;
 
-				if (nbChilds == 2) {
-					if (t.getChild(1).getChildCount() == 0) {
+				for (int i = 0; i< nbChilds; i++) {
+					if (t.getChild(i).getText().equals("mut")) {
 						mut = true;
-						posName = 1;
+						posName = posName + 1;
 					}
-				} else {
-					mut = true;
-					posName = 1;
+					if (t.getChild(i).getText().equals("SPE_UNAIRE")) {
+						posName = i;
+					}
 				}
+				
 
 				if (t.getChild(posName).getText().equals("SPE_UNAIRE")) {
 					name = t.getChild(posName).getChild(1).getText();
