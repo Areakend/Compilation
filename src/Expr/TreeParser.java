@@ -40,7 +40,7 @@ public class TreeParser {
 					}
 				} else {
 					mut = true;
-					posName=1;
+					posName=0;
 				}
 
 				if (t.getChild(posName).getText().equals("SPE_UNAIRE")) {
@@ -221,7 +221,12 @@ public class TreeParser {
 					if (nbChilds == 0) {
 						try {
 							Variable variable = tds.getVariable(tds, t.getText());
-							return variable.getValue();
+							if (variable.getValue()==null ||  isInteger(variable.getValue())) {
+							return variable.getName();
+							} else {
+								return variable.getValue();
+							}
+							
 						} catch (NonExistantVariable nonExistantVariable) {
 						}
 					} else if (t.getChild(0).getText().equals("IND")) {
