@@ -13,7 +13,7 @@ public class Vecteur {
         this(name, type, null);
     }
 
-    public Vecteur(String name, String type, ArrayList<String> valeurs) {
+    Vecteur(String name, String type, ArrayList<String> valeurs) {
         this.name = name;
         this.type = type;
         this.valeurs = valeurs;
@@ -54,8 +54,8 @@ public class Vecteur {
     public String toString() {
         StringBuilder res = new StringBuilder("Vecteur " + this.name + " | type : " + this.type + "\n");
 
-        for(int i = 0; i < this.valeurs.size(); i++)
-            res.append("\t").append(this.valeurs.get(i)).append("\n");
+        for (String valeur : this.valeurs)
+            res.append("\t").append(valeur).append("\n");
 
         return res.toString();
     }
