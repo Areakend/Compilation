@@ -10,4 +10,5 @@ fn main(a : i32) -> i32{
     let j = i && false;
     let f = true ;
     let i = false;
+    let k = 3 <= 4;
 }

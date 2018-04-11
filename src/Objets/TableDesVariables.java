@@ -16,6 +16,8 @@ public class TableDesVariables extends Table<String, Variable> {
             param=variable.isParam();
             if(variable.getValue() != null && !variable.isMut())
                 throw new NonMutable(name);
+            if(variable.getValue() != null && value==null)
+                value=variable.getValue();
             if (!variable.getType().equals(type))
                 throw new InvalidTypeAffectation(name,variable.getType(),type);
             else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, pointeur, param));

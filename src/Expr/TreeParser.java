@@ -173,17 +173,20 @@ public class TreeParser {
 	}
 
 	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
+		String type;
 		switch (spe_unaire) {
-		case "-":
-			return "-" + analyseExp(t, tds);
-		case "!":
-			return "!" + analyseExp(t, tds);
-		case "&":
-			return "&" + analyseExp(t, tds);
-		case "*":
-			return "*" + analyseExp(t, tds);
-		default:
-			return "";
+			case "-":
+				type="i32";
+				return type.equals(analyseExp(t, tds)) ? type : null;
+			case "!":
+				type="bool";
+				return type.equals(analyseExp(t, tds)) ? type : null;
+			case "&":
+				return analyseExp(t, tds);
+			case "*":
+				return analyseExp(t, tds);
+			default:
+				return null;
 		}
 
 	}
@@ -211,7 +214,22 @@ public class TreeParser {
 
 				try {
 					if (fg.equals(fd)) {
-						return fg;
+						switch (s) {
+							case "+":
+							case "-":
+							case "*":
+							case "/":
+								return "i32";
+							case "<":
+							case "<=":
+							case ">":
+							case ">=":
+							case "==":
+							case "!=":
+							case "&&":
+							case "||":
+								return "bool";
+						}
 					}
 					isSameTypes(t.getChild(0).getText(),t.getChild(1).getText(),fg,fd);
 				} catch (InvalidTypeArguments invalidTypeArguments) {
