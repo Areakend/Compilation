@@ -11,4 +11,9 @@ fn main(a : i32) -> i32{
     let f = true ;
     let i = false;
     let k = 3 <= 4;
+    let l = -true;
+    let m = !4;
+    let n = !true;
+    let o = *e ;
+
 }
