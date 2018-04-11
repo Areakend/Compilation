@@ -22,6 +22,9 @@ public class Fonction {
     }
 
     public String getReturnType() {
+        if (returnType.substring(0,1).equals("&") || returnType.substring(0,1).equals("*")) {
+            return returnType.substring(2,returnType.length());
+        }
         return returnType;
     }
 

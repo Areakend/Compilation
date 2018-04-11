@@ -13,15 +13,19 @@ public class Variable {
     private Structure structure;
 	private ArrayList<String> structureValeurs;
     private boolean pointeur;
+    private boolean param;
+    String type;
 
-    Variable(String name, boolean mut, String value, boolean pointeur) {
+    Variable(String name, boolean mut, String type, String value, boolean pointeur, boolean param) {
         this.name = name;
         this.mut = mut;
+        this.type = type;
         this.value = value;
         this.pointeur = pointeur;
+        this.param = param;
     }
 
-    Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
+    Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<String> structureValeurs) {
         this.name = name;
 
         try {
@@ -38,6 +42,14 @@ public class Variable {
     
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public boolean isParam() {
+        return param;
     }
 
     public void setName(String name) {
@@ -95,6 +107,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        return "\tVariable : " + this.name + " | mut : " + this.mut + " | pointeur : " + this.pointeur + " | val : " + this.value + "\n";
+        return "\tVariable : " + this.name + " | type : " + this.type + " | mut : " + this.mut + " | pointeur : " + this.pointeur + " | val : " + this.value + " | param : " + this.param + "\n";
     }
 }

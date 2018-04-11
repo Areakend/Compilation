@@ -27,7 +27,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         this.filsNbr++;
     }
     
-    public void ajouterVariable(String name, boolean mut, String value, boolean pointeur) {
+    public void ajouterVariable(String name, boolean mut, String type, String value, boolean pointeur, boolean param) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
@@ -37,8 +37,10 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            tableDesVariables.ajouterVariable(this, name, mut, value, pointeur);
+            tableDesVariables.ajouterVariable(this, name, mut, type, value, pointeur,param);
         } catch(NonMutable nonMutable) {
+        } catch (InvalidTypeAffectation invalidTypeAffectation) {
+            invalidTypeAffectation.printStackTrace();
         }
     }
 
