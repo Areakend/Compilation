@@ -1,21 +1,39 @@
 package Objets;
 
+import Exceptions.InvalidTypeAffectation;
 import Exceptions.NonExistantVariable;
 import Exceptions.NonInitialisedVariable;
 import Exceptions.NonMutable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesVariables extends Table<String, Variable> {
-    public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String value, boolean pointeur) throws NonMutable {
+    public void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String type, String value, boolean pointeur, boolean param) throws NonMutable, InvalidTypeAffectation {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
+
         if(variable != null) {
+            param=variable.isParam();
             if(variable.getValue() != null && !variable.isMut())
                 throw new NonMutable(name);
-            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), value, pointeur));
+            if(variable.getValue() != null && value==null)
+                value=variable.getValue();
+            if (!variable.getType().equals(type))
+                throw new InvalidTypeAffectation(name,variable.getType(),type);
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, pointeur, param));
         } else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
-            this.put(name, new Variable(name, mut, value,false));
-        else this.ajouterVariable(tableSymboles.getParent(), name, mut, value, pointeur);
+            this.put(name, new Variable(name, mut, type, value, pointeur, param));
+        else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param);
+    }
+
+    public void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
+        Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
+
+        if(variable != null)
+            tableSymboles.get(TableType.VAR).put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs));
+        else if(tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
+            this.put(name, new Variable(name, structureName, tableSymboles,structureVariables, structureValeurs));
+        else this.ajouterStructureVariable(tableSymboles.getParent(), name, structureName, structureVariables, structureValeurs, pointeur);
     }
 
     public String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {

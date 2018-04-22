@@ -8,7 +8,7 @@ public class Structure {
     private ArrayList<String> types;
     private ArrayList<String> valeurs = null;
 
-    public Structure(String structureName, ArrayList<String> names, ArrayList<String> types) {
+    Structure(String structureName, ArrayList<String> names, ArrayList<String> types) {
         this.structureName = structureName;
         this.names = names;
         this.types = types;

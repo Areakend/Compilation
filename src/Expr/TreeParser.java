@@ -14,7 +14,6 @@ public class TreeParser {
 	public static int LIGNE = 0;
 
 	public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
-
 		TreeParser.LIGNE = t.getLine();
 
 		if (t.isNil()) {
@@ -31,31 +30,34 @@ public class TreeParser {
 				boolean pointeur = false;
 				int nbChilds = t.getChildCount();
 				int posName = 0;
+				String type="";
 
 				for (int i = 0; i< nbChilds; i++) {
 					if (t.getChild(i).getText().equals("mut")) {
 						mut = true;
 						posName = posName + 1;
 					}
-					if (t.getChild(i).getText().equals("SPE_UNAIRE")) {
+
+					if (t.getChild(i).getText().equals("SPE_UNAIRE"))
 						posName = i;
-					}
 				}
-				
 
 				if (t.getChild(posName).getText().equals("SPE_UNAIRE")) {
 					name = t.getChild(posName).getChild(1).getText();
 					pointeur = true;
-				} else {
-					name = t.getChild(posName).getText();
-				}
+				} else name = t.getChild(posName).getText();
+
 				String value = null;
 				if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
 					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
-					value = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
+					value=null;
+					if (isInteger(node.getChild(0).getText()) || isBoolean(node.getChild(0).getText())) {
+						value=node.getChild(0).getText();
+					}
+					type = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
 				}
 				if ((t.getChild(nbChilds - 1)).getText() != "vecteur") {
-					tds.ajouterVariable(name, mut, value, pointeur);
+					tds.ajouterVariable(name, mut, type, value, pointeur,false);
 				} else {
 					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
 					int nbChild2 = node.getChildCount();
@@ -150,7 +152,8 @@ public class TreeParser {
 								if (types.get(k).equals("& i32") || types.get(k).equals("& bool")) {
 									pointeur = true;
 								}
-								tds2.ajouterVariable(names.get(k), true, null, pointeur);
+								String type = (types.get(k).substring(0,1).equals("&")) ? types.get(k).substring(2,types.get(k).length()) : types.get(k);
+								tds2.ajouterVariable(names.get(k), true, type, null, pointeur, true);
 							}
 						}
 						TreeParser.analyseRec(tables, node, tds2);
@@ -170,17 +173,21 @@ public class TreeParser {
 	}
 
 	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
+		String type;
+
 		switch (spe_unaire) {
-		case "-":
-			return "-" + analyseExp(t, tds);
-		case "!":
-			return "!" + analyseExp(t, tds);
-		case "&":
-			return "&" + analyseExp(t, tds);
-		case "*":
-			return "*" + analyseExp(t, tds);
-		default:
-			return "";
+			case "-":
+				type="i32";
+				return type.equals(analyseExp(t, tds)) ? type : null;
+			case "!":
+				type="bool";
+				return type.equals(analyseExp(t, tds)) ? type : null;
+			case "&":
+				return analyseExp(t, tds);
+			case "*":
+				return analyseExp(t, tds);
+			default:
+				return null;
 		}
 
 	}
@@ -208,58 +215,58 @@ public class TreeParser {
 
             try {
                 isSameTypeCalcul(fg, findType(fg), fd, findType(fd));
+            } catch (InvalidTypeCalcul e) {}
+
+            try {
+                if (fg.equals(fd)) {
+                    switch (s) {
+                        case "+":
+                        case "-":
+                        case "*":
+                        case "/":
+                            return "i32";
+                        case "<":
+                        case "<=":
+                        case ">":
+                        case ">=":
+                        case "==":
+                        case "!=":
+                        case "&&":
+                        case "||":
+                            return "bool";
+                    }
+                }
+
+                isSameTypeCalcul(t.getChild(0).getText(),t.getChild(1).getText(),fg,fd);
             } catch (InvalidTypeCalcul e) {
-
+                e.printStackTrace();
             }
-            ;
-
-			switch (s) {
-			case "+":
-				return "(" + fg + " + " + fd + ")";
-			case "-":
-				return "(" + fg + " - " + fd + ")";
-			case "*":
-				return "(" + fg + " * " + fd + ")";
-			case "/":
-				return "(" + fg + " / " + fd + ")";
-			case "<":
-				return "(" + fg + " < " + fd + ")";
-			case "<=":
-				return "(" + fg + " <= " + fd + ")";
-			case ">":
-				return "(" + fg + " > " + fd + ")";
-			case ">=":
-				return "(" + fg + " >= " + fd + ")";
-			case "==":
-				return "(" + fg + " == " + fd + ")";
-			case "!=":
-				return "(" + fg + " != " + fd + ")";
-			case "&&":
-				return "(" + fg + " && " + fd + ")";
-			case "||":
-				return "(" + fg + " || " + fd + ")";
-			}
-			break;
 		default:
-			if (isInteger(t.getText())) {
-				return t.getText();
-			} else {
+            if (isInteger(t.getText())) {
+                return "i32";
+            }
+            else if (isBoolean(t.getText())) {
+                return "bool";
+            } else {
+
+
+
 				int nbChilds = t.getChildCount();
 				if (nbChilds == 0) {
 					try {
-						if (t.getText().equals("true")){
-							return "true";
-						}
-						else if (t.getText().equals("false")){
-							return "false";
-						}
-						else {Variable variable = tds.getVariable(tds, t.getText());
-						if (variable.getValue()==null ||  isInteger(variable.getValue())) {
-							return variable.getName();
-							} else {
-								return variable.getValue();
-							}
-						}
+                        if (t.getText().equals("true")){
+                            return "true";
+                        }
+                        else if (t.getText().equals("false")){
+                            return "false";
+                        }
+                        else {Variable variable = tds.getVariable(tds, t.getText());
+                            if (variable.getValue()==null ||  isInteger(variable.getValue())) {
+                                return variable.getName();
+                            } else {
+                                return variable.getValue();
+                            }
+                        }
 					} catch (NonExistantVariable nonExistantVariable) {
 					}
 				} else if (t.getChild(0).getText().equals("IND")) {
@@ -306,39 +313,38 @@ public class TreeParser {
 
 						try {
 							fonc.validNumberArgs(fonc, nbChilds2);
+
 							for (int i = 0; i < nbChilds2; i++) {
 								String theoricalType = fonc.getArgs().getTypes().get(i);
 								CommonTree Child = (CommonTree) t.getChild(i).getChild(0);
 								String nameVal = Child.getText();
 
-								if (Child.getChildCount() == 0 && !name1.equals("CALL_ARGS")) {
-                                    try {
-
+								if (Child.getChildCount() == 0 && name1.equals("CALL_ARGS")) {
+									try {
                                         TreeParser.isSameType(name1, theoricalType, nameVal);
 
-                                        /*
-                                         * try { boolean
-                                         * theoricalPointerType =
-                                         * fonc.getArgs().getPointeurs().get
-                                         * (i); char pointertest[] = null;
-                                         *
-                                         * nameVal.getChars(0, 0,
-                                         * pointertest, 0);
-                                         * TreeParser.isSamePointerType(
-                                         * theoricalPointerType,
-                                         * pointertest[0]);
-                                         *
-                                         * if (fonc.getReturnType() == null)
-                                         * { return null; } } catch
-                                         * (PointerTypeException
-                                         * pointeurTypeException) {
-                                         *
-                                         * }
-                                         */
-
-                                    } catch (InvalidTypeArgument invalidTypeArgument) {
-                                    }
-                                    // } catch (NonExistantVariable e) {
+											/*
+											 * try { boolean
+											 * theoricalPointerType =
+											 * fonc.getArgs().getPointeurs().get
+											 * (i); char pointertest[] = null;
+											 * 
+											 * nameVal.getChars(0, 0,
+											 * pointertest, 0);
+											 * TreeParser.isSamePointerType(
+											 * theoricalPointerType,
+											 * pointertest[0]);
+											 * 
+											 * if (fonc.getReturnType() == null)
+											 * { return null; } } catch
+											 * (PointerTypeException
+											 * pointeurTypeException) {
+											 * 
+											 * }
+											 */
+										} catch (InvalidTypeArgument invalidTypeArgument) {
+										}
+										// } catch (NonExistantVariable e) {
 								} else if (Child.getChild(0).getText().equals("IND")) {
 									try {
 										TreeParser.analyseExp(Child, tds);
@@ -353,14 +359,17 @@ public class TreeParser {
 									try {
 										TreeParser.analyseExp(Child, tds);
 										Fonction foncFils = tds.getFonction(tds, t.getText());
-
+										System.out.println(foncFils.getName());
+										System.out.println(foncFils.getReturnType());
 										isSameType(fonc.getName(), theoricalType, foncFils.getReturnType());
 									} catch (NonExistantFunction e) {
 									} catch (InvalidTypeArgument e2) {
 									}
 								}
 							}
-						} catch (InvalidArgumentsNumber invalidArgumentsNumber) {
+
+                            return fonc.getReturnType();
+                        } catch (InvalidArgumentsNumber invalidArgumentsNumber) {
 						}
 					} catch (NonExistantFunction nonExistantFunction) {
 					}
@@ -497,18 +506,6 @@ public class TreeParser {
 	}
 
 	private static Boolean isInteger(String str) {
-		int length = str.length(), c;
-
-		if (length == 0)
-			return false;
-
-		for (int i = 0; i < length; i++) {
-			c = (int) str.charAt(i) - 48;
-
-			if (!(c >= 0 && c < 10))
-				return false;
-		}
-
-		return true;
+		return findType(str).equals("i32");
 	}
 }

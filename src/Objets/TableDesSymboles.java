@@ -27,7 +27,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         this.filsNbr++;
     }
     
-    public void ajouterVariable(String name, boolean mut, String value, boolean pointeur) {
+    public void ajouterVariable(String name, boolean mut, String type, String value, boolean pointeur, boolean param) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
@@ -37,9 +37,23 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            tableDesVariables.ajouterVariable(this, name, mut, value, pointeur);
+            tableDesVariables.ajouterVariable(this, name, mut, type, value, pointeur,param);
         } catch(NonMutable nonMutable) {
+        } catch (InvalidTypeAffectation invalidTypeAffectation) {
+            invalidTypeAffectation.printStackTrace();
         }
+    }
+
+    public void ajouterStructureVariable(String name, String structureName, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
+        TableType tableType = TableType.VAR;
+        TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
+
+        if(tableDesVariables == null) {
+            tableDesVariables = new TableDesVariables();
+            this.put(tableType, tableDesVariables);
+        }
+
+        tableDesVariables.ajouterStructureVariable(this, name, structureName, structureVariables, structureValeurs, pointeur);
     }
 
     public void ajouterFonction(String name, String returnType, Arguments arguments) {

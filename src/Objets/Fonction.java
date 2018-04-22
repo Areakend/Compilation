@@ -7,7 +7,7 @@ public class Fonction {
     private String returnType;
     private Arguments args;
 
-    public Fonction(String name, String returnType, Arguments args) {
+    Fonction(String name, String returnType, Arguments args) {
         this.name = name;
         this.returnType = returnType;
         this.args = args;
@@ -22,6 +22,9 @@ public class Fonction {
     }
 
     public String getReturnType() {
+        if (returnType.substring(0,1).equals("&") || returnType.substring(0,1).equals("*")) {
+            return returnType.substring(2,returnType.length());
+        }
         return returnType;
     }
 
