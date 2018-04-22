@@ -44,7 +44,7 @@ public class Vecteur {
     }
 
     public String getValeur(int i) throws IndexOutOfBounds {
-        if(i > this.valeurs.size())
+        if (i > this.valeurs.size())
             throw new IndexOutOfBounds(name);
 
         return valeurs.get(i);

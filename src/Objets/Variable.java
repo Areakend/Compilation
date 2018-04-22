@@ -1,20 +1,22 @@
 package Objets;
 
-import Exceptions.*;
+import Exceptions.InvalidStructureVarName;
+import Exceptions.InvalidTypeAffectation;
+import Exceptions.NonExistantStructure;
 
 import java.util.ArrayList;
 
 import static Expr.TreeParser.findType;
 
 public class Variable {
+    String type;
     private String name;
     private boolean mut;
     private String value;
     private Structure structure;
-	private ArrayList<String> structureValeurs;
+    private ArrayList<String> structureValeurs;
     private boolean pointeur;
     private boolean param;
-    String type;
 
     Variable(String name, boolean mut, String type, String value, boolean pointeur, boolean param) {
         this.name = name;
@@ -30,51 +32,53 @@ public class Variable {
 
         try {
             this.setStructure(tableDesSymboles, structureName, structureVariables, structureValeurs);
-        } catch(NonExistantStructure | InvalidTypeAffectation | InvalidStructureVarName e) {
+        } catch (NonExistantStructure | InvalidTypeAffectation | InvalidStructureVarName e) {
+            e.printStackTrace();
         }
     }
-    
+
     public Structure getStructure() throws NonExistantStructure {
-    	if (structure == null)
-    		throw new NonExistantStructure(" null ");
-		return structure;
-	}
-    
+        if (structure == null)
+            throw new NonExistantStructure(" null ");
+        return structure;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public boolean isParam() {
-        return param;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    boolean isParam() {
+        return param;
+    }
+
     private void setStructure(TableDesSymboles tableDesSymboles, String structureName, ArrayList<String> structureNewVariables, ArrayList<String> structureNewValeurs) throws InvalidTypeAffectation, NonExistantStructure, InvalidStructureVarName {
         Structure structure = tableDesSymboles.getStructure(tableDesSymboles, structureName);
         ArrayList<String> valeurs = new ArrayList<>();
 
-        if(structure != null) {
+        if (structure != null) {
             this.structure = structure;
             ArrayList<String> structureVariables = structure.getNames();
             ArrayList<String> structureTypes = structure.getTypes();
 
-            for(int i = 0; i < structureNewVariables.size(); i++) {
+            for (int i = 0; i < structureNewVariables.size(); i++) {
                 String structureNewVariable = structureNewVariables.get(i);
                 String typeVariable = findType(structureNewVariable);
 
-                for(int j = 0; j < structureVariables.size(); i++) {
-                    if(structureNewVariable.equals(structureVariables.get(j))) {
-                        if(typeVariable.equals(structureTypes.get(i)))
+                for (int j = 0; j < structureVariables.size(); i++) {
+                    if (structureNewVariable.equals(structureVariables.get(j))) {
+                        if (typeVariable.equals(structureTypes.get(i)))
                             valeurs.add(structureNewValeurs.get(i));
                         else throw new InvalidTypeAffectation(name, structureTypes.get(j), typeVariable);
-                    } else throw new InvalidStructureVarName(structureName, structureVariables.get(i), structureNewVariables.get(i));
+                    } else
+                        throw new InvalidStructureVarName(structureName, structureVariables.get(i), structureNewVariables.get(i));
                 }
             }
         }
@@ -96,13 +100,13 @@ public class Variable {
     public boolean isMut() {
         return mut;
     }
-    
-    public boolean isPointeur() {
-        return this.pointeur;
-    }
 
     public void setMut(boolean mut) {
         this.mut = mut;
+    }
+
+    public boolean isPointeur() {
+        return this.pointeur;
     }
 
     @Override

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Tables {
     private ArrayList<Table> tables = new ArrayList<>();
 
-    public void add(Table t) {
+    void add(Table t) {
         this.tables.add(t);
     }
 
@@ -14,9 +14,9 @@ public class Tables {
     }
 
     public Table getTablesById(String id) {
-        for(int i = 0; i < tables.size(); i++)
-            if(((TableDesSymboles) tables.get(i)).getName().equals(id))
-                return tables.get(i);
+        for (Table table : tables)
+            if (((TableDesSymboles) table).getName().equals(id))
+                return table;
 
         return null;
     }
@@ -25,8 +25,8 @@ public class Tables {
     public String toString() {
         StringBuilder res = new StringBuilder();
 
-        for(int i = 0; i < tables.size(); i++)
-            res.append(tables.get(i).toString());
+        for (Table table : tables)
+            res.append(table.toString());
 
         return res.toString();
     }

@@ -22,8 +22,8 @@ public class Fonction {
     }
 
     public String getReturnType() {
-        if (returnType.substring(0,1).equals("&") || returnType.substring(0,1).equals("*")) {
-            return returnType.substring(2,returnType.length());
+        if (returnType.substring(0, 1).equals("&") || returnType.substring(0, 1).equals("*")) {
+            return returnType.substring(2, returnType.length());
         }
         return returnType;
     }
@@ -46,7 +46,7 @@ public class Fonction {
     }
 
     public void validNumberArgs(Fonction fonc, int num) throws InvalidArgumentsNumber {
-        if(fonc.getArgs().getNames().size() != num)
+        if (fonc.getArgs().getNames().size() != num)
             throw new InvalidArgumentsNumber(name, fonc.getArgs().getNames().size());
     }
 }

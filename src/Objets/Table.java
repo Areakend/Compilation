@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class Table<K, V> {
-    protected HashMap<K, V> table = new HashMap<>();
+    HashMap<K, V> table = new HashMap<>();
 
     public V get(K key) {
         return table.get(key);
@@ -15,7 +15,7 @@ public class Table<K, V> {
         return table;
     }
 
-    public void put(K key, V value) {
+    void put(K key, V value) {
         this.table.put(key, value);
     }
 
