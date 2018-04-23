@@ -4,6 +4,6 @@ import Expr.TreeParser;
 
 public class NonMutable extends Exception {
     public NonMutable(String name) {
-        System.out.println("Erreur ligne : \"" + TreeParser.LIGNE + name + "\" ne peut pas etre modifie\n");
+        System.out.println("Erreur ligne : \"" + TreeParser.LIGNE + " | \"" + name + "\" ne peut pas etre modifie");
     }
 }
