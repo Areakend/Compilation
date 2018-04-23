@@ -32,7 +32,7 @@ fn main() {
   let t = true;
   let f = false;
 
-  print!(verifierPriorite(a,b,c,d));
+  print!(verifierPriorite(a,b,c,d,e));
   print!(verifierAssociativite(a,b,c,d,e));
   print!(testBooleen(t,f));
 }

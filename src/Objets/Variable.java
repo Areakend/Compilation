@@ -111,6 +111,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        return "\tVariable : " + this.name + " |  type : \" + this.type + \" | mut : " + this.mut + " | pointeur : " + this.pointeur + " | val : " + this.value + "  | param : " + this.param + "\n";
+        return "\tVariable : " + this.name + " | type : " + this.type + " | mut : " + this.mut + " | pointeur : " + this.pointeur + (this.value == null ? "" : " | val : " + this.value) + " | param : " + this.param + "\n";
     }
 }

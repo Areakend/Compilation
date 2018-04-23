@@ -12,15 +12,15 @@ public class TableDesVariables extends Table<String, Variable> {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null) {
-            param = variable.isParam();
             if (variable.getValue() != null && !variable.isMut())
                 throw new NonMutable(name);
+
             if (variable.getValue() != null && value == null)
                 value = variable.getValue();
-            if (!variable.getType().equals(type))
+
+            if (!variable.getType().equals(type) && !variable.getType().equals(""))
                 throw new InvalidTypeAffectation(name, variable.getType(), type);
-            else
-                tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, pointeur, param));
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, pointeur, variable.isParam()));
         } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
             this.put(name, new Variable(name, mut, type, value, pointeur, param));
         else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param);

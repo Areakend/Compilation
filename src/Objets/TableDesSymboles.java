@@ -111,7 +111,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         return this.parent;
     }
 
-    public Variable getVariable(TableDesSymboles tableDesSymboles, String name) throws NonExistantVariable {
+    public Variable getVariable(TableDesSymboles tableDesSymboles, String name, boolean exception) throws NonExistantVariable {
         TableDesVariables tableDesVariables = ((TableDesVariables) tableDesSymboles.get(TableType.VAR));
 
         if (tableDesVariables != null) {
@@ -119,10 +119,13 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
             if (variable != null)
                 return variable;
-        } else if (tableDesSymboles.getName().equals("1"))
-            throw new NonExistantVariable(name);
+        } else if (tableDesSymboles.getName().equals("1")) {
+            if(exception)
+                throw new NonExistantVariable(name);
+            else return null;
+        }
 
-        return this.getVariable(tableDesSymboles.getParent(), name);
+        return this.getVariable(tableDesSymboles.getParent(), name, exception);
     }
 
     public Fonction getFonction(TableDesSymboles tableDesSymboles, String name) throws NonExistantFunction {
