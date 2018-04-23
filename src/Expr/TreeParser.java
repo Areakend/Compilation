@@ -476,9 +476,9 @@ public class TreeParser {
             throw new InvalidTypeCalcul(name, theoricalType, name2, findType(realType));
     }
 
-    private static void isSamePointerType(Boolean VV, char test) throws PointerTypeException {
-        if (!((VV && test == '*') || (!VV && test != '*')))
-            throw new PointerTypeException(VV, test);
+    private static void isSamePointerType(Boolean VV, char etoile, String var) throws PointerTypeException {
+        if ((!VV || etoile != '*') && (VV || etoile == '*'))
+            throw new PointerTypeException(VV, var);
     }
 
     private static boolean isBoolean(String str) {
