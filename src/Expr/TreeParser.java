@@ -297,9 +297,9 @@ public class TreeParser {
                                     String theoricalType = fonc.getArgs().getTypes().get(i);
                                     CommonTree Child = (CommonTree) t.getChild(i);
 
-                                    if (Child.getChildCount() == 0) {
+                                    if (Child.getChildCount() == 1) {
                                         try {
-                                            TreeParser.isSameType(name1, theoricalType, Child.getText());
+                                            TreeParser.isSameTypeFunc(name1, theoricalType, Child.getChild(0).getText(), Child.getChild(0).getText());
 
                                             /*
                                              * try { boolean
@@ -320,7 +320,7 @@ public class TreeParser {
                                              *
                                              * }
                                              */
-                                        } catch (InvalidTypeArgument e) {
+                                        } catch (InvalidTypeArguments e) {
                                             e.printStackTrace();
                                         }
                                     } else if (Child.getChild(0).getText().equals("IND")) try {
@@ -437,6 +437,13 @@ public class TreeParser {
         if (!(theoricalType.equals(findType(realType))))
             throw new InvalidTypeArgument(name, theoricalType, findType(realType));
     }
+    
+    private static void isSameTypeFunc(String name, String theoricalType, String name2, String realType) throws InvalidTypeArguments {
+        if (realType == null)
+            throw new InvalidTypeArguments(name, name2, theoricalType, "null");
+        if (!(theoricalType.equals(findType(realType))))
+            throw new InvalidTypeArguments(name, name2, theoricalType, findType(realType));
+    }
 
     private static void isSameTypeVecteurVariable(String vecteurName, String vecteurType, String variableName,
                                                   String variableType) throws InvalidVecteurVariableType {
@@ -449,6 +456,8 @@ public class TreeParser {
     private static void isSameTypeCalcul(String name, String theoricalType, String name2, String realType) throws InvalidTypeCalcul {
         if (realType == null)
             throw new InvalidTypeCalcul(name, theoricalType, name2, "null");
+        else if (theoricalType == null)
+            throw new InvalidTypeCalcul(name, "null", name2, realType);
         else if (!(theoricalType.equals(findType(realType))))
             throw new InvalidTypeCalcul(name, theoricalType, name2, findType(realType));
     }
