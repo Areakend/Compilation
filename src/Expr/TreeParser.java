@@ -3,6 +3,7 @@ package Expr;
 import Exceptions.*;
 import Objets.*;
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.stringtemplate.language.Cat;
 
 import java.util.ArrayList;
 
@@ -13,9 +14,26 @@ public class TreeParser {
 		TreeParser.LIGNE = t.getLine();
 
 		if (t.isNil()) {
-			for (int i = 0; i < t.getChildCount(); i++)
-				TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+			int numberMain = 0;
+			if (t.getText() == null) {
+				for (int i = 0; i < t.getChildCount(); i++) {
+					if (t.getChild(i).getChild(0).getText().equals("main")) {
+						numberMain = numberMain + 1;
+					}
+				}
+				try {
+					oneMain(numberMain);
+					for (int i = 0; i < t.getChildCount(); i++) {
+						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+					}
+
+				} catch (NoMain e) {
+					e.printStackTrace();
+				}
+			}
+
 		} else {
+
 			int nbChilds = t.getChildCount();
 			boolean pointeur = false;
 			String type = "";
@@ -52,17 +70,18 @@ public class TreeParser {
 					type = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
 				}
 
-				if (!t.getChild(nbChilds - 1).getText().equals("vecteur")) {
+				if (!t.getChild(nbChilds - 1).getChild(0).getText().equals("VEC")) {
 					tds.ajouterVariable(name, mut, type, value, pointeur, false);
 				} else {
-					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
+					CommonTree node = (CommonTree) t.getChild(nbChilds - 1).getChild(0); // Noeud
+																							// VEC
 					int nbChild2 = node.getChildCount();
 					ArrayList<String> value1 = new ArrayList<>();
 
 					try {
 						if (nbChild2 > 1)
 							for (int i = 0; i < nbChild2 - 1; i++)
-								isSameType(name, node.getChild(i).getText(), node.getChild(i + 1).getText());
+								isSameType(name, TreeParser.analyseExp((CommonTree) node.getChild(i), tds), type);
 
 						for (int i = 0; i < nbChild2; i++)
 							value1.add(node.getChild(i).getText());
@@ -134,6 +153,12 @@ public class TreeParser {
 						args = new Arguments(argNames, argTypes, argPointeurs);
 						break;
 					case "BLOC":
+						/*
+						 * if (!returnTypeFunc.equals("void")) { try {
+						 * isReturn(node); goodReturnType(node); } catch
+						 * (InvalidTypeReturn e) { e.printStackTrace(); } catch
+						 * (NoReturn e) { e.printStackTrace(); } }
+						 */
 						tds.ajouterFonction(nameFunc, returnType, args);
 						TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
 
@@ -160,10 +185,39 @@ public class TreeParser {
 				break;
 			case "PRINT":
 			case "RETURN":
-				TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
+				String returnTypeFunc = null;
+				CommonTree p = t;
+				while (!(p.getParent().getText().equals("FUNC"))) {
+					p = (CommonTree) p.getParent();
+				}
+				p = (CommonTree) p.getParent(); // On remonte au noeud FUNC de
+												// declaration de la fonction
+
+				if (p.getChildCount() == 4) {
+					returnTypeFunc = p.getChild(p.getChildCount() - 2).getText();
+				} else if (p.getChildCount() == 3) {
+					if (!p.getChild(p.getChildCount() - 2).getText().equals("FUNC_ARGS")) {
+						returnTypeFunc = p.getChild(p.getChildCount() - 2).getText();
+					} else {
+						returnTypeFunc = "void";
+					}
+				} else {
+					returnTypeFunc = "void";
+				}
+
+				try {
+
+					if (!(returnTypeFunc.equals("void"))) {
+						goodReturnType(analyseExp((CommonTree) t.getChild(0), tds), returnTypeFunc);
+						analyseExp((CommonTree) t.getChild(0), tds);
+					}
+				} catch (InvalidTypeReturn e) {
+					e.printStackTrace();
+				}
 				break;
 			}
 		}
+
 	}
 
 	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
@@ -495,7 +549,17 @@ public class TreeParser {
 			throw new InvalidStructureVarName(name, str1, str2);
 	}
 
+	private static void oneMain(int num) throws NoMain {
+		if (num != 1)
+			throw new NoMain();
+	}
+
 	private static Boolean isInteger(String str) {
 		return findType(str).equals("i32");
+	}
+
+	private static void goodReturnType(String analyseExp, String returnTypeFunc) throws InvalidTypeReturn {
+		if (!analyseExp.equals(returnTypeFunc))
+			throw new InvalidTypeReturn(analyseExp, returnTypeFunc);
 	}
 }
