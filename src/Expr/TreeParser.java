@@ -3,6 +3,7 @@ package Expr;
 import Exceptions.*;
 import Objets.*;
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.Tree;
 
 import java.util.ArrayList;
 
@@ -52,25 +53,19 @@ public class TreeParser {
 					type = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
 				}
 
-				if (!t.getChild(nbChilds - 1).getText().equals("vecteur")) {
+				CommonTree vecNode = (CommonTree) t.getChild(nbChilds - 1).getChild(0);
+
+				if (!vecNode.getText().equals("VEC")) {
 					tds.ajouterVariable(name, mut, type, value, pointeur, false);
 				} else {
-					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
-					int nbChild2 = node.getChildCount();
-					ArrayList<String> value1 = new ArrayList<>();
+				    int nbChild2 = vecNode.getChildCount();
+				    ArrayList<String> values = new ArrayList<>();
+				    String vecType = findType(vecNode.getChild(0).getText());
 
-					try {
-						if (nbChild2 > 1)
-							for (int i = 0; i < nbChild2 - 1; i++)
-								isSameType(name, node.getChild(i).getText(), node.getChild(i + 1).getText());
+                    for(int i = 0; i < nbChild2; i++)
+                        values.add(vecNode.getChild(i).getText());
 
-						for (int i = 0; i < nbChild2; i++)
-							value1.add(node.getChild(i).getText());
-
-						tds.ajouterVecteur(name, findType(node.getChild(0).getText()), value1);
-					} catch (InvalidTypeArgument e) {
-						e.printStackTrace();
-					}
+                    tds.ajouterVecteur(name, vecType, values, false, false);
 				}
 				break;
 			case "STRUCT":
@@ -132,6 +127,7 @@ public class TreeParser {
 						}
 
 						args = new Arguments(argNames, argTypes, argPointeurs);
+
 						break;
 					case "BLOC":
 						tds.ajouterFonction(nameFunc, returnType, args);
@@ -427,10 +423,11 @@ public class TreeParser {
 
 		while (temp.equals("VEC")) {
 			node = (CommonTree) node.getChild(0);
-			temp = node.getText();
+
+            temp = node.getText();
 			type = type.concat(" ");
 			type = type.concat(temp);
-		}
+        }
 
 		varNames.add(name);
 		varTypes.add(type);

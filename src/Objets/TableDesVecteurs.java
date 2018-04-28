@@ -1,5 +1,6 @@
 package Objets;
 
+import Exceptions.InvalidTypeAffectation;
 import Exceptions.InvalidVecteurVariableType;
 import Exceptions.NonExistantVecteur;
 
@@ -9,19 +10,16 @@ import java.util.HashMap;
 import static Expr.TreeParser.findType;
 
 public class TableDesVecteurs extends Table<String, Vecteur> {
-    void ajouterVecteur(TableDesSymboles tableSymboles, String name, String type, ArrayList<String> valeurs) throws InvalidVecteurVariableType {
+    void ajouterVecteur(TableDesSymboles tableSymboles, String name, String type, ArrayList<String> valeurs, boolean pointeur, boolean param) throws InvalidVecteurVariableType, InvalidTypeAffectation {
         Vecteur vecteur = ((TableDesVecteurs) tableSymboles.get(TableType.VEC)).get(name);
 
-        if (vecteur != null)
-            tableSymboles.get(TableType.VEC).put(name, new Vecteur(name, type, valeurs));
-        else if (tableSymboles.getParent() == null) {
-            for (String valeur : valeurs) {
-                if (!findType(valeur).equals(type))
-                    throw new InvalidVecteurVariableType(name, type, valeur, findType(valeur));
-            }
-
-            this.put(name, new Vecteur(name, type, valeurs));
-        } else this.ajouterVecteur(tableSymboles.getParent(), name, type, valeurs);
+        if (vecteur != null) {
+            if (!vecteur.getType().equals(type) && !vecteur.getType().equals(""))
+                throw new InvalidTypeAffectation(name, vecteur.getType(), type);
+            else tableSymboles.get(TableType.VEC).put(name,  new Vecteur(name, type, valeurs, vecteur.isPointeur(), vecteur.isParam()));
+        } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
+            this.put(name, new Vecteur(name, type, valeurs, pointeur, param));
+        else this.ajouterVecteur(tableSymboles.getParent(), name, type, valeurs, pointeur, param);
     }
 
     public Vecteur getVecteur(TableDesSymboles tableSymboles, String name) throws NonExistantVecteur {
@@ -37,7 +35,7 @@ public class TableDesVecteurs extends Table<String, Vecteur> {
 
     @Override
     public String toString() {
-        StringBuilder stringVecteurs = new StringBuilder();
+        StringBuilder stringVecteurs = new StringBuilder("Vecteurs : \n");
 
         for (HashMap.Entry<String, Vecteur> entry : table.entrySet())
             stringVecteurs.append("\t").append(entry.getValue().toString());
