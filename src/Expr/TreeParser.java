@@ -4,6 +4,7 @@ import Exceptions.*;
 import Objets.*;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.stringtemplate.language.Cat;
+import org.antlr.runtime.tree.Tree;
 
 import java.util.ArrayList;
 
@@ -70,23 +71,25 @@ public class TreeParser {
 					type = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
 				}
 
-				if (!t.getChild(nbChilds - 1).getChild(0).getText().equals("VEC")) {
-					tds.ajouterVariable(name, mut, type, value, pointeur, false);
+				CommonTree vecNode = (CommonTree) t.getChild(nbChilds - 1).getChild(0);
+
+				if (!vecNode.getText().equals("VEC")) {			
+						tds.ajouterVariable(name, mut, type, value, pointeur, false);
 				} else {
-					CommonTree node = (CommonTree) t.getChild(nbChilds - 1).getChild(0); // Noeud
-																							// VEC
-					int nbChild2 = node.getChildCount();
-					ArrayList<String> value1 = new ArrayList<>();
+					
+				    int nbChild2 = vecNode.getChildCount();
+				    ArrayList<String> values = new ArrayList<>();
+				    String vecType = findType(vecNode.getChild(0).getText());
 
 					try {
 						if (nbChild2 > 1)
 							for (int i = 0; i < nbChild2 - 1; i++)
-								isSameType(name, TreeParser.analyseExp((CommonTree) node.getChild(i), tds), type);
+								isSameType(name, TreeParser.analyseExp((CommonTree) vecNode.getChild(i), tds), type);
 
 						for (int i = 0; i < nbChild2; i++)
-							value1.add(node.getChild(i).getText());
+                        values.add(vecNode.getChild(i).getText());
 
-						tds.ajouterVecteur(name, findType(node.getChild(0).getText()), value1);
+                    tds.ajouterVecteur(name, vecType, values, false, false);
 					} catch (InvalidTypeArgument e) {
 						e.printStackTrace();
 					}
@@ -151,6 +154,7 @@ public class TreeParser {
 						}
 
 						args = new Arguments(argNames, argTypes, argPointeurs);
+
 						break;
 					case "BLOC":
 						/*
@@ -217,7 +221,6 @@ public class TreeParser {
 				break;
 			}
 		}
-
 	}
 
 	private static String analyseExpUnaire(CommonTree t, String spe_unaire, TableDesSymboles tds) throws Exception {
@@ -481,10 +484,11 @@ public class TreeParser {
 
 		while (temp.equals("VEC")) {
 			node = (CommonTree) node.getChild(0);
-			temp = node.getText();
+
+            temp = node.getText();
 			type = type.concat(" ");
 			type = type.concat(temp);
-		}
+        }
 
 		varNames.add(name);
 		varTypes.add(type);

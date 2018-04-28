@@ -1,14 +1,11 @@
 package Objets;
 
-import Exceptions.AlreadyExistantFonction;
-import Exceptions.NonExistantStructure;
-import Exceptions.NonExistantType;
-import Exceptions.WrongRegionDeclaration;
+import Exceptions.*;
 
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
-    void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration, NonExistantType, NonExistantStructure {
+    void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration, NonExistantType, NonExistantStructure, NonExistantVecteur {
         Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
 
         if (!tableSymboles.getName().equals("1"))
@@ -17,9 +14,16 @@ public class TableDesFonctions extends Table<String, Fonction> {
             throw new AlreadyExistantFonction(name);
         else {
             if (args != null)
-                for (String type : args.getTypes())
-                    if (!type.equals("bool") && !type.equals("i32") && !type.equals("& bool") && !type.equals("& i32") && (tableSymboles.getStructure(tableSymboles, type) == null))
+                for (String type : args.getTypes()) {
+                    String[] types = type.split(" ");
+
+                    if(types[0].equals("VEC")) {
+                        for (String vecType : types)
+                            if (!vecType.equals("bool") && !vecType.equals("i32") && !vecType.equals("& bool") && !vecType.equals("& i32") && !vecType.equals("VEC"))
+                                throw new NonExistantVecteur(type);
+                    } else if (!type.equals("bool") && !type.equals("i32") && !type.equals("& bool") && !type.equals("& i32")/* && (tableSymboles.getStructure(tableSymboles, type) == null)*/)
                         throw new NonExistantType(type);
+                }
 
             if (returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && (tableSymboles.getStructure(tableSymboles, returnType) == null))
                 throw new NonExistantType(returnType);

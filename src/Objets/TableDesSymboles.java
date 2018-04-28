@@ -66,7 +66,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         try {
             tableDesFonctions.ajouterFonction(this, name, returnType, arguments);
-        } catch (AlreadyExistantFonction | WrongRegionDeclaration | NonExistantType | NonExistantStructure e) {
+        } catch (AlreadyExistantFonction | WrongRegionDeclaration | NonExistantType | NonExistantStructure | NonExistantVecteur e) {
             e.printStackTrace();
         }
     }
@@ -87,7 +87,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
     }
 
-    public void ajouterVecteur(String name, String type, ArrayList<String> valeurs) {
+    public void ajouterVecteur(String name, String type, ArrayList<String> valeurs, boolean pointeur, boolean param) {
         TableType tableType = TableType.VEC;
         TableDesVecteurs tableDesVecteurs = (TableDesVecteurs) this.get(tableType);
 
@@ -97,8 +97,8 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            tableDesVecteurs.ajouterVecteur(this, name, type, valeurs);
-        } catch (InvalidVecteurVariableType e) {
+            tableDesVecteurs.ajouterVecteur(this, name, type, valeurs, pointeur, param);
+        } catch (InvalidVecteurVariableType | InvalidTypeAffectation e) {
             e.printStackTrace();
         }
     }
