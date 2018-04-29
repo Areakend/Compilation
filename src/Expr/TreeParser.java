@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class TreeParser {
 	public static int LIGNE = 0;
 
-	public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds) throws Exception {
+	public static void analyseRec(Tables tables, CommonTree t, TableDesSymboles tds, Offsets offsets) throws Exception {
 		TreeParser.LIGNE = t.getLine();
 
 		if (t.isNil()) {
@@ -23,7 +23,7 @@ public class TreeParser {
 				try {
 					oneMain(numberMain);
 					for (int i = 0; i < t.getChildCount(); i++) {
-						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds, offsets);
 					}
 
 				} catch (NoMain e) {
@@ -72,7 +72,8 @@ public class TreeParser {
 				CommonTree vecNode = (CommonTree) t.getChild(nbChilds - 1).getChild(0);
 
 				if (!vecNode.getText().equals("VEC")) {			
-						tds.ajouterVariable(name, mut, type, value, pointeur, false);
+				    tds.ajouterVariable(name, mut, type, value, pointeur, false, getDeplacement(name,type));
+                    offsets.add(name,new Offset(tds.getName(),tds.getCurrentDeplacement()));
 				} else {
                     int nbChild2 = vecNode.getChildCount();
                     ArrayList<String> values = new ArrayList<>();
@@ -102,24 +103,24 @@ public class TreeParser {
 					TableDesSymboles tds2 = new TableDesSymboles(tables, tds);
 
 					for (int i = 0; i < nbChilds; i++)
-						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds2);
+						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds2, offsets);
 				} else
 					for (int i = 0; i < nbChilds; i++)
-						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds, offsets);
 
 				break;
 			case "IF":
 				TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
 
 				for (int i = 1; i < t.getChildCount(); i++)
-					TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+					TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds, offsets);
 				break;
 			case "ELSE":
-				TreeParser.analyseRec(tables, (CommonTree) t.getChild(0), tds);
+				TreeParser.analyseRec(tables, (CommonTree) t.getChild(0), tds, offsets);
 				break;
 			case "WHILE":
 				TreeParser.analyseExp((CommonTree) t.getChild(0), tds);
-				TreeParser.analyseRec(tables, (CommonTree) t.getChild(1), tds);
+				TreeParser.analyseRec(tables, (CommonTree) t.getChild(1), tds, offsets);
 				break;
 			case "FUNC":
 				String nameFunc = t.getChild(0).getText();
@@ -171,12 +172,14 @@ public class TreeParser {
                                     tds2.ajouterVecteur(names.get(k), types.get(k).substring(4, types.get(k).length()), null, pointeur, true);
                                 else {
                                     type = types.get(k);
-                                    tds2.ajouterVariable(names.get(k), true, type, null, pointeur, true);
+                                    name= names.get(k);
+                                    tds2.ajouterVariable(name, true, type, null, pointeur, true, getDeplacement(name,type));
+                                    offsets.add(name,new Offset(tds.getName(),tds.getCurrentDeplacement()));
                                 }
 							}
 						}
 
-						TreeParser.analyseRec(tables, node, tds2);
+						TreeParser.analyseRec(tables, node, tds2, offsets);
 						break;
 					default:
 						returnType = node.getText();
@@ -562,5 +565,15 @@ public class TreeParser {
 	private static void goodReturnType(String analyseExp, String returnTypeFunc) throws InvalidTypeReturn {
 		if (!analyseExp.equals(returnTypeFunc))
 			throw new InvalidTypeReturn(analyseExp, returnTypeFunc);
+	}
+
+	private static int getDeplacement(String name, String type) {
+		if (type.equals("i32")) {
+			return 4;
+		} else if (type.equals("bool")){
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 }

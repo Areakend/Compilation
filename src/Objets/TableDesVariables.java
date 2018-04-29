@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesVariables extends Table<String, Variable> {
-    void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String type, String value, boolean pointeur, boolean param) throws NonMutable, InvalidTypeAffectation {
+    void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String type, String value, boolean pointeur, boolean param, int deplacement) throws NonMutable, InvalidTypeAffectation {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null) {
@@ -20,10 +20,10 @@ public class TableDesVariables extends Table<String, Variable> {
 
             if (!variable.getType().equals(type) && !variable.getType().equals(""))
                 throw new InvalidTypeAffectation(name, variable.getType(), type);
-            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam()));
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam(), deplacement));
         } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
-            this.put(name, new Variable(name, mut, type, value, pointeur, param));
-        else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param);
+            this.put(name, new Variable(name, mut, type, value, pointeur, param, deplacement));
+        else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param, deplacement);
     }
 
     void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {

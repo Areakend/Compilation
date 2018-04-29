@@ -13,11 +13,13 @@ public class Variable extends VecVar {
     private String value;
     private Structure structure;
     private ArrayList<String> structureValeurs;
+    private int deplacement;
 
-    Variable(String name, boolean mut, String type, String value, boolean pointeur, boolean param) {
+    Variable(String name, boolean mut, String type, String value, boolean pointeur, boolean param, int deplacement) {
         super(name, type, pointeur, param);
         this.mut = mut;
         this.value = value;
+        this.deplacement = deplacement;
     }
 
     Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<String> structureValeurs) {
@@ -81,6 +83,6 @@ public class Variable extends VecVar {
 
     @Override
     public String toString() {
-        return "\tVariable : " + this.name + " | type : " + this.type + " | mut : " + this.mut + " | pointeur : " + this.pointeur + (this.value == null ? "" : " | valeur : " + this.value) + " | param : " + this.param + "\n";
+        return "\tVariable : " + this.name + " | type : " + this.type + " | mut : " + this.mut + " | pointeur : " + this.pointeur + (this.value == null ? "" : " | valeur : " + this.value) + " | param : " + this.param + " | deplacement : " + this.deplacement + "\n";
     }
 }
