@@ -5,7 +5,7 @@ import Exceptions.*;
 import java.util.HashMap;
 
 public class TableDesFonctions extends Table<String, Fonction> {
-    void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration, NonExistantType, NonExistantStructure, NonExistantVecteur {
+    void ajouterFonction(TableDesSymboles tableSymboles, String name, String returnType, Arguments args) throws AlreadyExistantFonction, WrongRegionDeclaration, NonExistantType, NonExistantStructure, NonExistantVecteur, NonExistantVariable {
         Fonction fonction = ((TableDesFonctions) tableSymboles.get(TableType.FONC)).get(name);
 
         if (!tableSymboles.getName().equals("1"))
@@ -21,11 +21,11 @@ public class TableDesFonctions extends Table<String, Fonction> {
                         for (String vecType : types)
                             if (!vecType.equals("bool") && !vecType.equals("i32") && !vecType.equals("& bool") && !vecType.equals("& i32") && !vecType.equals("VEC"))
                                 throw new NonExistantVecteur(type);
-                    } else if (!type.equals("bool") && !type.equals("i32") && !type.equals("& bool") && !type.equals("& i32")/* && (tableSymboles.getStructure(tableSymboles, type) == null)*/)
+                    } else if (!type.equals("bool") && !type.equals("i32") && !type.equals("& bool") && !type.equals("& i32") && tableSymboles.getVecteur(tableSymboles, type, false) == null && tableSymboles.getStructure(tableSymboles, type, false) == null)
                         throw new NonExistantType(type);
                 }
 
-            if (returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && (tableSymboles.getStructure(tableSymboles, returnType) == null))
+            if (returnType != null && !returnType.equals("bool") && !returnType.equals("i32") && (tableSymboles.getStructure(tableSymboles, returnType, true) == null))
                 throw new NonExistantType(returnType);
 
             this.put(name, new Fonction(name, returnType, args));

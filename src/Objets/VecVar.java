@@ -1,10 +1,10 @@
 package Objets;
 
 public abstract class VecVar {
-    String name;
-    String type;
-    boolean pointeur;
-    boolean param;
+    private String name;
+    private String type;
+    private boolean pointeur;
+    private boolean param;
 
     VecVar() {}
 
@@ -16,7 +16,7 @@ public abstract class VecVar {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -24,7 +24,7 @@ public abstract class VecVar {
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(String type) {
@@ -32,12 +32,16 @@ public abstract class VecVar {
     }
 
     boolean isParam() {
-        return param;
+        return this.param;
     }
+
+    void setParam() { this.param = true; }
 
     boolean isPointeur() {
         return this.pointeur;
     }
+
+    void setPointeur(boolean pointeur) { this.pointeur = pointeur; }
 
     @Override
     public abstract String toString();

@@ -30,9 +30,7 @@ public class TreeParser {
 					e.printStackTrace();
 				}
 			}
-
 		} else {
-
 			int nbChilds = t.getChildCount();
 			boolean pointeur = false;
 			String type = "";
@@ -63,17 +61,36 @@ public class TreeParser {
 				if (t.getChild(nbChilds - 1).getChildCount() > 0) { // AFFECT
 					CommonTree node = (CommonTree) t.getChild(nbChilds - 1);
 
-					if (TreeParser.isInteger(node.getChild(0).getText())
-							|| TreeParser.isBoolean(node.getChild(0).getText()))
+					if (TreeParser.isInteger(node.getChild(0).getText()) || TreeParser.isBoolean(node.getChild(0).getText()))
 						value = node.getChild(0).getText();
 					type = TreeParser.analyseExp((CommonTree) node.getChild(0), tds);
 				}
 
 				CommonTree vecNode = (CommonTree) t.getChild(nbChilds - 1).getChild(0);
 
-				if (!vecNode.getText().equals("VEC")) {			
-						tds.ajouterVariable(name, mut, type, value, pointeur, false);
-				} else {
+				if (!vecNode.getText().equals("VEC")) {
+                    if (type.equals("bool") || type.equals("i32") || type.equals("& bool") || type.equals("& i32")) {
+                        tds.ajouterVariable(name, mut, type, value, pointeur, false);
+                    } else {
+                        ArrayList<String> structureVariables = new ArrayList<>();
+                        ArrayList<ArrayList<String>> structureValeurs = new ArrayList<>();
+
+                        for(int i = 0; i < vecNode.getChildCount(); i++) {
+                            structureVariables.add(vecNode.getChild(i).getChild(0).getText());
+                            CommonTree val = (CommonTree)vecNode.getChild(i).getChild(1);
+                            ArrayList<String> valeurs = new ArrayList<>();
+
+                            if(!val.getText().equals("VEC"))
+                                valeurs.add(val.getText());
+                            else for (int j = 0; j < val.getChildCount(); j++)
+                                valeurs.add(vecNode.getChild(i).getText());
+
+                            structureValeurs.add(valeurs);
+                        }
+
+                        tds.ajouterStructureVariable(name, type, structureVariables, structureValeurs, pointeur);
+                    }
+                } else {
                     int nbChild2 = vecNode.getChildCount();
                     ArrayList<String> values = new ArrayList<>();
                     String vecType = findType(vecNode.getChild(0).getText());
@@ -89,13 +106,14 @@ public class TreeParser {
 				ArrayList<String> varNames = new ArrayList<>();
 				ArrayList<String> varTypes = new ArrayList<>();
 				ArrayList<Boolean> varPointeurs = new ArrayList<>();
+				ArrayList<Boolean> vecteurs = new ArrayList<>();
 
-				for (int i = 1; i < nbChilds; i++) {
-					CommonTree node = (CommonTree) t.getChild(i);
-					fillVarNamesTypes(node, varNames, varTypes, varPointeurs);
-				}
+				TreeParser.fillVarNamesTypes(1, t, varNames, varTypes, varPointeurs);
 
-				tds.ajouterStructure(nameStruct, varNames, varTypes, varPointeurs);
+				for(int i = 0; i < varNames.size(); i++)
+                    vecteurs.add(varTypes.get(i).split(" ")[0].equals("VEC"));
+
+				tds.ajouterStructure(nameStruct, varNames, varTypes, varPointeurs, vecteurs);
 				break;
 			case "BLOC":
 				if (!t.getParent().getText().equals("FUNC")) {
@@ -103,9 +121,8 @@ public class TreeParser {
 
 					for (int i = 0; i < nbChilds; i++)
 						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds2);
-				} else
-					for (int i = 0; i < nbChilds; i++)
-						TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
+				} else for (int i = 0; i < nbChilds; i++)
+					TreeParser.analyseRec(tables, (CommonTree) t.getChild(i), tds);
 
 				break;
 			case "IF":
@@ -137,10 +154,7 @@ public class TreeParser {
 						argTypes = new ArrayList<>();
 						argPointeurs = new ArrayList<>();
 
-						for (int j = 0; j < node.getChildCount(); j++) {
-							CommonTree node2 = (CommonTree) node.getChild(j);
-							fillVarNamesTypes(node2, argNames, argTypes, argPointeurs);
-						}
+						TreeParser.fillVarNamesTypes(0, node, argNames, argTypes, argPointeurs);
 
 						args = new Arguments(argNames, argTypes, argPointeurs);
 
@@ -161,19 +175,24 @@ public class TreeParser {
 
 							for (int k = 0; k < names.size(); k++) {
 							    String[] differentTypes = types.get(k).split(" ");
+							    Structure structure;
 
 							    if (differentTypes[0].equals("&")) {
                                     pointeur = true;
                                     type = types.get(k).substring(2, types.get(k).length());
-                                }
+                                } else type = types.get(k);
 
-                                if(differentTypes[0].equals("VEC") || (differentTypes[0].equals("&") && differentTypes[1].equals("VEC")))
-                                    tds2.ajouterVecteur(names.get(k), types.get(k).substring(4, types.get(k).length()), null, pointeur, true);
-                                else {
-                                    type = types.get(k);
-                                    tds2.ajouterVariable(names.get(k), true, type, null, pointeur, true);
-                                }
-							}
+                                if(differentTypes[0].equals("VEC")) {
+                                    String types2 = differentTypes[1];
+
+                                    for(int j = 2; i < differentTypes.length; i++)
+                                        types2 = types2.concat(differentTypes[j]);
+
+                                    tds2.ajouterVecteur(names.get(k), types2, null, pointeur, true);
+                                } else if((structure = tds.getStructure(tds, differentTypes[0], false)) != null)
+                                    tds2.ajouterArgumentStructure(names.get(k), structure, pointeur);
+                                else tds2.ajouterVariable(names.get(k), true, type, null, pointeur, true);
+                            }
 						}
 
 						TreeParser.analyseRec(tables, node, tds2);
@@ -287,29 +306,19 @@ public class TreeParser {
 			}
 
 		default:
+            Structure structure;
+            Variable variable;
+
 			if (isInteger(t.getText()))
 				return "i32";
-			else if (isBoolean(t.getText())) {
+			else if (isBoolean(t.getText()))
 				return "bool";
-			} else {
-				int nbChilds = t.getChildCount();
-				if (nbChilds == 0) {
-					try {
-						switch (t.getText()) {
-						case "true":
-							return "bool";
-						case "false":
-							return "bool";
-						default:
-							Variable variable = tds.getVariable(tds, t.getText(), true);
-
-							return variable.getValue() == null || isInteger(variable.getValue()) ? variable.getType()
-									: variable.getType();
-						}
-					} catch (NonExistantVariable e) {
-						e.printStackTrace();
-					}
-				} else if (t.getText().equals("BLOC"))
+			else if((variable = tds.getVariable(tds, t.getText(), false)) != null)
+                return variable.getType();
+            else if((structure = tds.getStructure(tds, t.getText(), false)) != null)
+                return structure.getStructureName();
+            else if(t.getChildCount() != 0){
+				if (t.getText().equals("BLOC"))
 					return tds.getFonction(tds, t.getChild(0).getText()).getReturnType();
 				else if (t.getChild(0).getText().equals("IND")) {
 					String name = t.getText();
@@ -320,8 +329,8 @@ public class TreeParser {
 
 						if (t.getChildCount() == 0)
 							try {
-								String variable = TreeParser.analyseExp(t, tds);
-								isSameType(name, "i32", findType(variable));
+								String variable2 = TreeParser.analyseExp(t, tds);
+								isSameType(name, "i32", findType(variable2));
 							} catch (InvalidTypeArgument e) {
 								e.printStackTrace();
 							}
@@ -460,35 +469,40 @@ public class TreeParser {
 				}
 			}
 		}
+
 		return null;
-	}
+		//throw new NonExistantType(t.getText());
+    }
 
-	private static void fillVarNamesTypes(CommonTree node, ArrayList<String> varNames, ArrayList<String> varTypes,
-			ArrayList<Boolean> varPointeur) {
-		String name = node.getChild(0).getText();
-		String temp = node.getChild(1).getText();
-		String type = temp;
+	private static void fillVarNamesTypes(int startIndex, CommonTree node, ArrayList<String> varNames, ArrayList<String> varTypes, ArrayList<Boolean> varPointeur) {
+        for (int i = startIndex; i < node.getChildCount(); i++) {
+            CommonTree node2 = (CommonTree) node.getChild(i);
 
-		if (temp.equals("&")) {
-			varPointeur.add(true);
-			type = type.concat(" ");
-			type = type.concat(node.getChild(2).getText());
-			node = (CommonTree) node.getChild(2);
-		} else {
-			varPointeur.add(false);
-			node = (CommonTree) node.getChild(1);
-		}
+            String name = node2.getChild(0).getText();
+            String temp = node2.getChild(1).getText();
+            String type = temp;
 
-		while (temp.equals("VEC")) {
-			node = (CommonTree) node.getChild(0);
+            if (temp.equals("&")) {
+                varPointeur.add(true);
+                type = type.concat(" ");
+                type = type.concat(node2.getChild(2).getText());
+                node2 = (CommonTree) node2.getChild(2);
+            } else {
+                varPointeur.add(false);
+                node2 = (CommonTree) node2.getChild(1);
+            }
 
-            temp = node.getText();
-			type = type.concat(" ");
-			type = type.concat(temp);
+            while (temp.equals("VEC")) {
+                node2 = (CommonTree) node2.getChild(0);
+
+                temp = node2.getText();
+                type = type.concat(" ");
+                type = type.concat(temp);
+            }
+
+            varNames.add(name);
+            varTypes.add(type);
         }
-
-		varNames.add(name);
-		varTypes.add(type);
 	}
 
 	public static String findType(String value) {

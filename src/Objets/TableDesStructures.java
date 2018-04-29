@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesStructures extends Table<String, Structure> {
-    void ajouterStructure(TableDesSymboles tableSymboles, String name, ArrayList<String> names, ArrayList<String> types, ArrayList<Boolean> pointeurs) throws AlreadyExistantStructure, NonExistantType, WrongRegionDeclaration {
+    void ajouterStructure(TableDesSymboles tableSymboles, String name, ArrayList<String> names, ArrayList<String> types, ArrayList<Boolean> pointeurs, ArrayList<Boolean> vecteurs) throws AlreadyExistantStructure, NonExistantType, WrongRegionDeclaration {
         TableDesStructures structuresTable = (TableDesStructures) tableSymboles.get(TableType.STRUCT);
         Structure structure = structuresTable.get(name);
 
@@ -24,7 +24,7 @@ public class TableDesStructures extends Table<String, Structure> {
                     throw new NonExistantType(type);
             }
 
-            this.put(name, new Structure(name, names, types));
+            this.put(name, new Structure(name, names, types, pointeurs, vecteurs));
         }
     }
 
