@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class Table<K, V> {
+public abstract class Table<K, V> {
     HashMap<K, V> table = new HashMap<>();
 
     public V get(K key) {
@@ -22,4 +22,7 @@ public class Table<K, V> {
     public Set<Entry<K, V>> entrySet() {
         return this.table.entrySet();
     }
+
+    @Override
+    public abstract String toString();
 }

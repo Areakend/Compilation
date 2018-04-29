@@ -3,8 +3,6 @@ package Expr;
 import Exceptions.*;
 import Objets.*;
 import org.antlr.runtime.tree.CommonTree;
-import org.antlr.stringtemplate.language.Cat;
-import org.antlr.runtime.tree.Tree;
 
 import java.util.ArrayList;
 
@@ -76,23 +74,14 @@ public class TreeParser {
 				if (!vecNode.getText().equals("VEC")) {			
 						tds.ajouterVariable(name, mut, type, value, pointeur, false);
 				} else {
-					
-				    int nbChild2 = vecNode.getChildCount();
-				    ArrayList<String> values = new ArrayList<>();
-				    String vecType = findType(vecNode.getChild(0).getText());
+                    int nbChild2 = vecNode.getChildCount();
+                    ArrayList<String> values = new ArrayList<>();
+                    String vecType = findType(vecNode.getChild(0).getText());
 
-					try {
-						if (nbChild2 > 1)
-							for (int i = 0; i < nbChild2 - 1; i++)
-								isSameType(name, TreeParser.analyseExp((CommonTree) vecNode.getChild(i), tds), type);
-
-						for (int i = 0; i < nbChild2; i++)
+                    for(int i = 0; i < nbChild2; i++)
                         values.add(vecNode.getChild(i).getText());
 
                     tds.ajouterVecteur(name, vecType, values, false, false);
-					} catch (InvalidTypeArgument e) {
-						e.printStackTrace();
-					}
 				}
 				break;
 			case "STRUCT":
@@ -169,13 +158,21 @@ public class TreeParser {
 						if (args != null) {
 							ArrayList<String> names = args.getNames();
 							ArrayList<String> types = args.getTypes();
-							for (int k = 0; k < names.size(); k++) {
-								if (types.get(k).equals("& i32") || types.get(k).equals("& bool"))
-									pointeur = true;
 
-								type = (types.get(k).substring(0, 1).equals("&"))
-										? types.get(k).substring(2, types.get(k).length()) : types.get(k);
-								tds2.ajouterVariable(names.get(k), true, type, null, pointeur, true);
+							for (int k = 0; k < names.size(); k++) {
+							    String[] differentTypes = types.get(k).split(" ");
+
+							    if (differentTypes[0].equals("&")) {
+                                    pointeur = true;
+                                    type = types.get(k).substring(2, types.get(k).length());
+                                }
+
+                                if(differentTypes[0].equals("VEC") || (differentTypes[0].equals("&") && differentTypes[1].equals("VEC")))
+                                    tds2.ajouterVecteur(names.get(k), types.get(k).substring(4, types.get(k).length()), null, pointeur, true);
+                                else {
+                                    type = types.get(k);
+                                    tds2.ajouterVariable(names.get(k), true, type, null, pointeur, true);
+                                }
 							}
 						}
 
@@ -189,11 +186,11 @@ public class TreeParser {
 				break;
 			case "PRINT":
 			case "RETURN":
-				String returnTypeFunc = null;
+				String returnTypeFunc;
 				CommonTree p = t;
-				while (!(p.getParent().getText().equals("FUNC"))) {
+				while (!(p.getParent().getText().equals("FUNC")))
 					p = (CommonTree) p.getParent();
-				}
+
 				p = (CommonTree) p.getParent(); // On remonte au noeud FUNC de
 												// declaration de la fonction
 

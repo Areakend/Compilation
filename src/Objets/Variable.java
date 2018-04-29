@@ -8,23 +8,16 @@ import java.util.ArrayList;
 
 import static Expr.TreeParser.findType;
 
-public class Variable {
-    String type;
-    private String name;
+public class Variable extends VecVar {
     private boolean mut;
     private String value;
     private Structure structure;
     private ArrayList<String> structureValeurs;
-    private boolean pointeur;
-    private boolean param;
 
     Variable(String name, boolean mut, String type, String value, boolean pointeur, boolean param) {
-        this.name = name;
+        super(name, type, pointeur, param);
         this.mut = mut;
-        this.type = type;
         this.value = value;
-        this.pointeur = pointeur;
-        this.param = param;
     }
 
     Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<String> structureValeurs) {
@@ -41,22 +34,6 @@ public class Variable {
         if (structure == null)
             throw new NonExistantStructure(" null ");
         return structure;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    boolean isParam() {
-        return param;
     }
 
     private void setStructure(TableDesSymboles tableDesSymboles, String structureName, ArrayList<String> structureNewVariables, ArrayList<String> structureNewValeurs) throws InvalidTypeAffectation, NonExistantStructure, InvalidStructureVarName {
@@ -90,10 +67,7 @@ public class Variable {
         this.structureValeurs.set(this.structureValeurs.indexOf(name), valeur);
     }
 
-    public String getValue() /*throws NonInitialisedVariable*/ {
-        /*if(value == null)
-            throw new NonInitialisedVariable(this.name);
-        */
+    public String getValue() {
         return value;
     }
 
@@ -103,10 +77,6 @@ public class Variable {
 
     public void setMut(boolean mut) {
         this.mut = mut;
-    }
-
-    public boolean isPointeur() {
-        return this.pointeur;
     }
 
     @Override

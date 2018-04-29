@@ -20,7 +20,7 @@ public class TableDesVariables extends Table<String, Variable> {
 
             if (!variable.getType().equals(type) && !variable.getType().equals(""))
                 throw new InvalidTypeAffectation(name, variable.getType(), type);
-            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, pointeur, variable.isParam()));
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam()));
         } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
             this.put(name, new Variable(name, mut, type, value, pointeur, param));
         else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param);
