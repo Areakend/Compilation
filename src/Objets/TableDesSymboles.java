@@ -49,7 +49,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
     }
 
-    public void ajouterStructureVariable(String name, String structureName, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, boolean pointeur) {
+    public void ajouterStructureVariable(String name, String structureName, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, boolean pointeur, int deplacement) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
@@ -58,7 +58,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
             this.put(tableType, tableDesVariables);
         }
 
-        tableDesVariables.ajouterStructureVariable(this, name, structureName, structureVariables, structureValeurs, pointeur);
+        tableDesVariables.ajouterStructureVariable(this, name, structureName, structureVariables, structureValeurs, pointeur, deplacement);
     }
 
     public void ajouterArgumentStructure(String name, Structure structure, boolean pointeur) {
@@ -136,7 +136,6 @@ public class TableDesSymboles extends Table<TableType, Table> {
     public Variable getVariable(TableDesSymboles tableDesSymboles, String name, boolean exception) throws NonExistantVariable {
         TableDesVariables tableDesVariables = ((TableDesVariables) tableDesSymboles.get(TableType.VAR));
 
-        //System.out.println(tableDesVariables);
         if (tableDesVariables != null) {
             Variable variable = tableDesVariables.get(name);
 

@@ -5,14 +5,16 @@ public abstract class VecVar {
     private String type;
     private boolean pointeur;
     private boolean param;
+    private int deplacement;
 
     VecVar() {}
 
-    VecVar(String name, String type, boolean pointeur, boolean param) {
+    VecVar(String name, String type, boolean pointeur, boolean param, int deplacement) {
         this.name = name;
         this.type = type;
         this.pointeur = pointeur;
         this.param = param;
+        this.deplacement = deplacement;
     }
 
     public String getName() {

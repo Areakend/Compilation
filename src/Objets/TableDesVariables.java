@@ -27,14 +27,14 @@ public class TableDesVariables extends Table<String, Variable> {
         else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param, deplacement);
     }
 
-    void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, boolean pointeur) {
+    void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, boolean pointeur, int deplacement) {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null)
-            tableSymboles.get(TableType.VAR).put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs));
+            tableSymboles.get(TableType.VAR).put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs, deplacement));
         else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
-            this.put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs));
-        else this.ajouterStructureVariable(tableSymboles.getParent(), name, structureName, structureVariables, structureValeurs, pointeur);
+            this.put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs, deplacement));
+        else this.ajouterStructureVariable(tableSymboles.getParent(), name, structureName, structureVariables, structureValeurs, pointeur, deplacement);
     }
 
     void ajouterArgumentStructure(TableDesSymboles tableSymboles, String name, Structure structure, boolean pointeur) throws AlreadyExistantStructure {

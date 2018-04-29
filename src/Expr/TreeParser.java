@@ -69,27 +69,29 @@ public class TreeParser {
 				CommonTree vecNode = (CommonTree) t.getChild(nbChilds - 1).getChild(0);
 
 				if (!vecNode.getText().equals("VEC")) {
-                    if (type.equals("bool") || type.equals("i32") || type.equals("& bool") || type.equals("& i32")) {
-                        tds.ajouterVariable(name, mut, type, value, pointeur, false, getDeplacement(name,type));
-                        offsets.add(name, new Offset(tds.getName(), tds.getCurrentDeplacement()));
-                    } else {
-                        ArrayList<String> structureVariables = new ArrayList<>();
-                        ArrayList<ArrayList<String>> structureValeurs = new ArrayList<>();
+                    if (type != null) {
+                        if (type.equals("bool") || type.equals("i32") || type.equals("& bool") || type.equals("& i32")) {
+                            tds.ajouterVariable(name, mut, type, value, pointeur, false, TreeParser.getDeplacement(name, type));
+                            offsets.add(name, new Offset(tds.getName(), tds.getCurrentDeplacement()));
+                        } else {
+                            ArrayList<String> structureVariables = new ArrayList<>();
+                            ArrayList<ArrayList<String>> structureValeurs = new ArrayList<>();
 
-                        for(int i = 0; i < vecNode.getChildCount(); i++) {
-                            structureVariables.add(vecNode.getChild(i).getChild(0).getText());
-                            CommonTree val = (CommonTree)vecNode.getChild(i).getChild(1);
-                            ArrayList<String> valeurs = new ArrayList<>();
+                            for(int i = 0; i < vecNode.getChildCount(); i++) {
+                                structureVariables.add(vecNode.getChild(i).getChild(0).getText());
+                                CommonTree val = (CommonTree)vecNode.getChild(i).getChild(1);
+                                ArrayList<String> valeurs = new ArrayList<>();
 
-                            if(!val.getText().equals("VEC"))
-                                valeurs.add(val.getText());
-                            else for (int j = 0; j < val.getChildCount(); j++)
-                                valeurs.add(vecNode.getChild(i).getText());
+                                if(!val.getText().equals("VEC"))
+                                    valeurs.add(val.getText());
+                                else for (int j = 0; j < val.getChildCount(); j++)
+                                    valeurs.add(vecNode.getChild(i).getText());
 
-                            structureValeurs.add(valeurs);
+                                structureValeurs.add(valeurs);
+                            }
+
+                            tds.ajouterStructureVariable(name, type, structureVariables, structureValeurs, pointeur, TreeParser.getDeplacement(name, type));
                         }
-
-                        tds.ajouterStructureVariable(name, type, structureVariables, structureValeurs, pointeur);
                     }
                 } else {
                     int nbChild2 = vecNode.getChildCount();
@@ -583,12 +585,13 @@ public class TreeParser {
 	}
 
 	private static int getDeplacement(String name, String type) {
-		if (type.equals("i32")) {
-			return 4;
-		} else if (type.equals("bool")){
-			return 1;
-		} else {
-			return 0;
-		}
+        if (type.equals("i32")) {
+            return 4;
+        } else if (type.equals("bool")) {
+            return 1;
+        } else {
+            return 0;
+        }
+        /*TODO gerer la taille des structures et des vecteurs*/
 	}
 }
