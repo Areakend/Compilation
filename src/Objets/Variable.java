@@ -12,20 +12,22 @@ public class Variable extends VecVar {
     private boolean mut;
     private String valeur;
     private Structure structure;
+    private int deplacement;
 
-    Variable(String name, String type, boolean pointeur) {
-        super(name, type, pointeur, false);
+    Variable(String name, String type, boolean pointeur, int deplacement) {
+        super(name, type, pointeur, false, deplacement);
         this.mut = true;
     }
 
-    Variable(String name, boolean mut, String type, String valeur, boolean pointeur, boolean param) {
-        super(name, type, pointeur, param);
+    Variable(String name, boolean mut, String type, String valeur, boolean pointeur, boolean param, int deplacement) {
+        super(name, type, pointeur, param, deplacement);
         this.mut = mut;
         this.valeur = valeur;
     }
 
-    Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs) {
+    Variable(String name, String structureName, TableDesSymboles tableDesSymboles, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, int deplacement) {
         this.setName(name);
+        this.deplacement = deplacement;
 
         try {
             this.setStructure(tableDesSymboles, structureName, structureVariables, structureValeurs);
@@ -109,9 +111,9 @@ public class Variable extends VecVar {
     @Override
     public String toString() {
         if(this.structure == null)
-            return "\tVariable : " + this.getName() + " | type : " + this.getType() + " | mut : " + this.mut + " | pointeur : " + this.isPointeur() + (this.valeur == null ? "" : " | valeur : " + this.valeur) + " | param : " + this.isParam() + "\n";
+            return "\tVariable : " + this.getName() + " | type : " + this.getType() + " | mut : " + this.mut + " | pointeur : " + this.isPointeur() + (this.valeur == null ? "" : " | valeur : " + this.valeur) + " | param : " + this.isParam()+ " | deplacement : " + this.deplacement + "\n";
         else {
-            StringBuilder res = new StringBuilder("\tVariable : " + this.getName() + " | structure : " + this.structure.getStructureName() + " | param : " + this.isParam() + " | pointeur : " + this.isPointeur() + "\n");
+            StringBuilder res = new StringBuilder("\tVariable : " + this.getName() + " | structure : " + this.structure.getStructureName() + " | param : " + this.isParam() + " | pointeur : " + this.isPointeur()+ " | deplacement : " + this.deplacement + "\n");
             ArrayList<String> names = this.structure.getNames();
 
             for(int i = 0; i < names.size(); i++)

@@ -1,6 +1,7 @@
 
 import Expr.ExprLexer;
 import Expr.ExprParser;
+import Objets.Offsets;
 import Objets.TableDesSymboles;
 import Objets.Tables;
 import org.antlr.runtime.ANTLRInputStream;
@@ -15,7 +16,7 @@ import static Expr.TreeParser.analyseRec;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String file = "ExemplesRust/vecTest.rs";
+        String file = "ExemplesRust/ex1.rs";
 
         System.out.println("File to load: " + file);
 
@@ -31,11 +32,13 @@ public class Main {
             CommonTree t = (CommonTree) result.getTree();
 
             Tables tables = new Tables();
+            Offsets offsets = new Offsets();
             TableDesSymboles tds = new TableDesSymboles(tables);
 
-            analyseRec(tables, t, tds);
+            analyseRec(tables, t, tds, offsets);
 
             System.out.print(tables.toString());
+            System.out.print(offsets.toString());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
