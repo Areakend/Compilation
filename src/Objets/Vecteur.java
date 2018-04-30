@@ -7,8 +7,8 @@ import java.util.ArrayList;
 public class Vecteur extends VecVar {
     private ArrayList<String> valeurs;
 
-    public Vecteur(String name, String type, boolean pointeur, boolean param) {
-        this(name, type, null, pointeur, param);
+    Vecteur(String name, String type, boolean pointeur) {
+        this(name, type, null, pointeur, false);
     }
 
     Vecteur(String name, String type, ArrayList<String> valeurs, boolean pointeur, boolean param) {
@@ -16,28 +16,24 @@ public class Vecteur extends VecVar {
         this.valeurs = valeurs;
     }
 
-    public ArrayList<String> getValeurs() {
+    ArrayList<String> getValeurs() {
         return valeurs;
     }
 
-    public void setValeurs(ArrayList<String> valeurs) {
+    void setValeurs(ArrayList<String> valeurs) {
         this.valeurs = valeurs;
-    }
-
-    public void setParam(boolean param) {
-        this.param = param;
     }
 
     public String getValeur(int i) throws IndexOutOfBounds {
         if (i > this.valeurs.size())
-            throw new IndexOutOfBounds(name);
+            throw new IndexOutOfBounds(this.getName());
 
         return valeurs.get(i);
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("\tVecteur : " + this.name + " | type : " + this.type + " | pointeur : " + this.pointeur);
+        StringBuilder res = new StringBuilder("\tVecteur : " + this.getName() + " | type : " + this.getType() + " | pointeur : " + this.isPointeur());
 
         if(valeurs != null) {
             res.append(" | valeurs : ");
@@ -47,6 +43,6 @@ public class Vecteur extends VecVar {
                 res.append(", ").append(valeurs.get(i));
         }
 
-        return res.append(" | param : ").append(this.param).append("\n").toString();
+        return res.append(" | param : ").append(this.isParam()).append("\n").toString();
     }
 }

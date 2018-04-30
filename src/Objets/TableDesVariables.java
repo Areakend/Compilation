@@ -1,5 +1,6 @@
 package Objets;
 
+import Exceptions.AlreadyExistantStructure;
 import Exceptions.InvalidTypeAffectation;
 import Exceptions.NonExistantVariable;
 import Exceptions.NonMutable;
@@ -12,21 +13,21 @@ public class TableDesVariables extends Table<String, Variable> {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null) {
-            if (variable.getValue() != null && !variable.isMut())
+            if (variable.getValeur() != null && !variable.isMut())
                 throw new NonMutable(name);
 
-            if (variable.getValue() != null && value == null)
-                value = variable.getValue();
+            if (variable.getValeur() != null && value == null)
+                value = variable.getValeur();
 
             if (!variable.getType().equals(type) && !variable.getType().equals(""))
                 throw new InvalidTypeAffectation(name, variable.getType(), type);
-            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam()));
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam(),variable.getDeplacement()));
         } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1")) {
             if (!tabOffsets.isInOffsets(name,tableSymboles.getName())) {
                 tableSymboles.updateDeplacements(deplacement);
                 tabOffsets.add(new Offset(name, tableSymboles.getName(), tableSymboles.getCurrentDeplacement()));
             }
-            this.put(name, new Variable(name, mut, type, value, pointeur, param));
+            this.put(name, new Variable(name, mut, type, value, pointeur, param, tableSymboles.getCurrentDeplacement()));
         }
         else {
             if (!tabOffsets.isInOffsets(name,tableSymboles.getName())) {
@@ -37,22 +38,31 @@ public class TableDesVariables extends Table<String, Variable> {
         }
     }
 
-    void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<String> structureValeurs, boolean pointeur) {
+    void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, boolean pointeur, int deplacement) {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null)
-            tableSymboles.get(TableType.VAR).put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs));
+            tableSymboles.get(TableType.VAR).put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs, deplacement));
         else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
-            this.put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs));
-        else
-            this.ajouterStructureVariable(tableSymboles.getParent(), name, structureName, structureVariables, structureValeurs, pointeur);
+            this.put(name, new Variable(name, structureName, tableSymboles, structureVariables, structureValeurs, deplacement));
+        else this.ajouterStructureVariable(tableSymboles.getParent(), name, structureName, structureVariables, structureValeurs, pointeur, deplacement);
+    }
+
+    void ajouterArgumentStructure(TableDesSymboles tableSymboles, String name, Structure structure, boolean pointeur) throws AlreadyExistantStructure {
+        Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
+
+        if (variable != null)
+            throw new AlreadyExistantStructure(name);
+        else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
+            this.put(name, new Variable(name, structure, pointeur));
+        else this.ajouterArgumentStructure(tableSymboles.getParent(), name, structure, pointeur);
     }
 
     private String getValeurVariable(TableDesSymboles tableSymboles, String name) throws NonExistantVariable {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null) {
-            return variable.getValue();
+            return variable.getValeur();
         } else if (tableSymboles.getParent() == null)
             throw new NonExistantVariable(name);
 
