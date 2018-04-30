@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableDesVariables extends Table<String, Variable> {
-    void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String type, String value, boolean pointeur, boolean param, int deplacement) throws NonMutable, InvalidTypeAffectation {
+    void ajouterVariable(TableDesSymboles tableSymboles, String name, boolean mut, String type, String value, boolean pointeur, boolean param, int deplacement, Offsets tabOffsets) throws NonMutable, InvalidTypeAffectation {
         Variable variable = ((TableDesVariables) tableSymboles.get(TableType.VAR)).get(name);
 
         if (variable != null) {
@@ -21,10 +21,21 @@ public class TableDesVariables extends Table<String, Variable> {
 
             if (!variable.getType().equals(type) && !variable.getType().equals(""))
                 throw new InvalidTypeAffectation(name, variable.getType(), type);
-            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam(), deplacement));
-        } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1"))
-            this.put(name, new Variable(name, mut, type, value, pointeur, param, deplacement));
-        else this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param, deplacement);
+            else tableSymboles.get(TableType.VAR).put(name, new Variable(name, variable.isMut(), type, value, variable.isPointeur(), variable.isParam(),variable.getDeplacement()));
+        } else if (tableSymboles.getParent().get(TableType.VAR) == null || tableSymboles.getParent().getName().equals("1")) {
+            if (!tabOffsets.isInOffsets(name,tableSymboles.getName())) {
+                tableSymboles.updateDeplacements(deplacement);
+                tabOffsets.add(new Offset(name, tableSymboles.getName(), tableSymboles.getCurrentDeplacement()));
+            }
+            this.put(name, new Variable(name, mut, type, value, pointeur, param, tableSymboles.getCurrentDeplacement()));
+        }
+        else {
+            if (!tabOffsets.isInOffsets(name,tableSymboles.getName())) {
+                tableSymboles.updateDeplacements(deplacement);
+                tabOffsets.add(new Offset(name, tableSymboles.getName(), tableSymboles.getCurrentDeplacement()));
+            }
+            this.ajouterVariable(tableSymboles.getParent(), name, mut, type, value, pointeur, param, deplacement, tabOffsets);
+        }
     }
 
     void ajouterStructureVariable(TableDesSymboles tableSymboles, String name, String structureName, ArrayList<String> structureVariables, ArrayList<ArrayList<String>> structureValeurs, boolean pointeur, int deplacement) {

@@ -1,5 +1,7 @@
 package Objets;
 
+import Expr.TreeParser;
+
 import java.util.ArrayList;
 
 public class Structure {
@@ -19,7 +21,7 @@ public class Structure {
         for (int i = 0; i < names.size(); i++) {
             if(this.vecteurs.get(i))
                 this.vecVars.add(new Vecteur(names.get(i), types.get(i), pointeurs.get(i)));
-            else this.vecVars.add(new Variable(names.get(i), types.get(i), pointeurs.get(i)));
+            //else this.vecVars.add(new Variable(names.get(i), types.get(i), pointeurs.get(i)));
         }
     }
 

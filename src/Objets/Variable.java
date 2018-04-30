@@ -12,15 +12,12 @@ public class Variable extends VecVar {
     private boolean mut;
     private String valeur;
     private Structure structure;
+    private ArrayList<String> structureValeurs;
     private int deplacement;
 
-    Variable(String name, String type, boolean pointeur, int deplacement) {
-        super(name, type, pointeur, false, deplacement);
-        this.mut = true;
-    }
-
     Variable(String name, boolean mut, String type, String valeur, boolean pointeur, boolean param, int deplacement) {
-        super(name, type, pointeur, param, deplacement);
+        super(name, type, pointeur, param);
+        this.deplacement=deplacement;
         this.mut = mut;
         this.valeur = valeur;
     }
@@ -94,6 +91,10 @@ public class Variable extends VecVar {
 
     public String getValeur() {
         return this.valeur;
+    }
+
+    public int getDeplacement() {
+        return this.deplacement;
     }
 
     public boolean isMut() {

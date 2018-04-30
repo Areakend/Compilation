@@ -9,12 +9,11 @@ public abstract class VecVar {
 
     VecVar() {}
 
-    VecVar(String name, String type, boolean pointeur, boolean param, int deplacement) {
+    VecVar(String name, String type, boolean pointeur, boolean param) {
         this.name = name;
         this.type = type;
         this.pointeur = pointeur;
         this.param = param;
-        this.deplacement = deplacement;
     }
 
     public String getName() {
