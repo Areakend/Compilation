@@ -11,13 +11,13 @@ import Exceptions.InvalidTypeArgument;
 import Expr.TreeParser;
 import Objets.Arguments;
 import Objets.TableDesSymboles;
-import objet.ListeOffset;
-import objet.Tables;
+import Objets.Offsets;
+import Objets.Tables;
 
-
+/*
 
 public class Code_gen {
-	
+
 	//le code micropiup que nous allons ecrire tout du long et ajouter a notre fichier excecutable
 	private String code ="";
 	
@@ -80,7 +80,7 @@ public class Code_gen {
 				"LDW BP, #NIL\n" +
 				"STW BP,-(SP)\n" +
 				"LDW BP,SP\n";
-				*/
+
 		this.add();
 	}
 	
@@ -122,13 +122,13 @@ public class Code_gen {
 			}
 			case "IF":
 				//test de la condition
-				code = ""
+				code = "";
 				this.GenerateIf.gen_runner();
 				String test=t.getChild(0).getText();
 				String filsgauche=t.getChild(0).getChild(0).getText();
 				String filsdroit=t.getChild(0).getChild(1).getText();
 				
-				if(filsgauche.is
+				if(false){
 				code += "LDW R0,#"+ filsgauche + "\n" +
 						"LDW R1,#"+ filsdroit  + "\n" ;
 				
@@ -185,7 +185,8 @@ public class Code_gen {
 			file.delete();
 		}
 	}
-	
-	
+
 	
 }
+
+*/

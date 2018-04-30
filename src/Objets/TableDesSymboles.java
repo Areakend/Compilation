@@ -31,7 +31,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         this.filsNbr++;
     }
 
-    public void ajouterVariable(String name, boolean mut, String type, String value, boolean pointeur, boolean param, int deplacement) {
+    public void ajouterVariable(String name, boolean mut, String type, String value, boolean pointeur, boolean param, int deplacement, Offsets tabOffsets) {
         TableType tableType = TableType.VAR;
         TableDesVariables tableDesVariables = (TableDesVariables) this.get(tableType);
 
@@ -41,9 +41,7 @@ public class TableDesSymboles extends Table<TableType, Table> {
         }
 
         try {
-            tableDesVariables.ajouterVariable(this, name, mut, type, value, pointeur, param, currentDeplacement+precDeplacement);
-            this.currentDeplacement=currentDeplacement+precDeplacement;
-            this.precDeplacement=deplacement;
+            tableDesVariables.ajouterVariable(this, name, mut, type, value, pointeur, param, deplacement, tabOffsets);
         } catch (NonMutable | InvalidTypeAffectation e) {
             e.printStackTrace();
         }
@@ -168,10 +166,16 @@ public class TableDesSymboles extends Table<TableType, Table> {
 
         return this.getStructure(tableDesSymboles.getParent(), name);
     }
-    
+
     public int getCurrentDeplacement() {
         return this.currentDeplacement;
     }
+
+    public void updateDeplacements(int deplacement) {
+        this.currentDeplacement=this.currentDeplacement+precDeplacement;
+        this.precDeplacement=deplacement;
+    }
+
 
     private String setName() {
         return this.parent.getName().concat(Integer.toString(this.parent.getFilsNbr()));

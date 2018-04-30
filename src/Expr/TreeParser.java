@@ -71,9 +71,8 @@ public class TreeParser {
 
 				CommonTree vecNode = (CommonTree) t.getChild(nbChilds - 1).getChild(0);
 
-				if (!vecNode.getText().equals("VEC")) {			
-				    tds.ajouterVariable(name, mut, type, value, pointeur, false, getDeplacement(name,type));
-                    offsets.add(name,new Offset(tds.getName(),tds.getCurrentDeplacement()));
+				if (!vecNode.getText().equals("VEC")) {
+				    tds.ajouterVariable(name, mut, type, value, pointeur, false, getDeplacement(name,type), offsets);
 				} else {
                     int nbChild2 = vecNode.getChildCount();
                     ArrayList<String> values = new ArrayList<>();
@@ -173,8 +172,7 @@ public class TreeParser {
                                 else {
                                     type = types.get(k);
                                     name= names.get(k);
-                                    tds2.ajouterVariable(name, true, type, null, pointeur, true, getDeplacement(name,type));
-                                    offsets.add(name,new Offset(tds.getName(),tds.getCurrentDeplacement()));
+                                    tds2.ajouterVariable(name, true, type, null, pointeur, true, getDeplacement(name,type), offsets);
                                 }
 							}
 						}
@@ -568,12 +566,14 @@ public class TreeParser {
 	}
 
 	private static int getDeplacement(String name, String type) {
-		if (type.equals("i32")) {
-			return 4;
-		} else if (type.equals("bool")){
-			return 1;
-		} else {
-			return 0;
+	    if (type!=null) {
+            if (type.equals("i32")) {
+                return 4;
+            }
+            else if (type.equals("bool")){
+                return 1;
+		    }
 		}
+		return 0;
 	}
 }

@@ -1,10 +1,10 @@
 package Assembleur;
 
 import org.antlr.runtime.tree.CommonTree;
-
-import objet.ListeOffset;
-import objet.Offset;
-import objet.TableDesSymboles;
+/*
+import Objets.Offsets;
+import Objets.Offset;
+import Objets.TableDesSymboles;
 
 
 public class GenerateIf {
@@ -82,3 +82,4 @@ public class GenerateIf {
 		return code;
 	}
 }
+*/
