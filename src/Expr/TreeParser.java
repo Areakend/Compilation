@@ -324,7 +324,7 @@ public class TreeParser {
 						if (t.getChildCount() == 0)
 							try {
 								String variable = TreeParser.analyseExp(t, tds);
-								isSameType(name, "i32", findType(variable));
+								isSameType(name, "i32", variable);
 							} catch (InvalidTypeArgument e) {
 								e.printStackTrace();
 							}
@@ -351,6 +351,7 @@ public class TreeParser {
 					}
 				} else if (t.getChild(0).getText().equals("CALL_ARGS")) {
 					String name1 = t.getText();
+					
 
 					try {
 						Fonction fonc = tds.getFonction(tds, name1);
@@ -419,6 +420,7 @@ public class TreeParser {
 					}
 				} else if (t.getChild(0).getText().equals("ASSOC")) {
 					String name = t.getText();
+					
 					t = (CommonTree) t.getChild(0).getChild(0);
 
 					try {
@@ -506,8 +508,8 @@ public class TreeParser {
 	private static void isSameType(String name, String theoricalType, String realType) throws InvalidTypeArgument {
 		if (realType == null)
 			throw new InvalidTypeArgument(name, theoricalType, "null");
-		if (!(theoricalType.equals(findType(realType))))
-			throw new InvalidTypeArgument(name, theoricalType, findType(realType));
+		if (!(theoricalType.equals(realType)))
+			throw new InvalidTypeArgument(name, theoricalType, realType);
 	}
 
 	private static void isSameTypeFunc(String name, String theoricalType, String name2, String realType)
